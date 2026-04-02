@@ -150,14 +150,10 @@ export function SnoozePanel(props: Props): React.Node {
       nextFocusedIndex = -1;
     } else if (focusedButtonIndex === -1) {
       nextFocusedIndex = 0;
-    } else if (key === 'left' && focusedButtonIndex % 3 !== 0) {
+    } else if (key === 'up' && focusedButtonIndex > 0) {
       nextFocusedIndex -= 1;
-    } else if (key === 'right' && focusedButtonIndex % 3 !== 2) {
+    } else if (key === 'down' && focusedButtonIndex < snoozeOptions.length - 1) {
       nextFocusedIndex += 1;
-    } else if (key === 'up' && focusedButtonIndex > 2) {
-      nextFocusedIndex -= 3;
-    } else if (key === 'down' && focusedButtonIndex < 6) {
-      nextFocusedIndex += 3;
     } else if (key === 'tab') {
       nextFocusedIndex =
         (nextFocusedIndex + 1) % snoozeOptions.length;

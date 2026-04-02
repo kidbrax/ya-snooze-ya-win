@@ -83,13 +83,32 @@ export default function calcSnoozeOptions(
     moment().add(somedayMonthsDelta, 'months')
   );
 
+  const oneHourFromNow = moment().add(1, 'hours');
+  const twoHoursFromNow = moment().add(2, 'hours');
+
   return [
+    {
+      id: 'one_hour',
+      title: '1 Hour from Now',
+      icon: coffeeIcon,
+      activeIcon: coffeeWhiteIcon,
+      tooltip: oneHourFromNow.calendar(),
+      when: oneHourFromNow.toDate(),
+    },
+    {
+      id: 'two_hours',
+      title: '2 Hours from Now',
+      icon: coffeeIcon,
+      activeIcon: coffeeWhiteIcon,
+      tooltip: twoHoursFromNow.calendar(),
+      when: twoHoursFromNow.toDate(),
+    },
     {
       id: 'later',
       title: 'Later Today',
       icon: coffeeIcon,
       activeIcon: coffeeWhiteIcon,
-      tooltip: `${laterTodayTime.calendar()} (${laterTodayHoursDelta} hours from now)`,
+      tooltip: `${laterTodayTime.calendar()}`,
       when: laterTodayTime.toDate(),
     },
     {
@@ -139,7 +158,7 @@ export default function calcSnoozeOptions(
       activeIcon: pineWhiteIcon,
       tooltip: `${somedayTime.format(
         'LL'
-      )} (${somedayMonthsDelta} months from now)`,
+      )}`,
       when: somedayTime.toDate(),
     },
     {
