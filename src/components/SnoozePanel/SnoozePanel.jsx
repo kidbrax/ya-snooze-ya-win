@@ -18,9 +18,7 @@ import SnoozeFooter from './SnoozeFooter';
 import { loadAudio, SOUND_SNOOZE } from '../../core/audio';
 import keycode from 'keycode';
 import {
-  countConsecutiveSnoozes,
   IS_BETA,
-  createTab,
   getActiveTab,
 } from '../../core/utils';
 import { filterSnoozableTabs, getTargetTabs } from '../../core/tabSelection';
@@ -112,6 +110,9 @@ export function SnoozePanel(props: Props): React.Node {
     if (selectedSnoozeOptionId != null) {
       return;
     }
+    if (targetTabs.length === 0) {
+      return; // tabs not yet loaded, ignore click
+    }
 
     setSelectedSnoozeOptionId(snoozeOption.id);
     preventTooltip();
@@ -185,7 +186,7 @@ export function SnoozePanel(props: Props): React.Node {
     delayedSnoozeTabs(targetTabs, {
       type: selectedSnoozeOptionId || '',
       wakeupTime: date.getTime(),
-      closeTab: true,
+      closeTab: true, // dialog-initiated snoozes always close tabs
     });
   }, [selectedSnoozeOptionId, targetTabs]);
 
@@ -196,7 +197,7 @@ export function SnoozePanel(props: Props): React.Node {
     delayedSnoozeTabs(targetTabs, {
       type: selectedSnoozeOptionId || '',
       period,
-      closeTab: true,
+      closeTab: true, // dialog-initiated snoozes always close tabs
     });
   }, [selectedSnoozeOptionId, isProUser, targetTabs]);
 
@@ -231,7 +232,11 @@ export function SnoozePanel(props: Props): React.Node {
       }}
     >
       <PanelHeader>
-        <TabModeToggle onClick={toggleSingleTabMode}>
+        <TabModeToggle
+          onClick={toggleSingleTabMode}
+          title={singleTabMode ? 'Click to snooze all tabs in window' : 'Click to snooze only this tab'}
+          aria-label={singleTabMode ? 'Switch to snooze all tabs mode' : 'Switch to snooze this tab only'}
+        >
           {singleTabMode ? 'This tab' : `${targetTabs.length} tab${targetTabs.length !== 1 ? 's' : ''}`}
         </TabModeToggle>
         {!singleTabMode && (
@@ -292,8 +297,6 @@ const SNOOZE_SHORTCUT_KEYS: { [any]: number } = {
   P: 8,
   D: 8,
 };
-const CONSECUTIVE_SNOOZE_TIMEOUT = 20 * 1000; //10s
-
 async function delayedSnoozeTabs(tabs: Array<ChromeTab>, config: SnoozeConfig) {
   // Strip to the fields the SW needs; keep tab.id client-side for removal
   const snoozePromise = chrome.runtime.sendMessage({
