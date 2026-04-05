@@ -67,4 +67,7 @@ declare type Settings = {|
     weekNumber: number,
     usageCount: number,
   },
+
+  // Multi-tab snooze
+  singleTabMode: boolean,
 |};

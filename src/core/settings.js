@@ -32,6 +32,9 @@ export const DEFAULT_SETTINGS: Settings = {
   // Support reminders
   showSupportReminders: true,
   lastSupportReminderDate: 0,
+
+  // Multi-tab snooze
+  singleTabMode: false,
 };
 
 export async function getSettings(): Promise<Settings> {
