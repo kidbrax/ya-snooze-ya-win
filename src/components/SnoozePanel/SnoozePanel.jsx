@@ -2,26 +2,20 @@
 import type { SnoozeOption } from './calcSnoozeOptions';
 import type { Props as SnoozeButtonProps } from './SnoozeButton';
 
-import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import styled from 'styled-components';
-// import bugsnag from '../../bugsnag';
 import calcSnoozeOptions, {
   SNOOZE_TYPE_REPEATED,
   SNOOZE_TYPE_SPECIFIC_DATE,
 } from './calcSnoozeOptions';
 import SnoozeButtonsGrid from './SnoozeButtonsGrid';
-import { MSG_SNOOZE_TAB } from '../../core/messages';
+import { MSG_SNOOZE_TABS } from '../../core/messages';
 import TooltipHelper from './TooltipHelper';
 import UpgradeDialog from './UpgradeDialog';
-import { DEFAULT_SETTINGS, getSettings } from '../../core/settings';
-import {
-  isOverFreeWeeklyQuota
-} from '../../core/license';
+import { DEFAULT_SETTINGS, getSettings, saveSettings } from '../../core/settings';
+import { isOverFreeWeeklyQuota } from '../../core/license';
 import SnoozeFooter from './SnoozeFooter';
-import {
-  loadAudio,
-  SOUND_SNOOZE,
-} from '../../core/audio';
+import { loadAudio, SOUND_SNOOZE } from '../../core/audio';
 import keycode from 'keycode';
 import {
   countConsecutiveSnoozes,
@@ -29,7 +23,7 @@ import {
   createTab,
   getActiveTab,
 } from '../../core/utils';
-// import { getUpgradeUrl } from '../../paths';
+import { filterSnoozableTabs, getTargetTabs } from '../../core/tabSelection';
 
 // code splitting these big components
 const AsyncPeriodSelector = lazy(() => import('./PeriodSelector'));
@@ -55,6 +49,10 @@ export function SnoozePanel(props: Props): React.Node {
   const [isProUser, setIsProUser] = useState(true);
   const [selectorDialogOpen, setSelectorDialogOpen] = useState(false);
   const [isOverFreePlanLimit, setIsOverFreePlanLimit] = useState(false);
+  const [allTabs, setAllTabs] = useState([]);
+  const [highlightedTabs, setHighlightedTabs] = useState([]);
+  const [activeTab, setActiveTab] = useState(null);
+  const [singleTabMode, setSingleTabMode] = useState(DEFAULT_SETTINGS.singleTabMode);
 
   useEffect(() => {
     let cancelled = false;
@@ -62,11 +60,20 @@ export function SnoozePanel(props: Props): React.Node {
 
     const loadData = async () => {
       try {
-        const settings = await getSettings()
-        
+        const [settings, allTabsResult, highlightedTabsResult, activeTabResult] = await Promise.all([
+          getSettings(),
+          chrome.tabs.query({ currentWindow: true }),
+          chrome.tabs.query({ highlighted: true, currentWindow: true }),
+          getActiveTab(),
+        ]);
+
         if (!cancelled) {
           setSnoozeOptions(calcSnoozeOptions(settings));
           setIsProUser(true);
+          setAllTabs(allTabsResult);
+          setHighlightedTabs(highlightedTabsResult);
+          setActiveTab(activeTabResult);
+          setSingleTabMode(settings.singleTabMode);
         }
 
         timeoutId = setTimeout(async () => {
@@ -88,31 +95,38 @@ export function SnoozePanel(props: Props): React.Node {
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, []);
+
+  const targetTabs = useMemo(() => {
+    if (!activeTab) return [];
+    const raw = getTargetTabs(allTabs, highlightedTabs, singleTabMode, activeTab);
+    return filterSnoozableTabs(raw);
+  }, [allTabs, highlightedTabs, singleTabMode, activeTab]);
+
+  const toggleSingleTabMode = useCallback(async () => {
+    const next = !singleTabMode;
+    setSingleTabMode(next);
+    await saveSettings({ singleTabMode: next });
+  }, [singleTabMode]);
+
   const onSnoozeButtonClicked = useCallback((event: Event, snoozeOption: SnoozeOption) => {
     if (selectedSnoozeOptionId != null) {
-      // ignore additional selections after first one
       return;
     }
 
-    setSelectedSnoozeOptionId(snoozeOption.id)
-
-    // Avoid showing tooltip after user already selected, its distructing
+    setSelectedSnoozeOptionId(snoozeOption.id);
     preventTooltip();
 
     if (snoozeOption.when != null) {
-      // Perform snooze
       const wakeupTime = snoozeOption.when.getTime();
-
-      delayedSnoozeActiveTab({
+      delayedSnoozeTabs(targetTabs, {
         type: snoozeOption.id,
         wakeupTime,
         closeTab: !(event: any).altKey,
       });
     } else {
-      // either period or date selector opens as dialog
       setTimeout(() => setSelectorDialogOpen(true), 400);
     }
-  }, [selectedSnoozeOptionId, setSelectedSnoozeOptionId, preventTooltip, setSelectorDialogOpen]);
+  }, [selectedSnoozeOptionId, preventTooltip, setSelectorDialogOpen, targetTabs]);
 
   const onKeyPress = useCallback((event: KeyboardEvent) => {
     if (isOverFreePlanLimit) {
@@ -168,25 +182,23 @@ export function SnoozePanel(props: Props): React.Node {
 
 
   const onSnoozeSpecificDateSelected = useCallback((date: Date) => {
-    delayedSnoozeActiveTab({
-      type: selectedSnoozeOptionId || '', // '' is for Flow to shutup
+    delayedSnoozeTabs(targetTabs, {
+      type: selectedSnoozeOptionId || '',
       wakeupTime: date.getTime(),
       closeTab: true,
     });
-  }, [selectedSnoozeOptionId]);
+  }, [selectedSnoozeOptionId, targetTabs]);
 
   const onSnoozePeriodSelected = useCallback((period: SnoozePeriod) => {
     if (!isProUser) {
-      // createTab(getUpgradeUrl());
       return;
     }
-
-    delayedSnoozeActiveTab({
-      type: selectedSnoozeOptionId || '', // '' is for Flow to shutup
+    delayedSnoozeTabs(targetTabs, {
+      type: selectedSnoozeOptionId || '',
       period,
       closeTab: true,
     });
-  }, [selectedSnoozeOptionId, isProUser]);
+  }, [selectedSnoozeOptionId, isProUser, targetTabs]);
 
   // decide whether or not to use callback here...
   const getSnoozeButtons = (): Array<SnoozeButtonProps> => {
@@ -218,6 +230,14 @@ export function SnoozePanel(props: Props): React.Node {
         if (ref) ref.focus();
       }}
     >
+      <PanelHeader>
+        <TabModeToggle onClick={toggleSingleTabMode}>
+          {singleTabMode ? 'This tab' : `${targetTabs.length} tab${targetTabs.length !== 1 ? 's' : ''}`}
+        </TabModeToggle>
+        {!singleTabMode && (
+          <HintText>Ctrl+click tabs to snooze a selection</HintText>
+        )}
+      </PanelHeader>
       <SnoozeButtonsGrid buttons={snoozeButtons} />
       <SnoozeFooter
         tooltip={{
@@ -274,28 +294,21 @@ const SNOOZE_SHORTCUT_KEYS: { [any]: number } = {
 };
 const CONSECUTIVE_SNOOZE_TIMEOUT = 20 * 1000; //10s
 
-// give time for animation & sound to finish before snoozing (closing) tab
-async function delayedSnoozeActiveTab(config: SnoozeConfig) {
-  // Capture active tab NOW in popup context where chrome.tabs.query
-  // reliably returns the correct tab. The SW can't determine this.
-  const activeTab = await getActiveTab();
-
-  // Send snooze request to service worker (single writer for snoozedTabs).
-  // Wait for confirmation before closing the tab to prevent data loss.
+async function delayedSnoozeTabs(tabs: Array<ChromeTab>, config: SnoozeConfig) {
+  // Strip to the fields the SW needs; keep tab.id client-side for removal
   const snoozePromise = chrome.runtime.sendMessage({
-    action: MSG_SNOOZE_TAB,
-    tab: {
-      url: activeTab.url,
-      title: activeTab.title,
-      favIconUrl: activeTab.favIconUrl,
-    },
+    action: MSG_SNOOZE_TABS,
+    tabs: tabs.map(t => ({
+      url: t.url,
+      title: t.title,
+      favicon: t.favIconUrl,
+    })),
     config: {
       ...config,
-      // Don't close tab automatically, we close it ourselves below.
-      closeTab: false,
+      closeTab: false, // popup handles closing
     },
   }).catch(error => {
-    console.error('Failed to send snooze message to SW:', error);
+    console.error('Failed to send snooze batch message to SW:', error);
     return { success: false };
   });
 
@@ -304,14 +317,16 @@ async function delayedSnoozeActiveTab(config: SnoozeConfig) {
   setTimeout(async () => {
     const response = await snoozePromise;
     if (!response?.success) {
-      // Snooze failed — keep the tab open so the user doesn't lose it
-      console.error('Snooze was not confirmed by service worker, keeping tab open');
+      console.error('Snooze batch not confirmed by SW — keeping tabs open');
       window.close();
       return;
     }
 
     if (config.closeTab) {
-      chrome.tabs.remove(activeTab.id);
+      const tabIds = tabs.map(t => t.id).filter(Boolean);
+      if (tabIds.length > 0) {
+        chrome.tabs.remove(tabIds);
+      }
     }
     window.close();
   }, 1100);
@@ -342,4 +357,33 @@ export default TooltipHelper(SnoozePanel);
 
 const Root = styled.div`
   position: relative;
+`;
+
+const PanelHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px 4px;
+  gap: 2px;
+`;
+
+const TabModeToggle = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: ${(props: any) => props.theme.snoozePanel.countBadgeColor};
+  padding: 2px 8px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: ${(props: any) => props.theme.snoozePanel.hoverColor};
+  }
+`;
+
+const HintText = styled.div`
+  font-size: 11px;
+  color: ${(props: any) => props.theme.snoozePanel.footerTextColor};
+  opacity: 0.6;
 `;
