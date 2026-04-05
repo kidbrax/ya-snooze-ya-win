@@ -90,4 +90,15 @@ describe('snoozeTabsBatch', () => {
       snoozeTabsBatch(TWO_TABS, { type: 'later_today' })
     ).rejects.toThrow('No wakeup date and no period given');
   });
+
+  it('derives wakeupTime from period when no explicit wakeupTime given', async () => {
+    const { calcNextOccurrenceForPeriod } = await import('../core/utils');
+    calcNextOccurrenceForPeriod.mockReturnValue({ getTime: () => FUTURE_TIME });
+
+    await snoozeTabsBatch(TWO_TABS, { type: 'every_week', period: { type: 'weekly', hour: 9, days: [1] } });
+
+    expect(calcNextOccurrenceForPeriod).toHaveBeenCalledTimes(1);
+    const stored = addSnoozedTabs.mock.calls[0][0];
+    expect(stored[0].when).toBe(FUTURE_TIME);
+  });
 });

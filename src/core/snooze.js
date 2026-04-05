@@ -136,6 +136,8 @@ export async function snoozeTabsBatch(
   tabs: Array<{ url: string, title: string, favicon: string }>,
   config: SnoozeConfig
 ) {
+  if (tabs.length === 0) return;
+
   let { wakeupTime, period, type } = config;
 
   if (period) {
@@ -167,14 +169,14 @@ export async function snoozeTabsBatch(
   await scheduleWakeupAlarm('auto');
 
   let { totalSnoozeCount } = await getSettings();
-  const wasFirstSnooze = totalSnoozeCount === 0;
   totalSnoozeCount += tabs.length;
   await saveSettings({ totalSnoozeCount });
 
   // Count as one user action, not N
   await incrementWeeklyUsage();
 
-  if (wasFirstSnooze) {
+  if (totalSnoozeCount === tabs.length) {
+    // Was zero before this batch — show first-snooze dialog
     createCenteredWindow(FIRST_SNOOZE_PATH, 830, 485);
   }
 }
