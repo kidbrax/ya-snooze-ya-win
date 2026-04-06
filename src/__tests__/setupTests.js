@@ -79,9 +79,9 @@ const mockChrome = {
 
 // Make chrome API available globally
 global.chrome = mockChrome
-window.chrome = mockChrome
+if (typeof window !== 'undefined') {
+  window.chrome = mockChrome
+}
 
 // Mock other globals that might be needed
 global.browser = mockChrome
-
-chrome = mockChrome

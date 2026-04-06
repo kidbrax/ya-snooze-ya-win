@@ -68,7 +68,6 @@ export default defineConfig({
   define: {
     'global': 'globalThis',
     'process.env.NODE_ENV': '"production"',
-    'chrome': 'chrome'
   },
 
   // Configure for Chrome extension development
