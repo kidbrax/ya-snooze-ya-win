@@ -126,3 +126,57 @@ export async function resnoozePeriodicTab(snoozedTab: SnoozedTab) {
   // Store & persist rescheduled tab for later
   await addSnoozedTabs([snoozedTab]);
 }
+
+/**
+ * Snooze a batch of tabs atomically: one storage write, one alarm schedule.
+ * tabs is an array of { url, title, favicon } — the same shape the popup
+ * strips from ChromeTab before sending to the service worker.
+ */
+export async function snoozeTabsBatch(
+  tabs: Array<{ url: string, title: string, favicon: string }>,
+  config: SnoozeConfig
+) {
+  if (tabs.length === 0) return;
+
+  let { wakeupTime, period, type } = config;
+
+  if (period) {
+    const nextOccurrenceDate = calcNextOccurrenceForPeriod(period);
+    wakeupTime = nextOccurrenceDate.getTime();
+  }
+
+  if (!wakeupTime) {
+    throw new Error('No wakeup date and no period given');
+  }
+
+  console.log(
+    `Snoozing ${tabs.length} tab(s) until ${new Date(wakeupTime).toString()}`
+  );
+
+  const sleepStart = Date.now();
+  const snoozedTabs: Array<SnoozedTab> = tabs.map(tab => ({
+    url: tab.url,
+    title: tab.title,
+    favicon: tab.favicon,
+    type,
+    sleepStart,
+    period,
+    when: wakeupTime,
+  }));
+
+  // One atomic write + one alarm reschedule for the whole batch
+  await addSnoozedTabs(snoozedTabs);
+  await scheduleWakeupAlarm('auto');
+
+  let { totalSnoozeCount } = await getSettings();
+  const wasFirstSnooze = totalSnoozeCount === 0;
+  totalSnoozeCount += tabs.length;
+  await saveSettings({ totalSnoozeCount });
+
+  // Count as one user action, not N
+  await incrementWeeklyUsage();
+
+  if (wasFirstSnooze) {
+    createCenteredWindow(FIRST_SNOOZE_PATH, 830, 485);
+  }
+}
