@@ -4,9 +4,28 @@ import { crx } from '@crxjs/vite-plugin'
 import { resolve } from 'path'
 import flow from 'esbuild-plugin-flow'
 import manifest from './public/manifest.json'
+import babel from '@babel/core'
+
+// Strip Flow type annotations before crxjs's internal rollup sees them.
+// crxjs bundles background/offscreen scripts with its own rollup instance
+// that doesn't have Flow stripping configured, so we do it here first.
+const stripFlow = {
+  name: 'crx:strip-flow',
+  transform(code, id) {
+    if (/\.jsx?$/.test(id) && !id.includes('node_modules') && code.includes('@flow')) {
+      const result = babel.transformSync(code, {
+        presets: [['@babel/preset-flow', { all: true }]],
+        filename: id,
+        sourceMaps: true,
+      })
+      return { code: result.code, map: result.map }
+    }
+  }
+}
 
 export default defineConfig({
   plugins: [
+    stripFlow,
     react({
       babel: {
         presets: [
@@ -102,7 +121,11 @@ export default defineConfig({
     globals: true,
     // Mock Chrome APIs for testing
     deps: {
-      inline: ['@testing-library/jest-dom']
+      optimizer: {
+        web: {
+          include: ['@testing-library/jest-dom']
+        }
+      }
     },
     coverage: {
       provider: 'v8',

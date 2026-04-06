@@ -1,6 +1,6 @@
-# Tab Snooze
+# MultiTab Snooze
 
-A Chrome extension that lets you temporarily "snooze" browser tabs — hiding them and automatically reopening them at a scheduled time. Never lose track of tabs you want to revisit later.
+A Chrome extension that lets you temporarily "snooze" browser tabs — hiding them and automatically reopening them at a scheduled time. Supports snoozing multiple highlighted tabs at once.
 
 ## Install
 
@@ -9,6 +9,7 @@ A Chrome extension that lets you temporarily "snooze" browser tabs — hiding th
 ## Features
 
 - **Snooze tabs** to hide them now and have them reopen automatically later
+- **Multi-tab snoozing** — snooze all highlighted tabs in one action
 - **One-time and recurring schedules** — snooze until tomorrow morning, next week, or on a custom recurring schedule
 - **Snoozed tabs dashboard** to view and manage all your snoozed tabs
 - **Todo management** built into the extension
@@ -48,10 +49,20 @@ Manifest V3 extension built around a Service Worker background script.
 
 ```bash
 npm install
-npm run build
+npm run dev       # build + watch mode — rebuilds on every file save
 ```
 
-Load unpacked on chrome browser
+Then in Chrome:
+1. Go to `chrome://extensions` and enable **Developer mode**
+2. Click **Load unpacked** and select the `build/` folder
+3. After each rebuild, click ↻ on the extension card to reload it
+
+**Run tests:**
+```bash
+npm test
+```
+
+Tests run automatically as a pre-commit hook.
 
 ## Links
 

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Tab Snooze - Manifest V3",
-  "short_name": "Tab Snooze",
+  "name": "MultiTab Snooze",
+  "short_name": "MultiTab Snooze",
   "version": "12.1.1",
   "description": "Save articles, videos and todos for later. They'll magically reopen when you need them.",
   "icons": { "128": "images/extension_icon_128.png" },
