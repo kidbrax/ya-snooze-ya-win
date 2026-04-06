@@ -17,8 +17,6 @@ import { resnoozePeriodicTab } from './snooze';
 
 import { ensureOffscreenDocument } from "./backgroundMain";
 
-// import bugsnag from '../bugsnag';
-
 
 const WAKEUP_TABS_ALARM_NAME = 'WAKEUP_TABS_ALARM';
 const KEEPALIVE_CHECK_ALARM_NAME = 'KEEPALIVE_CHECK';
@@ -189,14 +187,6 @@ export async function handleScheduledWakeup(): Promise<void> {
     // ****** THIS SHOULD NOT HAPPEN ***** //
     if (snoozedTabs.findIndex(tab => !tab) !== -1) {
       console.error('Found null in snoozedTabs');
-      // Notify bugsnag about this error
-      // bugsnag.notify(new Error('Found null in snoozedTabs'), {
-      //   metaData: {
-      //     storage: {
-      //       snoozedTabs,
-      //     },
-      //   },
-      // });
 
       // TEMP FIX, remove null tabs
       snoozedTabs = snoozedTabs.filter(tab => tab);

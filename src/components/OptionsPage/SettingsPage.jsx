@@ -48,7 +48,6 @@ import {
   GITHUB_REPO_URL,
   SUPPORT_EMAIL_URL
 } from '../../paths';
-// import { EVENTS, track } from '../../core/analytics';
 import {
   BADGE_HIDDEN,
   BADGE_TOTAL_SNOOZED,

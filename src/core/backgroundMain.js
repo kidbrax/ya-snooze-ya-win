@@ -26,7 +26,6 @@ import {
   COMMAND_OPEN_SLEEPING_TABS,
 } from './commands';
 import { createTab, createCenteredWindow, IS_BETA, APP_VERSION } from './utils';
-// import { track, EVENTS } from './analytics';
 
 import {
   updateBadge,

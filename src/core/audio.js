@@ -1,5 +1,4 @@
 // @flow
-// import bugsnag from '../bugsnag';
 
 // export const SOUND_TAB_SNOOZE1 = 'sounds/snooze1.mp3';
 // export const SOUND_TAB_SNOOZE2 = 'sounds/snooze2.mp3';
@@ -23,6 +22,5 @@ export function playAudio(sound: string): void {
     loadAudio(sound).play();
   } catch (err) {
     console.error('Error playing snooze sound:', err);
-    // bugsnag.notify(err);
   }
 }

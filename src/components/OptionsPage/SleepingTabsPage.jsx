@@ -21,7 +21,6 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from 'react-router-dom';
 import { TODO_PATH } from '../../paths';
-// import { track, EVENTS } from '../../core/analytics';
 
 // A tab group represents a collection of tabs that are in the same
 // wakeup time range

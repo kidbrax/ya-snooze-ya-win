@@ -6,7 +6,6 @@ import {
   getRecentlySnoozedTab,
   createCenteredWindow,
 } from './utils';
-// import { trackTabSnooze, track, EVENTS } from './analytics';
 import { getSettings, saveSettings } from './settings';
 import { scheduleWakeupAlarm } from './wakeup';
 
