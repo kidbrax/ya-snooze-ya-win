@@ -68,6 +68,10 @@ declare type Settings = {|
     usageCount: number,
   },
 
+  // Support reminders
+  showSupportReminders: boolean,
+  lastSupportReminderDate: number,
+
   // Multi-tab snooze
   singleTabMode: boolean,
 |};

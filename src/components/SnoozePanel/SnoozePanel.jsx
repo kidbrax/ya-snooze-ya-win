@@ -321,7 +321,6 @@ async function delayedSnoozeTabs(tabs: Array<ChromeTab>, config: SnoozeConfig) {
     const response = await snoozePromise;
     if (!response?.success) {
       console.error('Snooze batch not confirmed by SW — keeping tabs open');
-      window.close();
       return;
     }
 

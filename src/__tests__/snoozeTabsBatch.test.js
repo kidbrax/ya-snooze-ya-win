@@ -85,6 +85,24 @@ describe('snoozeTabsBatch', () => {
     expect(createCenteredWindow).not.toHaveBeenCalled();
   });
 
+  it('does not show first-snooze dialog when prior count matches batch size', async () => {
+    // prior count=2, batch size=2 — should NOT trigger (prior count was not zero)
+    getSettings.mockResolvedValue({ totalSnoozeCount: 2 });
+    const twoTabs = [
+      { url: 'https://a.com', title: 'A', favicon: '' },
+      { url: 'https://b.com', title: 'B', favicon: '' },
+    ];
+    await snoozeTabsBatch(twoTabs, { type: 'later_today', wakeupTime: FUTURE_TIME });
+    expect(createCenteredWindow).not.toHaveBeenCalled();
+  });
+
+  it('returns early without side effects when tabs array is empty', async () => {
+    await snoozeTabsBatch([], { type: 'later_today', wakeupTime: FUTURE_TIME });
+    expect(addSnoozedTabs).not.toHaveBeenCalled();
+    expect(scheduleWakeupAlarm).not.toHaveBeenCalled();
+    expect(saveSettings).not.toHaveBeenCalled();
+  });
+
   it('throws when neither wakeupTime nor period is given', async () => {
     await expect(
       snoozeTabsBatch(TWO_TABS, { type: 'later_today' })
