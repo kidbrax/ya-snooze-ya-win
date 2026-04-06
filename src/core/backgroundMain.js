@@ -113,8 +113,8 @@ export function runBackgroundScript() {
 
   // Handle snooze/delete requests from popup and options page.
   // The service worker is the single writer for snoozedTabs storage.
-  // We use snoozeTab() (not snoozeActiveTab) because the popup sends
-  // the tab info — getActiveTab() wouldn't return the right tab from SW context.
+  // We use snoozeTabsBatch() because the popup sends the full tab array —
+  // getActiveTab() wouldn't return the right tabs from SW context.
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === MSG_SNOOZE_TABS) {
       const { tabs, config } = message;
