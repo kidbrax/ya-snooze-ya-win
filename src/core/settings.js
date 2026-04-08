@@ -1,9 +1,22 @@
 // @flow
 
 import { BADGE_HIDDEN } from './badge';
-// import { exposeFunctionForDebug } from './utils';
 
 export const STORAGE_KEY_SETTINGS = 'settings';
+
+export const DEFAULT_CUSTOM_SNOOZE_OPTIONS: Array<CustomSnoozeOption> = [
+  { id: 'one_hour',   label: '1 Hour from Now',  type: 'offset', offsetMinutes: 60 },
+  { id: 'two_hours',  label: '2 Hours from Now',  type: 'offset', offsetMinutes: 120 },
+  { id: 'later',      label: 'Later Today',        type: 'offset', offsetMinutes: 180 },
+  { id: 'evening',    label: 'This Evening',       type: 'evening' },
+  { id: 'tomorrow',   label: 'Tomorrow',           type: 'tomorrow' },
+  { id: 'weekend',    label: 'This Weekend',       type: 'weekend' },
+  { id: 'next_week',  label: 'Next Week',          type: 'next_week' },
+  { id: 'in_a_month', label: 'In a Month',         type: 'in_a_month' },
+  { id: 'someday',    label: 'Someday',            type: 'someday' },
+  { id: 'periodically', label: 'Repeatedly',      type: 'periodically' },
+  { id: 'specific_date', label: 'Pick a Date',    type: 'specific_date' },
+];
 
 export const DEFAULT_SETTINGS: Settings = {
   // General
@@ -13,8 +26,8 @@ export const DEFAULT_SETTINGS: Settings = {
   showNotifications: true,
 
   // Snooze times
-  weekStartDay: 1, // Sunday(0) or Monday(1)
-  weekEndDay: 6, // Friday (5) or Saturday(6)
+  weekStartDay: 1,
+  weekEndDay: 6,
   workdayStart: 8,
   workdayEnd: 19,
   laterTodayHoursDelta: 3,
@@ -29,44 +42,22 @@ export const DEFAULT_SETTINGS: Settings = {
     usageCount: 0,
   },
 
+  // Snooze panel options
+  enabledSnoozeOptions: DEFAULT_CUSTOM_SNOOZE_OPTIONS.map(o => o.id),
+  customSnoozeOptions: DEFAULT_CUSTOM_SNOOZE_OPTIONS,
+
   // Support reminders
   showSupportReminders: true,
   lastSupportReminderDate: 0,
 };
 
 export async function getSettings(): Promise<Settings> {
-  let { settings } = await chrome.storage.local.get(
-    STORAGE_KEY_SETTINGS
-  );
-
-  // Add new settings keys, preserve user old preferences
+  let { settings } = await chrome.storage.local.get(STORAGE_KEY_SETTINGS);
   return Object.assign({}, DEFAULT_SETTINGS, settings);
 }
 
-export async function saveSettings(
-  newSettings: $Shape<Settings>
-): Promise<void> {
+export async function saveSettings(newSettings: $Shape<Settings>): Promise<void> {
   const currentSettings = await getSettings();
-
   newSettings = Object.assign(currentSettings, newSettings);
-
-  return chrome.storage.local.set({
-    [STORAGE_KEY_SETTINGS]: newSettings,
-  });
+  return chrome.storage.local.set({ [STORAGE_KEY_SETTINGS]: newSettings });
 }
-
-async function resetSettings() {
-  chrome.storage.local.remove(STORAGE_KEY_SETTINGS);
-}
-
-async function printSettings() {
-  const settings = await getSettings();
-  console.table(settings);
-}
-
-// exposeFunctionForDebug([
-//   getSettings,
-//   saveSettings,
-//   printSettings,
-//   resetSettings,
-// ]);

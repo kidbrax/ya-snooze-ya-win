@@ -67,4 +67,22 @@ declare type Settings = {|
     weekNumber: number,
     usageCount: number,
   },
+
+  // Snooze panel options
+  enabledSnoozeOptions: Array<string>,
+
+  // Custom snooze options defined by the user
+  customSnoozeOptions: Array<CustomSnoozeOption>,
+
+  // Support reminders
+  showSupportReminders: boolean,
+  lastSupportReminderDate: number,
+|};
+
+declare type CustomSnoozeOption = {|
+  id: string,
+  label: string,
+  // offset in minutes from now, or a named preset
+  type: 'offset' | 'evening' | 'tomorrow' | 'weekend' | 'next_week' | 'in_a_month' | 'someday' | 'periodically' | 'specific_date',
+  offsetMinutes?: number, // only used when type === 'offset'
 |};
