@@ -19,6 +19,8 @@ import Zoom from '@mui/material/Zoom';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import Tooltip from '@mui/material/Tooltip';
 import { Link } from 'react-router-dom';
 import { TODO_PATH } from '../../paths';
 // import { track, EVENTS } from '../../core/analytics';
@@ -103,54 +105,94 @@ const SleepingTabsPage = (props: Props): React.Node => {
   }
 
   const wakeupTab = (tab: SnoozedTab, event: any) => {
-    // animate tab out
-
     const makeTabActive = !(
       event.which === 2 ||
       event.button === 4 ||
       event.metaKey
     );
-
-    // delay wakeup for click ripple animation to finish
-    // Use openTabs() since we just want to open the tab, not delete it from storage
     setTimeout(() => openTabs({ tabs: [tab], makeActive: makeTabActive }), 300);
   }
 
-  const renderTabGroup = (tabGroup: TabGroup, index: number) =>{
+  const wakeupGroup = (tabs: Array<SnoozedTab>) => {
+    setTimeout(() => openTabs({ tabs, makeActive: true }), 300);
+  }
+
+  const deleteGroup = (tabs: Array<SnoozedTab>, event: any) => {
+    event.stopPropagation();
+    setTimeout(() => {
+      chrome.runtime.sendMessage({
+        action: MSG_DELETE_SNOOZED_TABS,
+        tabsToDelete: tabs,
+      }).catch(error => console.error('Failed to send delete message to SW:', error));
+    }, 150);
+  }
+
+  // Group tabs within a time range by their groupId
+  const splitIntoSubgroups = (tabs: Array<SnoozedTab>): Array<{ groupId: ?string, tabs: Array<SnoozedTab> }> => {
+    const groups: Array<{ groupId: ?string, tabs: Array<SnoozedTab> }> = [];
+    const seen: { [string]: number } = {};
+    for (const tab of tabs) {
+      const key = tab.groupId ?? null;
+      if (key && seen[key] != null) {
+        groups[seen[key]].tabs.push(tab);
+      } else {
+        const idx = groups.length;
+        if (key) seen[key] = idx;
+        groups.push({ groupId: key, tabs: [tab] });
+      }
+    }
+    return groups;
+  }
+
+  const renderTabGroup = (tabGroup: TabGroup, index: number) => {
+    const subgroups = splitIntoSubgroups(tabGroup.tabs);
     return (
       <Fragment key={index}>
         <StyledListSubheader disableSticky>
           {tabGroup.timeRange.title}
         </StyledListSubheader>
-        {tabGroup.tabs.map((tab, index2) => (
-          <StyledListItem
-            key={index2}
-            button
-            onClick={event => {
-              wakeupTab(tab, event);
-            }}
-          >
-            <Icon src={tab.favicon} alt="" />
-            <ListItemText
-              primary={tab.title}
-              secondary={formatWakeupDescription(
-                tabGroup.timeRange,
-                tab
-              )}
-              primaryTypographyProps={{
-                style: { lineHeight: 1.5, marginBottom: 3 },
-              }}
-            />
-            <ListItemSecondaryAction>
-              <StyledDeleteButton
-                className="delete-btn"
-                onClick={event => deleteTab(tab, event)}
-                aria-label="Delete"
+        {subgroups.map((subgroup, si) => (
+          <Fragment key={si}>
+            {subgroup.groupId && subgroup.tabs.length > 1 && (
+              <GroupHeader>
+                <GroupLabel>{subgroup.tabs.length} tabs snoozed together</GroupLabel>
+                <Tooltip title="Restore all tabs in group">
+                  <IconButton size="small" onClick={() => wakeupGroup(subgroup.tabs)}>
+                    <OpenInNewIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete all tabs in group">
+                  <IconButton size="small" onClick={e => deleteGroup(subgroup.tabs, e)}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </GroupHeader>
+            )}
+            {subgroup.tabs.map((tab, ti) => (
+              <StyledListItem
+                key={ti}
+                button
+                onClick={event => wakeupTab(tab, event)}
+                style={subgroup.groupId && subgroup.tabs.length > 1 ? { paddingLeft: 40 } : undefined}
               >
-                <DeleteIcon />
-              </StyledDeleteButton>
-            </ListItemSecondaryAction>
-          </StyledListItem>
+                <Icon src={tab.favicon} alt="" />
+                <ListItemText
+                  primary={tab.title}
+                  secondary={formatWakeupDescription(tabGroup.timeRange, tab)}
+                  primaryTypographyProps={{ style: { lineHeight: 1.5, marginBottom: 3 } }}
+                />
+                <ListItemSecondaryAction>
+                  <StyledDeleteButton
+                    className="delete-btn"
+                    onClick={event => deleteTab(tab, event)}
+                    aria-label="Delete"
+                  >
+                    <DeleteIcon />
+                  </StyledDeleteButton>
+                </ListItemSecondaryAction>
+              </StyledListItem>
+            ))}
+          </Fragment>
         ))}
       </Fragment>
     );
@@ -237,6 +279,21 @@ const Icon = styled.img`
   align-self: flex-start;
   margin-top: 8px;
   border-radius: 3px;
+`;
+
+const GroupHeader = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 4px 16px 2px 24px;
+  background-color: #f5f5f5;
+  border-left: 3px solid #1a73e8;
+`;
+
+const GroupLabel = styled.span`
+  flex: 1;
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
 `;
 
 export default SleepingTabsPage;

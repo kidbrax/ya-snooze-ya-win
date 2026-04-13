@@ -4,8 +4,8 @@
  * Background Page - a page that opens in the background
  * without a view.
  */
-import { repeatLastSnooze, snoozeTab } from './snooze';
-import { MSG_SNOOZE_TAB, MSG_DELETE_SNOOZED_TABS } from './messages';
+import { repeatLastSnooze, snoozeTab, snoozeTabs } from './snooze';
+import { MSG_SNOOZE_TAB, MSG_SNOOZE_TABS, MSG_DELETE_SNOOZED_TABS } from './messages';
 import {
   registerEventListeners as registerWakeupEventListeners,
   scheduleWakeupAlarm,
@@ -125,7 +125,19 @@ export function runBackgroundScript() {
           console.error('snoozeTab message handler failed:', error);
           sendResponse({ success: false, error: error.message });
         });
-      return true; // keep channel open for async sendResponse
+      return true;
+    }
+
+    if (message.action === MSG_SNOOZE_TABS) {
+      const { tabs, config } = message;
+      console.log(`📨 [SW] Received snoozeTabs message for ${tabs?.length} tab(s)`);
+      snoozeTabs(tabs, config)
+        .then(() => sendResponse({ success: true }))
+        .catch(error => {
+          console.error('snoozeTabs message handler failed:', error);
+          sendResponse({ success: false, error: error.message });
+        });
+      return true;
     }
 
     if (message.action === MSG_DELETE_SNOOZED_TABS) {
