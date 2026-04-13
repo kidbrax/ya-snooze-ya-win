@@ -128,8 +128,8 @@ export default function SnoozeOptionsEditor({ options, onChange }: Props): Node 
       </List>
 
       <AddRow>
-        <MuiButton startIcon={<AddIcon />} onClick={openAdd} size="small">
-          Add option
+        <MuiButton startIcon={<AddIcon />} onClick={openAdd} variant="outlined" size="medium">
+          Add New Option
         </MuiButton>
       </AddRow>
 

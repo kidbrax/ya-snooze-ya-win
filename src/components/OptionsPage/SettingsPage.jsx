@@ -400,15 +400,18 @@ const SettingsPage = (props: Props): Node => {
         <Column>
           <StyledList>
             <Header>Preset Snooze Options</Header>
+          </StyledList>
 
-            <SnoozeOptionsEditor
-              options={settingsState.customSnoozeOptions ?? DEFAULT_CUSTOM_SNOOZE_OPTIONS}
-              onChange={customSnoozeOptions => {
-                const nextSettings = { ...settingsState, customSnoozeOptions };
-                saveSettings(nextSettings);
-                setSettingsState(nextSettings);
-              }}
-            />
+          <SnoozeOptionsEditor
+            options={settingsState.customSnoozeOptions ?? DEFAULT_CUSTOM_SNOOZE_OPTIONS}
+            onChange={customSnoozeOptions => {
+              const nextSettings = { ...settingsState, customSnoozeOptions };
+              saveSettings(nextSettings);
+              setSettingsState(nextSettings);
+            }}
+          />
+
+          <StyledList>
             {renderDropdownSetting({
               icon: <SunIcon />,
               title: 'Tomorrow starts at',
