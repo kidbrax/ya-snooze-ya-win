@@ -41,7 +41,7 @@ const StyledSettingsIcon = muiStyled(SettingsIcon)({
 
 function OptionsPage(props: {}): React.Node {
   const location = useLocation();
-  
+
   return (
     <>
       <AppBar position="fixed">
@@ -103,7 +103,8 @@ const Main = styled.div`
   /* min-width: 600px; */
   min-height: 500px;
   /* For wide screen */
-  width: 600px;
+  width: 1100px;
+  max-width: 95vw;
 `;
 
 const NavButton = styled(Button).attrs({

@@ -242,264 +242,254 @@ const SettingsPage = (props: Props): Node => {
       <Helmet>
         <title>Settings - Tab Snooze</title>
       </Helmet>
-      <StyledList>
-        {!isPro && (
-          <Fragment>
-            <Header>Cloud Sync</Header>
-            {/* <ListItem>
-                <ListItemIcon>
-                  <UserIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Fragment>
-                      Not Logged In <ProBadge />
-                    </Fragment>
-                  }
-                  secondary="Log in to backup & sync your tabs across devices"
-                />
-              </ListItem> */}
-            <ListItem>
-              <ListItemIcon>
-                <CloudIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={
-                  <Fragment>
-                    {/* Tabs Sync & Backup <ProBadge /> */}
-                  </Fragment>
-                }
-                secondary="Disabled"
-              />
-              <ListItemSecondaryAction>
-                <LogInButton
-                  as="a"
-                  // href={getUpgradeUrl()}
-                  target="_blank"
-                >
-                  Signup / Login
-                </LogInButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-            {/* wake up tabs on "active device" / "original device" */}
-            {/* this computer is HOME */}
-          </Fragment>
-        )}
-
-        <Header>General</Header>
-        {renderCheckboxSetting({
-          icon: <AudioIcon />,
-          title: 'Sound effects',
-          description: 'Play sounds with app interactions',
-          stateKey: 'playSoundEffects',
-        })}
-        {renderCheckboxSetting({
-          icon: <AudioIcon />,
-          title: 'Wake up sound',
-          description: 'Play a sound when tabs wake up',
-          stateKey: 'playNotificationSound',
-        })}
-        {renderCheckboxSetting({
-          icon: <NotificationIcon />,
-          title: 'Wake up notification',
-          description:
-            'Show a desktop notification (top-right corner) when tabs wake up',
-          stateKey: 'showNotifications',
-        })}
-        {renderDropdownSetting({
-          icon: <BadgeIcon />,
-          title: 'Toolbar badge',
-          description:
-            'Display a tab count on the toolbar moon icon',
-          stateKey: 'badge',
-          options: [
-            {
-              label: 'Hidden',
-              value: BADGE_HIDDEN,
-            },
-            {
-              label: 'Tabs due today',
-              value: BADGE_DUE_TODAY,
-            },
-            {
-              label: 'Total sleeping tabs',
-              value: BADGE_TOTAL_SNOOZED,
-            },
-          ],
-        })}
-        {!isPro &&
-          renderDropdownSetting({
-            icon: <AlarmIcon />,
-            title: (
+      <TwoColumnLayout>
+        <Column>
+          <StyledList>
+            {!isPro && (
               <Fragment>
-                {/* Smart wakeup <ProBadge /> */}
+                <Header>Cloud Sync</Header>
+                <ListItem>
+                  <ListItemIcon>
+                    <CloudIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Fragment>
+                        {/* Tabs Sync & Backup <ProBadge /> */}
+                      </Fragment>
+                    }
+                    secondary="Disabled"
+                  />
+                  <ListItemSecondaryAction>
+                    <LogInButton
+                      as="a"
+                      // href={getUpgradeUrl()}
+                      target="_blank"
+                    >
+                      Signup / Login
+                    </LogInButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
               </Fragment>
-            ),
-            description: 'Ask before waking up too many tabs',
-            stateKey: 'badge', // TODO: MUST CHANGE THIS
-            locked: !isPro,
-            options: [4, 5, 6, 7].map(num => ({
-              label: 'Disabled', // `${num} tabs`,
-              value: num,
-            })),
-          })}
-        {!isPro &&
-          renderGeneralSetting({
-            icon: <DarkIcon />,
-            title: (
-              <Fragment>
-                {/* Dark Mode <ProBadge /> */}
-              </Fragment>
-            ),
-            locked: !isPro,
-            description:
-              'Switch on the elegant Tab Snooze dark theme',
-            component: <Switch checked={false} />,
-          })}
+            )}
 
-        <Header>Preset Snooze Options</Header>
-
-        <SnoozeOptionsEditor
-          options={settingsState.customSnoozeOptions ?? DEFAULT_CUSTOM_SNOOZE_OPTIONS}
-          onChange={customSnoozeOptions => {
-            const nextSettings = { ...settingsState, customSnoozeOptions };
-            saveSettings(nextSettings);
-            setSettingsState(nextSettings);
-          }}
-        />
-        {renderDropdownSetting({
-          icon: <SunIcon />,
-          title: 'Tomorrow starts at',
-          stateKey: 'workdayStart',
-          options: [6, 7, 8, 9, 10, 11].map(hour => ({
-            label: `${hour}:00 AM`,
-            value: hour,
-          })),
-        })}
-        {renderDropdownSetting({
-          icon: <MoonIcon />,
-          title: 'Evening starts at',
-          stateKey: 'workdayEnd',
-          options: [15, 16, 17, 18, 19, 20, 21, 22].map(hour => ({
-            label: `${hour - 12}:00 PM`,
-            value: hour,
-          })),
-        })}
-        {renderDropdownSetting({
-          icon: <WorkIcon />,
-          title: 'Week starts on',
-          stateKey: 'weekStartDay',
-          options: weekdayOptions,
-        })}
-        {renderDropdownSetting({
-          icon: <WeekendIcon />,
-          title: 'Weekend starts on',
-          stateKey: 'weekEndDay',
-          options: weekdayOptions,
-        })}
-        {renderDropdownSetting({
-          icon: <CafeIcon />,
-          title: 'Later Today is',
-          stateKey: 'laterTodayHoursDelta',
-          options: [1, 2, 3, 4, 5].map(hours => ({
-            label: `in ${hours} hours`,
-            value: hours,
-          })),
-        })}
-        {renderDropdownSetting({
-          icon: <SomedayIcon />,
-          title: 'Someday is',
-          stateKey: 'somedayMonthsDelta',
-          options: [1, 2, 3, 4, 5].map(months => ({
-            label: `in ${months} months`,
-            value: months,
-          })),
-        })}
-
-        {!isPro && (
-          <Fragment>
-            <Header>
-              {/* Custom Snooze Options <ProBadge /> */}
-            </Header>
-            {['Hours', 'Days', 'Weeks'].map((period, index) =>
-              renderGeneralSetting({
-                key: String(index),
-                icon: <EditIcon />,
-                title: `Custom Snooze Option ${index + 1}`,
-                stateKey: 'somedayMonthsDelta',
-                locked: true,
-                component: (
+            <Header>General</Header>
+            {renderCheckboxSetting({
+              icon: <AudioIcon />,
+              title: 'Sound effects',
+              description: 'Play sounds with app interactions',
+              stateKey: 'playSoundEffects',
+            })}
+            {renderCheckboxSetting({
+              icon: <AudioIcon />,
+              title: 'Wake up sound',
+              description: 'Play a sound when tabs wake up',
+              stateKey: 'playNotificationSound',
+            })}
+            {renderCheckboxSetting({
+              icon: <NotificationIcon />,
+              title: 'Wake up notification',
+              description:
+                'Show a desktop notification (top-right corner) when tabs wake up',
+              stateKey: 'showNotifications',
+            })}
+            {renderDropdownSetting({
+              icon: <BadgeIcon />,
+              title: 'Toolbar badge',
+              description:
+                'Display a tab count on the toolbar moon icon',
+              stateKey: 'badge',
+              options: [
+                {
+                  label: 'Hidden',
+                  value: BADGE_HIDDEN,
+                },
+                {
+                  label: 'Tabs due today',
+                  value: BADGE_DUE_TODAY,
+                },
+                {
+                  label: 'Total sleeping tabs',
+                  value: BADGE_TOTAL_SNOOZED,
+                },
+              ],
+            })}
+            {!isPro &&
+              renderDropdownSetting({
+                icon: <AlarmIcon />,
+                title: (
                   <Fragment>
-                    <span style={{ marginRight: 10 }}>in</span>
-                    <SettingsSelect
-                      small="true"
-                      options={[{ value: 2, label: '2' }]}
-                      // {...bindSettings(options.stateKey)}
-                    />
-                    <SettingsSelect
-                      small="true"
-                      options={[{ value: 'days', label: period }]}
-                      // {...bindSettings(options.stateKey)}
-                    />
+                    {/* Smart wakeup <ProBadge /> */}
                   </Fragment>
                 ),
+                description: 'Ask before waking up too many tabs',
+                stateKey: 'badge', // TODO: MUST CHANGE THIS
+                locked: !isPro,
+                options: [4, 5, 6, 7].map(num => ({
+                  label: 'Disabled', // `${num} tabs`,
+                  value: num,
+                })),
+              })}
+            {!isPro &&
+              renderGeneralSetting({
+                icon: <DarkIcon />,
+                title: (
+                  <Fragment>
+                    {/* Dark Mode <ProBadge /> */}
+                  </Fragment>
+                ),
+                locked: !isPro,
+                description:
+                  'Switch on the elegant Tab Snooze dark theme',
+                component: <Switch checked={false} />,
+              })}
+
+            <Header>Keyboard Shortcuts {!isPro /* && <ProBadge />*/}</Header>
+            {commandsState.map((command, index) =>
+              renderShortcutSetting({
+                key: '' + index,
+                icon: <KeyboardIcon />,
+                title: command.description || 'Snooze active tab',
+                shortcut: isPro ? command.shortcut : '',
+                locked: !isPro,
               })
             )}
-          </Fragment>
-        )}
-        <Header>Keyboard Shortcuts {!isPro /* && <ProBadge />*/}</Header>
-        {commandsState.map((command, index) =>
-          renderShortcutSetting({
-            key: '' + index,
-            icon: <KeyboardIcon />,
-            // Hack! for some reason the main command (open popup)
-            // gets an empty description... so we add it here
-            title: command.description || 'Snooze active tab',
-            shortcut: isPro ? command.shortcut : '',
-            locked: !isPro,
-          })
-        )}
-        <EditShortcutsInstructions />
+            <EditShortcutsInstructions />
 
-        <Header>Miscellaneous</Header>
-        {renderCheckboxSetting({
-          icon: <NotificationIcon />,
-          title: 'Support reminders',
-          description: 'Show occasional reminders to rate and support Tab Snooze',
-          stateKey: 'showSupportReminders',
-        })}
-        {renderButtonSetting({
-          icon: <StarIcon />,
-          title: 'Loving Tab Snooze?',
-          description: 'Rate Tab Snooze the Chrome Web Store!',
-          href: CHROME_WEB_STORE_REVIEW,
-        })}
-        {renderButtonSetting({
-          icon: <GiftCardIcon />,
-          title: 'Donate to support further development',
-          description: 'Support the person who continued Tab Snooze',
-          href: CURR_DEVELOPER_DONATE_URL,
-        })}
-        {renderButtonSetting({
-          icon: <LoveIcon />,
-          title: 'Donate to support the original developer',
-          description: 'Support the person who started Tab Snooze',
-          href: ORIGINAL_DEVLOPER_DONATE_URL,
-        })}
-        {renderButtonSetting({
-          icon: <CodeIcon />,
-          title: 'Open Source Code',
-          description: 'Share ideas or contribute to the Tab Snooze code base',
-          href: GITHUB_REPO_URL,
-        })}
-        {renderButtonSetting({
-          icon: <MailIcon />,
-          title: 'Support',
-          description:
-            'Contact us for help, questions, or any feature requests',
-          href: SUPPORT_EMAIL_URL,
-        })}
-      </StyledList>
+            <Header>Miscellaneous</Header>
+            {renderCheckboxSetting({
+              icon: <NotificationIcon />,
+              title: 'Support reminders',
+              description: 'Show occasional reminders to rate and support Tab Snooze',
+              stateKey: 'showSupportReminders',
+            })}
+            {renderButtonSetting({
+              icon: <StarIcon />,
+              title: 'Loving Tab Snooze?',
+              description: 'Rate Tab Snooze the Chrome Web Store!',
+              href: CHROME_WEB_STORE_REVIEW,
+            })}
+            {renderButtonSetting({
+              icon: <GiftCardIcon />,
+              title: 'Donate to support further development',
+              description: 'Support the person who continued Tab Snooze',
+              href: CURR_DEVELOPER_DONATE_URL,
+            })}
+            {renderButtonSetting({
+              icon: <LoveIcon />,
+              title: 'Donate to support the original developer',
+              description: 'Support the person who started Tab Snooze',
+              href: ORIGINAL_DEVLOPER_DONATE_URL,
+            })}
+            {renderButtonSetting({
+              icon: <CodeIcon />,
+              title: 'Open Source Code',
+              description: 'Share ideas or contribute to the Tab Snooze code base',
+              href: GITHUB_REPO_URL,
+            })}
+            {renderButtonSetting({
+              icon: <MailIcon />,
+              title: 'Support',
+              description:
+                'Contact us for help, questions, or any feature requests',
+              href: SUPPORT_EMAIL_URL,
+            })}
+          </StyledList>
+        </Column>
+
+        <Column>
+          <StyledList>
+            <Header>Preset Snooze Options</Header>
+
+            <SnoozeOptionsEditor
+              options={settingsState.customSnoozeOptions ?? DEFAULT_CUSTOM_SNOOZE_OPTIONS}
+              onChange={customSnoozeOptions => {
+                const nextSettings = { ...settingsState, customSnoozeOptions };
+                saveSettings(nextSettings);
+                setSettingsState(nextSettings);
+              }}
+            />
+            {renderDropdownSetting({
+              icon: <SunIcon />,
+              title: 'Tomorrow starts at',
+              stateKey: 'workdayStart',
+              options: [6, 7, 8, 9, 10, 11].map(hour => ({
+                label: `${hour}:00 AM`,
+                value: hour,
+              })),
+            })}
+            {renderDropdownSetting({
+              icon: <MoonIcon />,
+              title: 'Evening starts at',
+              stateKey: 'workdayEnd',
+              options: [15, 16, 17, 18, 19, 20, 21, 22].map(hour => ({
+                label: `${hour - 12}:00 PM`,
+                value: hour,
+              })),
+            })}
+            {renderDropdownSetting({
+              icon: <WorkIcon />,
+              title: 'Week starts on',
+              stateKey: 'weekStartDay',
+              options: weekdayOptions,
+            })}
+            {renderDropdownSetting({
+              icon: <WeekendIcon />,
+              title: 'Weekend starts on',
+              stateKey: 'weekEndDay',
+              options: weekdayOptions,
+            })}
+            {renderDropdownSetting({
+              icon: <CafeIcon />,
+              title: 'Later Today is',
+              stateKey: 'laterTodayHoursDelta',
+              options: [1, 2, 3, 4, 5].map(hours => ({
+                label: `in ${hours} hours`,
+                value: hours,
+              })),
+            })}
+            {renderDropdownSetting({
+              icon: <SomedayIcon />,
+              title: 'Someday is',
+              stateKey: 'somedayMonthsDelta',
+              options: [1, 2, 3, 4, 5].map(months => ({
+                label: `in ${months} months`,
+                value: months,
+              })),
+            })}
+
+            {!isPro && (
+              <Fragment>
+                <Header>
+                  {/* Custom Snooze Options <ProBadge /> */}
+                </Header>
+                {['Hours', 'Days', 'Weeks'].map((period, index) =>
+                  renderGeneralSetting({
+                    key: String(index),
+                    icon: <EditIcon />,
+                    title: `Custom Snooze Option ${index + 1}`,
+                    stateKey: 'somedayMonthsDelta',
+                    locked: true,
+                    component: (
+                      <Fragment>
+                        <span style={{ marginRight: 10 }}>in</span>
+                        <SettingsSelect
+                          small="true"
+                          options={[{ value: 2, label: '2' }]}
+                        />
+                        <SettingsSelect
+                          small="true"
+                          options={[{ value: 'days', label: period }]}
+                        />
+                      </Fragment>
+                    ),
+                  })
+                )}
+              </Fragment>
+            )}
+          </StyledList>
+        </Column>
+      </TwoColumnLayout>
     </Root>
   );
 };
@@ -531,6 +521,21 @@ const EditShortcutsInstructions = () => (
 );
 
 const Root = styled.div``;
+
+const TwoColumnLayout = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const Column = styled.div`
+  min-width: 0;
+`;
 // const MyLink = styled.a`
 //   text-decoration: underline;
 // `;
