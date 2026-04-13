@@ -35,7 +35,8 @@ import NotificationIcon from '@mui/icons-material/Notifications';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Switch from '@mui/material/Switch';
 import Select from '../SnoozePanel/Select';
-import { getSettings, saveSettings, DEFAULT_SETTINGS } from '../../core/settings';
+import { getSettings, saveSettings, DEFAULT_SETTINGS, DEFAULT_CUSTOM_SNOOZE_OPTIONS } from '../../core/settings';
+import SnoozeOptionsEditor from './SnoozeOptionsEditor';
 
 import moment from 'moment';
 import KeyCombo from './KeyCombo';
@@ -358,19 +359,14 @@ const SettingsPage = (props: Props): Node => {
 
         <Header>Preset Snooze Options</Header>
 
-        {!isPro &&
-          renderGeneralSetting({
-            icon: <LocationIcon />,
-            title: (
-              <Fragment>
-                {/* Location Snooze <ProBadge /> */}
-              </Fragment>
-            ),
-            locked: !isPro,
-            description:
-              'Snooze tabs to open when you get on your Home/Work device',
-            component: <Switch checked={false} />,
-          })}
+        <SnoozeOptionsEditor
+          options={settingsState.customSnoozeOptions ?? DEFAULT_CUSTOM_SNOOZE_OPTIONS}
+          onChange={customSnoozeOptions => {
+            const nextSettings = { ...settingsState, customSnoozeOptions };
+            saveSettings(nextSettings);
+            setSettingsState(nextSettings);
+          }}
+        />
         {renderDropdownSetting({
           icon: <SunIcon />,
           title: 'Tomorrow starts at',

@@ -3,7 +3,6 @@ import React from 'react';
 import type { ComponentType } from 'react';
 import styled, { css, withTheme } from 'styled-components';
 import ProCornerRibbon from './ProCornerRibbon';
-import Collapse from '@mui/material/Collapse';
 
 // Theme type definition
 type Theme = {
@@ -20,7 +19,6 @@ type StyledProps = {
   theme: Theme,
   focused?: boolean,
   pressed?: boolean,
-  hide?: boolean,
 };
 
 export type Props = {
@@ -28,9 +26,11 @@ export type Props = {
   title: string,
   icon: string,
   activeIcon: string,
+  tooltip: string,
   focused: boolean,
   pressed: boolean,
   proBadge: boolean,
+  when?: Date,
   onClick: Event => void,
   onMouseEnter: () => void,
   onMouseLeave: () => void,
@@ -40,19 +40,21 @@ export type Props = {
 
 const SNOOZE_CLICK_EFFECT_TIME = 400;
 
-const SnoozeButton: ComponentType<Props> = (props: Props): React.Node => {  // Destructure props for easier access
+const SnoozeButton: ComponentType<Props> = (props: Props): React.Node => {
   const {
     title,
-    icon,
-    activeIcon,
+    tooltip,
+    when,
     focused,
     pressed,
     proBadge,
     onClick,
     onMouseLeave,
     onMouseEnter,
-    theme,
   } = props;
+
+  // Show the tooltip time string for options that have a concrete wakeup time
+  const timeLabel = when ? tooltip : null;
 
   return (
     <Button
@@ -62,52 +64,39 @@ const SnoozeButton: ComponentType<Props> = (props: Props): React.Node => {  // D
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <IconWrapper>
-        <Icon src={activeIcon} />
-        {theme && !theme.snoozePanel.whiteIcons && (
-          <OverlayIcon src={icon} hide={pressed ? "true" : undefined} />
-        )}
-      </IconWrapper>
-      <Collapse in={!pressed} timeout={SNOOZE_CLICK_EFFECT_TIME}>
-        <Title $pressed={pressed}>{title}</Title>
-      </Collapse>
+      <Title $pressed={pressed}>{title}</Title>
+      {timeLabel && <TimeLabel $pressed={pressed}>({timeLabel})</TimeLabel>}
       {proBadge && <ProCornerRibbon white={pressed ? true : undefined} />}
     </Button>
   );
 }
 
-export default (withTheme(SnoozeButton): ComponentType < Props >);
+export default (withTheme(SnoozeButton): ComponentType<Props>);
+
 const Button = styled.button`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 44px;
   margin: 0;
-  padding: 0;
+  padding: 0 16px;
+  white-space: nowrap;
   box-sizing: border-box;
   border: none;
   cursor: pointer;
   outline: inherit;
   background-color: ${(props: StyledProps) => props.theme.snoozePanel.bgColor};
-  
-  /* overflow: hidden; */ /* Removing overflow hidden to debug/fix clipping */
   transition: background-color 0.1s;
+
+  & * {
+    pointer-events: none;
+  }
 
   :hover {
     background-color: ${(props: StyledProps) => props.theme.snoozePanel.hoverColor};
-  }
-
-  /* Ensure children don't block the background */
-  & > * {
-    background-color: transparent;
-  }
-
-  /* Disable pointer events on all descendants so only Button receives hover */
-  & * {
-    pointer-events: none;
   }
 
   ${(props: StyledProps) =>
@@ -119,47 +108,36 @@ const Button = styled.button`
   ${(props: StyledProps) =>
     props.$pressed &&
     css`
-      /* To add transition, u need to transition the image too */
       transition: background-color ${SNOOZE_CLICK_EFFECT_TIME}ms;
       background-color: ${props.theme.primary} !important;
-      
-      ${Icon} {
-        transform: scale(1.3);
-      }
     `};
 `;
 
-const IconWrapper = styled.div`
-  position: relative;
-`;
-
-const Icon = styled.img`
-  transition: all ${SNOOZE_CLICK_EFFECT_TIME}ms;
-  opacity: ${(props: StyledProps) => (props.hide ? 0 : 1)};
-`;
-
-const OverlayIcon = styled(Icon)`
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-`;
-
 const Title = styled.div`
-  margin-top: 12px;
   font-size: 15px;
   color: ${(props: StyledProps) => props.theme.snoozePanel.buttonTextColor};
   font-weight: 500;
   transition: color ${SNOOZE_CLICK_EFFECT_TIME}ms;
-  /* height: 16px; */
 
   ${(props: StyledProps) =>
     props.$pressed &&
     css`
       color: #fff;
-      /* height: 0; */
-      /* overflow: hidden; */
-      /* margin: 0; */
     `};
 `;
+
+const TimeLabel = styled.div`
+  margin-left: 8px;
+  font-size: 13px;
+  opacity: 0.6;
+  color: ${(props: StyledProps) => props.theme.snoozePanel.buttonTextColor};
+  transition: color ${SNOOZE_CLICK_EFFECT_TIME}ms;
+
+  ${(props: StyledProps) =>
+    props.$pressed &&
+    css`
+      color: #fff;
+      opacity: 0.85;
+    `};
+`;
+

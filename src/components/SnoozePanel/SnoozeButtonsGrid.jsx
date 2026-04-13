@@ -28,14 +28,11 @@ const SnoozeButtonsGrid = (props: Props): React.Node => {
 }
 
 const ButtonsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 130px 130px 130px;
-  grid-template-rows: 130px 130px 130px;
-  justify-items: stretch;
-  align-items: stretch;
-  justify-content: stretch;
-  grid-gap: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
   background-color: ${(props: StyledProps) => props.theme.snoozePanel.border};
+  width: 326px;
 `;
 
 export default SnoozeButtonsGrid;
