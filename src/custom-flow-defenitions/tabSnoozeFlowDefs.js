@@ -33,6 +33,8 @@ declare type SnoozedTab = {
   sleepStart: number,
   // ??
   period?: SnoozePeriod,
+  // ID linking tabs that were snoozed together as a group
+  groupId?: string,
 };
 
 declare type SnoozeConfig = {|

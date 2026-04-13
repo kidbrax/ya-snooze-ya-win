@@ -15,7 +15,8 @@ import { incrementWeeklyUsage } from './license';
 
 export async function snoozeTab(
   tab: ChromeTab,
-  config: SnoozeConfig
+  config: SnoozeConfig,
+  groupId?: string
 ) {
   let { wakeupTime, period, type, closeTab = true } = config;
 
@@ -43,7 +44,8 @@ export async function snoozeTab(
     type,
     sleepStart: Date.now(),
     period,
-    when: wakeupTime, // convert to number since storage can't handle Date
+    when: wakeupTime,
+    ...(groupId ? { groupId } : {}),
   };
 
   // Store & persist snoozed tab for later
@@ -73,7 +75,7 @@ export async function snoozeTab(
 
   // ORDER MATTERS!  Closing a tab will close the snooze popup, and might terminate
   // the flow of this code before finish. so close tab at the end.
-  if (closeTab) {
+  if (closeTab && tab.id != null) {
     chrome.tabs.remove(tab.id);
   }
 
@@ -84,6 +86,21 @@ export async function snoozeTab(
 export async function snoozeActiveTab(config: SnoozeConfig) {
   const activeTab = await getActiveTab();
   return snoozeTab(activeTab, config);
+}
+
+/**
+ * Snooze multiple tabs together as a group.
+ * All tabs share the same groupId so they can be restored together.
+ */
+export async function snoozeTabs(
+  tabs: Array<ChromeTab>,
+  config: SnoozeConfig
+) {
+  const groupId = `group_${Date.now()}`;
+  for (const tab of tabs) {
+    // closeTab is handled by the popup after confirmation — don't close here
+    await snoozeTab(tab, { ...config, closeTab: false }, groupId);
+  }
 }
 
 export async function repeatLastSnooze() {

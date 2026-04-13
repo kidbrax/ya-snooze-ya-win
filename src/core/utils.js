@@ -192,6 +192,15 @@ export async function getActiveTab() {
   return tabs[0];
 }
 
+export async function getSelectedTabs(): Promise<Array<ChromeTab>> {
+  // highlighted = selected in Chrome (includes active tab)
+  const tabs = await chrome.tabs.query({
+    highlighted: true,
+    currentWindow: true,
+  });
+  return tabs;
+}
+
 /*
     e.g. input
     {

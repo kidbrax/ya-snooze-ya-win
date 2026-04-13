@@ -10,7 +10,7 @@ import calcSnoozeOptions, {
   SNOOZE_TYPE_SPECIFIC_DATE,
 } from './calcSnoozeOptions';
 import SnoozeButtonsGrid from './SnoozeButtonsGrid';
-import { MSG_SNOOZE_TAB } from '../../core/messages';
+import { MSG_SNOOZE_TAB, MSG_SNOOZE_TABS } from '../../core/messages';
 import TooltipHelper from './TooltipHelper';
 import UpgradeDialog from './UpgradeDialog';
 import { DEFAULT_SETTINGS, getSettings } from '../../core/settings';
@@ -28,6 +28,7 @@ import {
   IS_BETA,
   createTab,
   getActiveTab,
+  getSelectedTabs,
 } from '../../core/utils';
 // import { getUpgradeUrl } from '../../paths';
 
@@ -55,6 +56,7 @@ export function SnoozePanel(props: Props): React.Node {
   const [isProUser, setIsProUser] = useState(true);
   const [selectorDialogOpen, setSelectorDialogOpen] = useState(false);
   const [isOverFreePlanLimit, setIsOverFreePlanLimit] = useState(false);
+  const [selectedTabs, setSelectedTabs] = useState([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,6 +84,7 @@ export function SnoozePanel(props: Props): React.Node {
 
     loadData();
     getSnoozeAudio();
+    getSelectedTabs().then(setSelectedTabs);
 
     return () => {
       cancelled = true;
@@ -103,7 +106,7 @@ export function SnoozePanel(props: Props): React.Node {
       // Perform snooze
       const wakeupTime = snoozeOption.when.getTime();
 
-      delayedSnoozeActiveTab({
+      delayedSnooze(selectedTabs, {
         type: snoozeOption.id,
         wakeupTime,
         closeTab: !(event: any).altKey,
@@ -112,7 +115,8 @@ export function SnoozePanel(props: Props): React.Node {
       // either period or date selector opens as dialog
       setTimeout(() => setSelectorDialogOpen(true), 400);
     }
-  }, [selectedSnoozeOptionId, setSelectedSnoozeOptionId, preventTooltip, setSelectorDialogOpen]);
+  }, [selectedSnoozeOptionId, setSelectedSnoozeOptionId, preventTooltip, setSelectorDialogOpen, selectedTabs]);
+
 
   const onKeyPress = useCallback((event: KeyboardEvent) => {
     if (isOverFreePlanLimit) {
@@ -164,25 +168,23 @@ export function SnoozePanel(props: Props): React.Node {
 
 
   const onSnoozeSpecificDateSelected = useCallback((date: Date) => {
-    delayedSnoozeActiveTab({
-      type: selectedSnoozeOptionId || '', // '' is for Flow to shutup
+    delayedSnooze(selectedTabs, {
+      type: selectedSnoozeOptionId || '',
       wakeupTime: date.getTime(),
       closeTab: true,
     });
-  }, [selectedSnoozeOptionId]);
+  }, [selectedSnoozeOptionId, selectedTabs]);
 
   const onSnoozePeriodSelected = useCallback((period: SnoozePeriod) => {
     if (!isProUser) {
-      // createTab(getUpgradeUrl());
       return;
     }
-
-    delayedSnoozeActiveTab({
-      type: selectedSnoozeOptionId || '', // '' is for Flow to shutup
+    delayedSnooze(selectedTabs, {
+      type: selectedSnoozeOptionId || '',
       period,
       closeTab: true,
     });
-  }, [selectedSnoozeOptionId, isProUser]);
+  }, [selectedSnoozeOptionId, isProUser, selectedTabs]);
 
   // decide whether or not to use callback here...
   const getSnoozeButtons = (): Array<SnoozeButtonProps> => {
@@ -205,15 +207,20 @@ export function SnoozePanel(props: Props): React.Node {
   }
 
   const snoozeButtons = getSnoozeButtons();
+  const isMultiTab = selectedTabs.length > 1;
   return (
     <Root
       onKeyDown={onKeyPress}
       tabIndex="0"
       ref={ref => {
-        // autofocus Root so we get key press events
         if (ref) ref.focus();
       }}
     >
+      {isMultiTab && (
+        <MultiTabBanner>
+          Snoozing {selectedTabs.length} selected tabs
+        </MultiTabBanner>
+      )}
       <SnoozeButtonsGrid buttons={snoozeButtons} />
       <SnoozeFooter
         tooltip={{
@@ -271,43 +278,40 @@ const SNOOZE_SHORTCUT_KEYS: { [any]: number } = {
 const CONSECUTIVE_SNOOZE_TIMEOUT = 20 * 1000; //10s
 
 // give time for animation & sound to finish before snoozing (closing) tab
-async function delayedSnoozeActiveTab(config: SnoozeConfig) {
-  // Capture active tab NOW in popup context where chrome.tabs.query
-  // reliably returns the correct tab. The SW can't determine this.
-  const activeTab = await getActiveTab();
+async function delayedSnooze(tabs: Array<ChromeTab>, config: SnoozeConfig) {
+  const isMulti = tabs.length > 1;
 
-  // Send snooze request to service worker (single writer for snoozedTabs).
-  // Wait for confirmation before closing the tab to prevent data loss.
-  const snoozePromise = chrome.runtime.sendMessage({
-    action: MSG_SNOOZE_TAB,
-    tab: {
-      url: activeTab.url,
-      title: activeTab.title,
-      favIconUrl: activeTab.favIconUrl,
-    },
-    config: {
-      ...config,
-      // Don't close tab automatically, we close it ourselves below.
-      closeTab: false,
-    },
-  }).catch(error => {
-    console.error('Failed to send snooze message to SW:', error);
-    return { success: false };
-  });
+  const snoozePromise = isMulti
+    ? chrome.runtime.sendMessage({
+        action: MSG_SNOOZE_TABS,
+        tabs: tabs.map(t => ({ url: t.url, title: t.title, favIconUrl: t.favIconUrl })),
+        config: { ...config, closeTab: false },
+      }).catch(error => {
+        console.error('Failed to send snoozeTabs message to SW:', error);
+        return { success: false };
+      })
+    : chrome.runtime.sendMessage({
+        action: MSG_SNOOZE_TAB,
+        tab: { url: tabs[0].url, title: tabs[0].title, favIconUrl: tabs[0].favIconUrl },
+        config: { ...config, closeTab: false },
+      }).catch(error => {
+        console.error('Failed to send snoozeTab message to SW:', error);
+        return { success: false };
+      });
 
   playSnoozeSound();
 
   setTimeout(async () => {
     const response = await snoozePromise;
     if (!response?.success) {
-      // Snooze failed — keep the tab open so the user doesn't lose it
       console.error('Snooze was not confirmed by service worker, keeping tab open');
       window.close();
       return;
     }
 
     if (config.closeTab) {
-      chrome.tabs.remove(activeTab.id);
+      const tabIds = tabs.map(t => t.id).filter(Boolean);
+      if (tabIds.length) chrome.tabs.remove(tabIds);
     }
     window.close();
   }, 1100);
@@ -338,4 +342,13 @@ export default TooltipHelper(SnoozePanel);
 
 const Root = styled.div`
   position: relative;
+`;
+
+const MultiTabBanner = styled.div`
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  border-bottom: 1px solid #c5d8fb;
 `;
