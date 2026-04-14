@@ -61,3 +61,10 @@ Load unpacked on chrome browser
 - [Support the Current Developer](https://ko-fi.com/csandapp)
 - [Support the Original Developer](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=82HLJCDURLVME&currency_code=USD&source=url)
 - [Contact](mailto:csandapp@gmail.com)
+
+## TODO
+
+- use Node 24
+- should I use flow?
+- add auto-versioning upon pull request
+- add auto-deploy on merge to main/master

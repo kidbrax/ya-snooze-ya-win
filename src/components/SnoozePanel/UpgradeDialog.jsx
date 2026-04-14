@@ -20,7 +20,7 @@ const CONTINUE_DELAY = 6000;
 const UpgradeDialog = (props: Props): React.Node => {
   const { visible, onDismiss } = props;
   const [canContinue, setCanContinue] = useState(false);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setCanContinue(true);

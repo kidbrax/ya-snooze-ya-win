@@ -9,10 +9,10 @@ import tutorialBubbleImage from './images/tutorial_bubble.png';
 
 export default function Tutorial(): React.Node  {
   const [ isChatBubbleOpen, setIsChatBubbleOpen ] = useState(false);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => setIsChatBubbleOpen(true), 1200);
-  
+
     return () => clearTimeout(timer);
   }, []);
 

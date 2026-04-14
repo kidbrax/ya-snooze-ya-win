@@ -308,7 +308,7 @@ export function cancelWakeupAlarm(): Promise<void> {
  */
 export function registerEventListeners(): void {
   // Note: registerEventListeners is only called in background script
-  
+
   // Wake up tabs on scheduled dates
   chrome.alarms.onAlarm.addListener(async function(alarm) {
     console.log(`🔔 [${SERVICE_WORKER_INSTANCE_ID}] ALARM FIRED: "${alarm.name}" at ${new Date(alarm.scheduledTime).toISOString()}`);

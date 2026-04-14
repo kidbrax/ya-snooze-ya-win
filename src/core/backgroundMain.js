@@ -77,7 +77,14 @@ export function runBackgroundScript() {
 
     // chrome.runtime.setUninstallURL(getTrackUninstallUrl());
 
-    if (reason === 'install') {
+    // Skip popups in developer mode (unpacked extension)
+    const self = await chrome.management.getSelf();
+    const isDevMode = self.installType === 'development';
+    if (isDevMode) {
+      console.log(`🔵 Developer mode detected — skipping install/update popups`);
+    }
+
+    if (reason === 'install' && !isDevMode) {
       // track(EVENTS.EXT_INSTALLED);
 
       // Save install date for new users.
@@ -89,7 +96,7 @@ export function runBackgroundScript() {
       createTab(TUTORIAL_PATH);
     }
 
-    if (reason === 'update') {
+    if (reason === 'update' && !isDevMode) {
       // track(EVENTS.EXT_UPDATED);
 
       createTab(WHATS_NEW_PATH);
@@ -231,8 +238,14 @@ async function extensionMain() {
     settings.totalSnoozeCount >= 5 &&
     Date.now() - settings.lastSupportReminderDate >= NINETY_DAYS_MS
   ) {
-    await saveSettings({ lastSupportReminderDate: Date.now() });
-    createCenteredWindow(SUPPORT_TS_PATH, 500, 875);
+    // Skip support reminder in developer mode
+    const self = await chrome.management.getSelf();
+    if (self.installType === 'development') {
+      console.log(`🔵 Developer mode — skipping support reminder popup`);
+    } else {
+      await saveSettings({ lastSupportReminderDate: Date.now() });
+      createCenteredWindow(SUPPORT_TS_PATH, 500, 875);
+    }
   }
 
   // Uncomment for Debug:

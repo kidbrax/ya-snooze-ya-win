@@ -49,12 +49,12 @@ declare module 'react-loadable' {
   }
 
   declare type CaptureProps = { report(moduleName: string): void, ... };
-  
+
   /**
   * A type level function like
   * <T>({ [string]: () => Promise<T> }) -> ({ [string]: T })
   * It would be helpful to apply type arguments to Loadable.Map<> like below.
-  * 
+  *
   * Loadable.Map<Props, typeof { A: () => import("a") }>({...});
   */
   declare type MapModules<L> = $ObjMap<L, <P>(P) => $Await<any, $Call<P>>>;

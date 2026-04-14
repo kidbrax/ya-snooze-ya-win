@@ -44,12 +44,12 @@ const Router = () => (
       <Routes>
         {/* Default route - redirect to popup */}
         <Route path="/" element={<Navigate to={POPUP_PATH} replace />} />
-        
+
         <Route path={POPUP_PATH} element={<SnoozePanel />} />
-        
+
         {/* Options routes - handle both base and sub-paths */}
         <Route path={`${OPTIONS_PATH}/*`} element={<AsyncOptionsPage />} />
-        
+
         <Route path={TODO_PATH} element={<AsyncTodoPage />} />
         <Route
           path={FIRST_SNOOZE_PATH}

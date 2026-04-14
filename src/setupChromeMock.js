@@ -49,13 +49,13 @@ if (import.meta.env.DEV) {
         }
       }
     },
-    
+
     storage: {
       local: {
         get: (keys, callback) => {
           console.log('Mock chrome.storage.local.get:', keys);
           let result = {};
-          
+
           if (typeof keys === 'string') {
             result[keys] = mockStorage[keys];
           } else if (Array.isArray(keys)) {
@@ -69,7 +69,7 @@ if (import.meta.env.DEV) {
           } else {
             result = { ...mockStorage };
           }
-          
+
           if (callback) callback(result);
           return Promise.resolve(result);
         },
@@ -177,7 +177,7 @@ if (import.meta.env.DEV) {
           console.log('Mock chrome.idle.onStateChanged.removeListener');
         }
       }
-        
+
     },
 
     // Add action API for popup-related functionality
@@ -219,7 +219,7 @@ if (import.meta.env.DEV) {
       });
       console.log('Added mock snoozed tab:', mockStorage.snoozed_tabs);
     },
-    
+
     addMockTodo: (text, completed = false) => {
       mockStorage.todos.push({
         id: Date.now(),
@@ -229,7 +229,7 @@ if (import.meta.env.DEV) {
       });
       console.log('Added mock todo:', mockStorage.todos);
     },
-    
+
     clearMockData: () => {
       mockStorage.snoozed_tabs = [];
       mockStorage.todos = [];
