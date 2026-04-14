@@ -7,17 +7,17 @@ set -euo pipefail
 files=$(git ls-files -- '*.js' '*.jsx' '*.ts' '*.tsx' '*.css' '*.html' '*.json' '*.md' '*.yml' '*.yaml' '*.sh')
 
 bad_files=()
-for f in $files; do
-  if grep -Pn '\s+$' "$f" > /dev/null 2>&1; then
+while IFS= read -r f; do
+  if grep -En '[[:space:]]+$' "$f" > /dev/null 2>&1; then
     bad_files+=("$f")
   fi
-done
+done <<< "$files"
 
 if [ ${#bad_files[@]} -gt 0 ]; then
   echo "❌ Trailing whitespace found in ${#bad_files[@]} file(s):"
   echo ""
   for f in "${bad_files[@]}"; do
-    grep -Pn '\s+$' "$f" | while IFS= read -r line; do
+    grep -En '[[:space:]]+$' "$f" | while IFS= read -r line; do
       echo "  $f:$line"
     done
   done

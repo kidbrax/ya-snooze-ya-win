@@ -52,7 +52,7 @@ export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }: Snooz
     const fetchSnoozedTabs = async () => {
       try {
         const snoozedTabs = await getSnoozedTabs();
-        
+
         // Only update state if component is still mounted
         if (!cancelled) {
           setSleepingTabsCount(snoozedTabs.length);
@@ -84,7 +84,7 @@ export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }: Snooz
           <SleepingCountBadge>{sleepingTabsCount}</SleepingCountBadge>
           Sleeping Tabs
         </SleepingTabsBtn>
-        
+
         {!betaBadge && upgradeBadge && (
           <BadgeButton
             as="a"
@@ -94,22 +94,22 @@ export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }: Snooz
             <UpgradeBadge>Upgrade</UpgradeBadge>
           </BadgeButton>
         )}
-        
+
         {betaBadge && (
           <BadgeButton onClick={handleBetaClick}>
             <BetaBadge>BETA</BetaBadge>
           </BadgeButton>
         )}
-        
+
         <IconBtn as={Link} to={TODO_PATH} target="_blank">
           <CheckboxIcon />
         </IconBtn>
-        
+
         <IconBtn as={Link} to={SETTINGS_PATH} target="_blank">
           <SettingsIcon />
         </IconBtn>
       </Buttons>
-      
+
       <SnoozeTooltip visible={tooltip.visible ? "true" : undefined}>
         {tooltip.text}
       </SnoozeTooltip>
@@ -163,7 +163,7 @@ const FooterBtn = styled.button`
   &:hover {
     background-color: ${(props: StyledProps) => props.theme.snoozePanel.hoverColor};
   }
-  
+
   &:active {
     background-color: ${(props: StyledProps) => props.theme.dark ? props.theme.black : '#d7e3e3'};
   }

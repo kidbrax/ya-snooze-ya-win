@@ -65,7 +65,7 @@ export function SnoozePanel(props: Props): React.Node {
     const loadData = async () => {
       try {
         const settings = await getSettings()
-        
+
         if (!cancelled) {
           setSnoozeOptions(calcSnoozeOptions(settings));
           setIsProUser(true);

@@ -63,7 +63,7 @@ const StyledFab = muiStyled(Fab)(({ theme }) => ({
 const SleepingTabsPage = (props: Props): React.Node => {
   const [ visibleTabGroupsState, setVisibleTabGroupsState ] = useState<Array<TabGroup>>([]);
   const [ hidePeriodicState, setHidePeriodicState ] = useState(false);
-  
+
   const refreshSnoozedTabs = useCallback(async () => {
     const groups: Array<TabGroup> = await getSleepingTabByWakeupGroups(hidePeriodicState);
     setVisibleTabGroupsState(groups);
@@ -71,7 +71,7 @@ const SleepingTabsPage = (props: Props): React.Node => {
 
   useEffect(() => {
     refreshSnoozedTabs();
-    
+
     // Satisfy Flow that Promise is incompatible with undefined in the return value
     const storageListener = () => {
       refreshSnoozedTabs();
@@ -79,7 +79,7 @@ const SleepingTabsPage = (props: Props): React.Node => {
 
     // listen to storage changes
     chrome.storage.onChanged.addListener(storageListener);
-  
+
     return () => {
       chrome.storage.onChanged.removeListener(storageListener);
     }
@@ -198,7 +198,7 @@ const SleepingTabsPage = (props: Props): React.Node => {
     );
   }
 
-  
+
   if (!visibleTabGroupsState) {
       // avoid showing placeholder while loading, because
       // it causes placeholder to flicker before the list renders on screen

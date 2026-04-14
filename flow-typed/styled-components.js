@@ -1,11 +1,11 @@
 declare module 'styled-components' {
   declare export default any;
-  
+
   declare export var css: any;
-  
+
   declare export var withTheme: any;
   declare export var keyframes: any;
-  
+
   // declare export var ThemeProvider: any;
   // declare export var createGlobalStyle: any;
   // declare export var ServerStyleSheet: any;
@@ -18,16 +18,16 @@ declare module 'styled-components' {
 // declare module 'styled-components' {
 //   // Base styled component type
 //   declare type StyledComponent<Props> = React$ComponentType<Props>;
-  
+
 //   // Template literal function type
 //   declare type TaggedTemplateLiteral<Props> = (
 //     strings: string[],
 //     ...interpolations: Array<any>
 //   ) => StyledComponent<Props>;
-  
+
 //   // Individual tag functions
 //   declare type StyledTag = TaggedTemplateLiteral<any>;
-  
+
 //   // Main styled object with all HTML tags
 //   declare type Styled = {
 //     (tagName: string): StyledTag,
@@ -166,7 +166,7 @@ declare module 'styled-components' {
 //     text: StyledTag,
 //     tspan: StyledTag,
 //   };
-  
+
 //   declare export default Styled;
 //   declare export var css: any;
 //   declare export var withTheme: any;

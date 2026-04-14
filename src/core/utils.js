@@ -119,7 +119,7 @@ export async function createTab(path: string) {
   chrome.windows.update(newTab.windowId, { focused: true });
 }
 
-/* 
+/*
   Show desktop notification for the given tabs,
   and make the jumpToTab active, if notification is clicked.
 */
@@ -135,7 +135,7 @@ export async function notifyUserAboutNewTabs(
   // Console log
   console.log(title);
 
-  // This section kept throwing a 
+  // This section kept throwing a
   // Access to fetch at [iconurl] from origin [tabsnooze] has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
   // const faviconUrl = tabs[0].favicon;
   // let faviconURI;

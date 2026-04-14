@@ -48,7 +48,7 @@ export default createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
 
     /* remove mobile tap highlight */
-    -webkit-tap-highlight-color: transparent; 
+    -webkit-tap-highlight-color: transparent;
 
     font-size: 62.5%;
   }

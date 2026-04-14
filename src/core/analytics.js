@@ -40,7 +40,7 @@
 // // }
 
 // /*
-//     This function must be called after beta tester idetifies himself 
+//     This function must be called after beta tester idetifies himself
 //     so that upcoming future events will attach to a his/her user id.
 // */
 // // export function setupUserTracking(email: string, name: string) {

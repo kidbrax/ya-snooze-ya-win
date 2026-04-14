@@ -32,7 +32,7 @@ type State = {
 
 const PeriodSelector = (props: Props): React.Node => {
   const { visible, onPeriodSelected } = props;
-  
+
   const [ periodType, setPeriodType ] = useState<PeriodType>('weekly');
   const [ selectedHour, setSelectedHour ] = useState(9); // Default to 9 AM
   const [ selectedMonth, setSelectedMonth ] = useState(moment().month());

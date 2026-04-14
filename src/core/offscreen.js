@@ -4,7 +4,7 @@ import { MSG_PLAY_AUDIO } from "./messages";
 
 console.log("Offscreen script loaded");
 
-// TODO 
+// TODO
 // someone make it so that offscreen.html shows up properly
 
 // Add message listener

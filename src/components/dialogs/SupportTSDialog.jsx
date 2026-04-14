@@ -69,7 +69,7 @@ export default function SupportTSDialog(): React.Node {
             <Secondary>PayPal donation</Secondary>
           </ButtonText>
         </ActionButton>
-      
+
         <ActionButton
           raised
           as="a"

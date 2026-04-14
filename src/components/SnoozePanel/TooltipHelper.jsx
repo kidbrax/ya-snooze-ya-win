@@ -11,7 +11,7 @@ export default (WrappedComponent: any) => {
     // counts down until tooltip appears/hides
     const tooltipShowTimeout = useRef(null);
     const tooltipHideTimeout = useRef(null);
-  
+
     const [ tooltipVisibleState, setTooltipVisibleState ] = useState(false);
     const [ tooltipTextState, setTooltipTextState ] = useState("");
 

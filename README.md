@@ -66,3 +66,5 @@ Load unpacked on chrome browser
 
 - use Node 24
 - should I use flow?
+- add auto-versioning upon pull request
+- add auto-deploy on merge to main/master

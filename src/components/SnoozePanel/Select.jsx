@@ -16,7 +16,7 @@ export default (props: {
   options: Array<{ label: string, value: string }>,
 }): React.Node => {
   const SelectComp = props.component || StyledNativeSelect;
-  
+
   return (
     <SelectComp
       {...props}
