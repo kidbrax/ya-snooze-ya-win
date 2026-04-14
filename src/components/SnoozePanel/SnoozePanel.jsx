@@ -4,6 +4,8 @@ import type { Props as SnoozeButtonProps } from './SnoozeButton';
 
 import React, { useState, useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import styled from 'styled-components';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
 import calcSnoozeOptions, {
   SNOOZE_TYPE_REPEATED,
   SNOOZE_TYPE_SPECIFIC_DATE,
@@ -22,6 +24,7 @@ import {
   getActiveTab,
 } from '../../core/utils';
 import { filterSnoozableTabs, getTargetTabs } from '../../core/tabSelection';
+import navbarLogo from '../OptionsPage/images/navbar_logo.svg';
 
 // code splitting these big components
 const AsyncPeriodSelector = lazy(() => import('./PeriodSelector'));
@@ -71,7 +74,10 @@ export function SnoozePanel(props: Props): React.Node {
           setAllTabs(allTabsResult);
           setHighlightedTabs(highlightedTabsResult);
           setActiveTab(activeTabResult);
-          setSingleTabMode(settings.singleTabMode);
+          // Auto-switch to multi-tab mode if the user has Ctrl/Cmd+clicked multiple tabs,
+          // even if single tab mode is saved in settings.
+          const hasMultipleHighlighted = highlightedTabsResult.length > 1;
+          setSingleTabMode(hasMultipleHighlighted ? false : settings.singleTabMode);
         }
 
         timeoutId = setTimeout(async () => {
@@ -231,18 +237,28 @@ export function SnoozePanel(props: Props): React.Node {
         if (ref) ref.focus();
       }}
     >
-      <PanelHeader>
-        <TabModeToggle
-          onClick={toggleSingleTabMode}
-          title={singleTabMode ? 'Click to snooze all tabs in window' : 'Click to snooze only this tab'}
-          aria-label={singleTabMode ? 'Switch to snooze all tabs mode' : 'Switch to snooze this tab only'}
-        >
-          {singleTabMode ? 'This tab' : `${targetTabs.length} tab${targetTabs.length !== 1 ? 's' : ''}`}
-        </TabModeToggle>
-        {!singleTabMode && (
-          <HintText>Ctrl+click tabs to snooze a selection</HintText>
-        )}
-      </PanelHeader>
+      <AppBar position="relative" sx={{ zIndex: 1 }}>
+        <PanelToolbar>
+          <PanelHeaderRow>
+            <Logo src={navbarLogo} />
+            <TabControls>
+              <TabCountLabel>
+                {singleTabMode
+                  ? '1 tab'
+                  : `${targetTabs.length} tab${targetTabs.length !== 1 ? 's' : ''}`}
+              </TabCountLabel>
+              <SingleTabToggle
+                onClick={toggleSingleTabMode}
+                title={singleTabMode ? 'Switch to snooze all tabs in window' : 'Switch to snooze only this tab'}
+                aria-label={singleTabMode ? 'Switch to snooze all tabs mode' : 'Switch to snooze this tab only'}
+              >
+                {singleTabMode ? '⇄ All tabs' : '⇄ Single tab'}
+              </SingleTabToggle>
+            </TabControls>
+          </PanelHeaderRow>
+          <HintText>{MULTI_TAB_HINT}</HintText>
+        </PanelToolbar>
+      </AppBar>
       <SnoozeButtonsGrid buttons={snoozeButtons} />
       <SnoozeFooter
         tooltip={{
@@ -283,6 +299,9 @@ export function SnoozePanel(props: Props): React.Node {
     </Root>
   );
 }
+
+const isMac = /Mac/i.test(navigator.platform) || /Mac/i.test(navigator.userAgent);
+const MULTI_TAB_HINT = isMac ? '⌘+click tabs to snooze a selection' : 'Ctrl+click tabs to snooze a selection';
 
 const SNOOZE_SHORTCUT_KEYS: { [any]: number } = {
   L: 0,
@@ -361,31 +380,55 @@ const Root = styled.div`
   position: relative;
 `;
 
-const PanelHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px 16px 4px;
+const PanelToolbar = styled(Toolbar)`
+  flex-direction: column !important;
+  align-items: stretch !important;
+  padding: 6px 16px 4px !important;
   gap: 2px;
+  min-height: auto !important;
+  height: auto;
 `;
 
-const TabModeToggle = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
+const PanelHeaderRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Logo = styled.img`
+  height: 22px;
+`;
+
+const TabControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const TabCountLabel = styled.span`
   font-size: 13px;
   font-weight: 600;
-  color: ${(props: any) => props.theme.snoozePanel.countBadgeColor};
+  color: #fff;
+`;
+
+const SingleTabToggle = styled.button`
+  background: rgba(0, 0, 0, 0.15);
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
   padding: 2px 8px;
   border-radius: 4px;
 
   &:hover {
-    background-color: ${(props: any) => props.theme.snoozePanel.hoverColor};
+    background-color: rgba(0, 0, 0, 0.25);
   }
 `;
 
 const HintText = styled.div`
   font-size: 11px;
-  color: ${(props: any) => props.theme.snoozePanel.footerTextColor};
-  opacity: 0.6;
+  color: #fff;
+  opacity: 0.8;
+  text-align: right;
 `;

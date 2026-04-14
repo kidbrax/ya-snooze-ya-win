@@ -33,22 +33,24 @@ export const styledComponentsTheme = {
 export const muiTheme = createTheme({
   palette: {
     primary: { main: '#21c1f4' }, // styledComponentsTheme.primary
-    // secondary: green,
+    text: {
+      primary: '#4A4A4A',   // styledComponentsTheme.black
+      secondary: '#7F7F7F', // styledComponentsTheme.gray
+    },
   },
   // Note: 'ripple' was removed from theme root in MUI v5
   // Ripple effects are now configured per-component
   typography: {
-    // 'useNextVariants' was removed in MUI v5 (it's now the default)
-    // Tell Material-UI what's the font-size on the html element is.
-
     htmlFontSize: 10,
+    fontFamily: `"Roboto", "Helvetica Neue", Arial, sans-serif`,
   },
   components: { // 'overrides' was renamed to 'components' in MUI v5
     // Name of the component ⚛️ / style sheet
     MuiToolbar: {
-      styleOverrides: { // 'root' is now under 'styleOverrides'
+      styleOverrides: {
         root: {
-          height: 68,
+          height: 48,
+          minHeight: '48px !important',
         },
       },
     },
@@ -56,6 +58,31 @@ export const muiTheme = createTheme({
       styleOverrides: {
         root: {
           color: 'white',
+        },
+      },
+    },
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          paddingTop: 4,
+          paddingBottom: 4,
+          paddingLeft: 12,
+          paddingRight: 12,
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          minWidth: 36,
+        },
+      },
+    },
+    MuiListSubheader: {
+      styleOverrides: {
+        root: {
+          paddingLeft: 12,
+          lineHeight: '32px',
         },
       },
     },

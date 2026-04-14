@@ -41,9 +41,11 @@ type SnoozeFooterProps = {
   };
   upgradeBadge: boolean;
   betaBadge: boolean;
+  mainLink?: string;
+  mainLabel?: string;
 };
 
-export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }: SnoozeFooterProps) : React.Node {
+export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge, mainLink = SLEEPING_TABS_PATH, mainLabel = 'Sleeping Tabs' }: SnoozeFooterProps) : React.Node {
   const [sleepingTabsCount, setSleepingTabsCount] = useState(0);
 
   useEffect(() => {
@@ -80,9 +82,9 @@ export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }: Snooz
   return (
     <Footer>
       <Buttons>
-        <SleepingTabsBtn as={Link} to={SLEEPING_TABS_PATH}>
+        <SleepingTabsBtn as={Link} to={mainLink}>
           <SleepingCountBadge>{sleepingTabsCount}</SleepingCountBadge>
-          Sleeping Tabs
+          {mainLabel}
         </SleepingTabsBtn>
         
         {!betaBadge && upgradeBadge && (

@@ -37,17 +37,17 @@ const StyledList = muiStyled(List)(({ theme }) => ({
 
 const StyledListSubheader = muiStyled(ListSubheader)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
-  paddingLeft: theme.spacing(3),
 }));
 
-const StyledListItem = muiStyled(ListItem)(({ theme }) => ({
-  paddingLeft: theme.spacing(3),
+const StyledListItem = muiStyled(ListItem)(() => ({
+  paddingRight: 48, // space for the delete button
 }));
 
 const StyledDeleteButton = muiStyled(IconButton)(({ theme }) => ({
   transition: 'opacity 0.2s',
   opacity: 1,
-  marginRight: theme.spacing(2),
+  marginRight: theme.spacing(0.5),
+  '& svg': { fontSize: 16 },
 }));
 
 const StyledFab = muiStyled(Fab)(({ theme }) => ({
@@ -230,11 +230,12 @@ const Placeholder = styled.div`
 `;
 
 const Icon = styled.img`
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
   align-self: flex-start;
-  margin-top: 8px;
+  margin-top: 6px;
+  margin-right: 10px;
   border-radius: 3px;
 `;
 

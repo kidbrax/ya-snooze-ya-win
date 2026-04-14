@@ -576,9 +576,9 @@ const SettingsSelect = styled(Select).attrs({
   line-height: inherit;
   outline: none;
   padding-left: 5px;
-  width: ${(props: StyledProps) => (props.small ? 94 : 200)}px;
-  height: 40px;
-  margin-right: 12px;
+  width: ${(props: StyledProps) => (props.small ? 80 : 140)}px;
+  height: 32px;
+  margin-right: 8px;
   :hover {
     background-color: #e7e7e7;
   }
