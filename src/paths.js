@@ -27,13 +27,10 @@ export const BACKGROUND_PATH = 'background';
 export const CHROME_SETTINGS_SHORTCUTS = 'chrome://extensions/shortcuts';
 
 // Miscellaneous Section on Settings Page
+// TODO: update these
 export const CHROME_WEB_STORE = "https://chromewebstore.google.com/detail/kgnigbfnfjgpfaiaafcbgdkpalapiinb"
 export const CHROME_WEB_STORE_REVIEW = `${CHROME_WEB_STORE}/reviews`;
 export const ORIGINAL_DEVLOPER_DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=82HLJCDURLVME&currency_code=USD&source=url';
 export const CURR_DEVELOPER_DONATE_URL = "https://ko-fi.com/csandapp"
-export const GITHUB_REPO_URL = "https://github.com/csandapp/tab-snooze-extension-continued"
-export const SUPPORT_EMAIL_URL = "mailto:csandapp@gmail.com"
-
-// export const getTrackUninstallUrl = () =>
-//   addTrackingIdToUrl(TRACK_UNINSTALL_URL);
-// export const getUpgradeUrl = () => addTrackingIdToUrl(UPGRADE_URL);
+export const GITHUB_REPO_URL = "https://github.com/kidbrax/tab-snooze-extension-continued"
+export const SUPPORT_EMAIL_URL = "mailto:support@braxtonbeyer.com"
