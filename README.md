@@ -70,3 +70,4 @@ Load unpacked on chrome browser
 - add auto-deploy on merge to main/master
 - re-implement bugsnag?
 - Update to use MUI instead of styled-components?
+- test release action
