@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Ya Snooze, Ya Win",
   "short_name": "snoozewin",
-  "version": "13.0.3",
+  "version": "13.0.4",
   "description": "Snooze a tab or group of tabs and they will reopen automatically later.",
   "icons": {
     "128": "images/extension_icon_128.png"
