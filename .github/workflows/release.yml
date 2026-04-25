@@ -1,0 +1,137 @@
+name: Release & Publish
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    name: Bump version, tag, and publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ── Determine bump type from the merged PR label ──────────────────────
+      - name: Get merged PR labels
+        id: pr_labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find the PR that was just merged into this commit
+          PR_NUMBER=$(gh pr list --state merged --base main --json number,mergeCommit \
+            --jq ".[] | select(.mergeCommit.oid == \"${{ github.sha }}\") | .number" | head -1)
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No merged PR found for this commit — defaulting to patch bump."
+            echo "bump=patch" >> "$GITHUB_OUTPUT"
+          else
+            LABELS=$(gh pr view "$PR_NUMBER" --json labels --jq '[.labels[].name] | join(",")')
+            echo "PR #$PR_NUMBER labels: $LABELS"
+
+            if echo "$LABELS" | grep -q "major"; then
+              echo "bump=major" >> "$GITHUB_OUTPUT"
+            elif echo "$LABELS" | grep -q "minor"; then
+              echo "bump=minor" >> "$GITHUB_OUTPUT"
+            else
+              echo "bump=patch" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      # ── Bump version in manifest.json and package.json ────────────────────
+      - name: Bump version
+        id: bump
+        run: |
+          BUMP=${{ steps.pr_labels.outputs.bump }}
+          CURRENT=$(node -p "require('./public/manifest.json').version")
+          echo "Current version: $CURRENT, bump: $BUMP"
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+
+          case "$BUMP" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "New version: $NEW_VERSION"
+          echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+          # Update manifest.json
+          node -e "
+            const fs = require('fs');
+            const m = JSON.parse(fs.readFileSync('./public/manifest.json', 'utf8'));
+            m.version = '$NEW_VERSION';
+            fs.writeFileSync('./public/manifest.json', JSON.stringify(m, null, 2) + '\n');
+          "
+
+          # Update package.json
+          npm version "$NEW_VERSION" --no-git-tag-version
+
+      # ── Update CHANGELOG [Unreleased] → versioned entry ──────────────────
+      - name: Stamp CHANGELOG
+        run: |
+          VERSION=${{ steps.bump.outputs.version }}
+          DATE=$(date +%Y-%m-%d)
+          # Replace "## [Unreleased]" with versioned heading and add new Unreleased section
+          sed -i "s/## \[Unreleased\]/## [Unreleased]\n\n## [$VERSION] - $DATE/" CHANGELOG.md
+
+      # ── Commit, tag, push ─────────────────────────────────────────────────
+      - name: Commit and tag
+        run: |
+          VERSION=${{ steps.bump.outputs.version }}
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/manifest.json package.json package-lock.json CHANGELOG.md
+          git commit -m "chore: release v$VERSION [skip ci]"
+          git tag "v$VERSION"
+          git push origin main --follow-tags
+
+      # ── Build ─────────────────────────────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build extension
+        run: npm run build
+
+      # ── Zip the build ─────────────────────────────────────────────────────
+      - name: Zip build
+        run: |
+          VERSION=${{ steps.bump.outputs.version }}
+          mkdir -p dist
+          cd build && zip -r "../dist/extension_v${VERSION}.zip" . && cd ..
+          echo "zip_path=dist/extension_v${VERSION}.zip" >> "$GITHUB_ENV"
+
+      # ── Publish to Chrome Web Store ───────────────────────────────────────
+      - name: Upload to Chrome Web Store
+        uses: mnao305/chrome-extension-upload@v6.0.0
+        with:
+          file-path: ${{ env.zip_path }}
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+
+      # ── GitHub Release ────────────────────────────────────────────────────
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${{ steps.bump.outputs.version }}
+          # Extract this version's section from CHANGELOG for release notes
+          NOTES=$(awk "/^## \[$VERSION\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
+          gh release create "v$VERSION" \
+            "${{ env.zip_path }}" \
+            --title "v$VERSION" \
+            --notes "$NOTES"

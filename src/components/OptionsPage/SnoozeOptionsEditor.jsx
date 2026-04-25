@@ -23,7 +23,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 
 const OPTION_TYPES = [
-  { value: 'offset',        label: 'X minutes from now' },
+  { value: 'offset',        label: 'X hours from now' },
   { value: 'evening',       label: 'This Evening' },
   { value: 'tomorrow',      label: 'Tomorrow morning' },
   { value: 'weekend',       label: 'This Weekend' },

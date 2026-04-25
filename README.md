@@ -68,3 +68,5 @@ Load unpacked on chrome browser
 - should I use flow?
 - add auto-versioning upon pull request
 - add auto-deploy on merge to main/master
+- re-implement bugsnag?
+- Update to use MUI instead of styled-components?

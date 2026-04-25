@@ -18,7 +18,7 @@ if (import.meta.env.DEV) {
         name: "Tab Snooze - Manifest V3",
         version: "12.0.0",
         manifest_version: 3,
-        description: "Save articles, videos and todos for later. They'll magically reopen when you need them."
+        description: "Snooze a tab or group of tabs and they will reopen automatically later."
       }),
       id: 'development-extension-id',
       sendMessage: (message, callback) => {

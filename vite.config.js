@@ -77,17 +77,7 @@ export default defineConfig({
     strictPort: true,
     fs: {
       allow: ['..'],
-    },
-    // Add middleware to handle routing for different extension pages
-    // middlewares: [
-    //   (req, res, next) => {
-    //     // Handle extension routes in development
-    //     if (req.url.includes('#popup') || req.url.includes('#options')) {
-    //       req.url = '/';
-    //     }
-    //     next();
-    //   }
-    // ]
+    }
   },
   // Resolve configuration
   resolve: {

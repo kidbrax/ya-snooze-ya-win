@@ -32,6 +32,8 @@ export default function WhatsNewDialog(): React.Node {
       }
       closeBtnText="Close"
     >
+
+      {/* TODO: update these */}
       <DonateButtons>
         <DonateButton
           raised
@@ -61,7 +63,7 @@ export default function WhatsNewDialog(): React.Node {
           href={GITHUB_REPO_URL}
           target="_blank"
         >
-          <CodeIcon/>
+          <CodeIcon />
           Open source codebase
         </DonateButton>
       </DonateButtons>
