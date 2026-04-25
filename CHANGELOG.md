@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Snooze panel buttons are now text-only (icons removed) for a cleaner look
 - Keyboard navigation updated for vertical list layout
 
-## [13.0.0] - 2024-01-01
+## [13.0.0] - 2026-04-20
 
 ### Changed
 - Initial release under new maintainer
