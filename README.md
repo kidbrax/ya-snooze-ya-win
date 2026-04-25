@@ -85,5 +85,5 @@ gh pr create \
 - add auto-versioning upon pull request
 - add auto-deploy on merge to main/master
 - re-implement bugsnag?
-- use MUI?
-- test release action
+- Update to use MUI instead of styled-components?
+
