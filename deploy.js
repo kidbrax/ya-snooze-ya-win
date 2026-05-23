@@ -40,8 +40,8 @@ function markBuildAsBeta() {
 
   const manifestJson = require(MANIFEST_PATH);
 
-  manifestJson.name = 'Tab Snooze (Beta Channel)';
-  manifestJson.short_name = 'Tab Snooze Beta';
+  manifestJson.name = 'Ya Snooze, Ya Win (Beta Channel)';
+  manifestJson.short_name = 'Ya Snooze, Ya Win Beta';
   manifestJson.icons['128'] = 'images/beta_extension_icon_128.png';
   // fs.copySync(icon, oldicon);
 

@@ -34,7 +34,7 @@ const UpgradeDialog = (props: Props): React.Node => {
       <Root>
         <Star src={starImage} />
         <Title>
-          {/* Become a Tab Snooze <ProBadge big /> ! */}
+          {/* Become a Ya Snooze, Ya Win <ProBadge big /> ! */}
         </Title>
         <Subtitle>
           Help us support this extension development and enjoy

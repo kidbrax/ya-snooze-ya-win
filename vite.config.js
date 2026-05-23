@@ -4,6 +4,9 @@ import { crx } from '@crxjs/vite-plugin'
 import { resolve } from 'path'
 import flow from 'esbuild-plugin-flow'
 import manifest from './public/manifest.json'
+import devManifest from './public/manifest.dev.json'
+
+const isDev = process.env.BUILD_TARGET === 'dev'
 
 export default defineConfig({
   plugins: [
@@ -14,7 +17,7 @@ export default defineConfig({
         ]
       }
     }),
-    crx({ manifest })
+    crx({ manifest: isDev ? devManifest : manifest })
   ],
 
   esbuild: {

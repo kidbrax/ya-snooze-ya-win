@@ -247,32 +247,7 @@ async function extensionMain() {
       createCenteredWindow(SUPPORT_TS_PATH, 500, 875);
     }
   }
-
-  // Uncomment for Debug:
-  // require('../components/dialogs/FirstSnoozeDialog').default.open();
 }
-
-// async function notifyAboutNewBetaVersion() {
-//   const notificationId = await chrome.notifications.create('', {
-//     type: 'basic',
-//     title: `Tab Snooze ${APP_VERSION} installed`,
-//     message: 'Click to open the changelog',
-//     iconUrl: '/images/beta_extension_icon_128.png',
-//     requireInteraction: true,
-//   });
-
-//   // If notification clicked, open changelog
-//   chrome.notifications.onClicked.addListener(
-//     async function makeTabActive(notifId) {
-//       if (notifId === notificationId) {
-//         createTab(CHANGELOG_URL);
-
-//         chrome.notifications.clear(notificationId);
-//         chrome.notifications.onClicked.removeListener(makeTabActive);
-//       }
-//     }
-//   );
-// }
 
 // CRITICAL: Only run background script registration in service worker context
 // This prevents duplicate event listeners when UI pages (popup/options) import this module

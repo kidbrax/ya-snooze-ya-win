@@ -33,6 +33,7 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
+    "build:dev": "BUILD_TARGET=dev vite build",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",

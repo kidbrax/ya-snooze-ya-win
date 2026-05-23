@@ -130,7 +130,7 @@ export async function notifyUserAboutNewTabs(
   const message = tabs.map(tab => tab.title).join('\n');
 
   const title =
-    'Tab Snooze woke up ' +
+    'Ya Snooze, Ya Win woke up ' +
     (tabs.length > 1 ? `${tabs.length} tabs` : 'a tab'); // plural handling
   // Console log
   console.log(title);
