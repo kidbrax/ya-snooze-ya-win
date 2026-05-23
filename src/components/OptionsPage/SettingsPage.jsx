@@ -240,7 +240,7 @@ const SettingsPage = (props: Props): Node => {
   return (
     <Root>
       <Helmet>
-        <title>Settings - Tab Snooze</title>
+        <title>Settings - Ya Snooze, Ya Win</title>
       </Helmet>
       <TwoColumnLayout>
         <Column>
@@ -340,7 +340,7 @@ const SettingsPage = (props: Props): Node => {
                 ),
                 locked: !isPro,
                 description:
-                  'Switch on the elegant Tab Snooze dark theme',
+                  'Switch on the elegant Ya Snooze, Ya Win dark theme',
                 component: <Switch checked={false} />,
               })}
 
@@ -360,15 +360,24 @@ const SettingsPage = (props: Props): Node => {
             {renderCheckboxSetting({
               icon: <NotificationIcon />,
               title: 'Support reminders',
-              description: 'Show occasional reminders to rate and support Tab Snooze',
+              description: 'Show occasional reminders to rate and support Ya Snooze, Ya Win',
               stateKey: 'showSupportReminders',
             })}
             {renderButtonSetting({
               icon: <StarIcon />,
-              title: 'Loving Tab Snooze?',
-              description: 'Rate Tab Snooze the Chrome Web Store!',
+              title: 'Loving Ya Snooze, Ya Win?',
+              description: 'Rate Ya Snooze, Ya Win the Chrome Web Store!',
               href: CHROME_WEB_STORE_REVIEW,
             })}
+
+
+            {renderButtonSetting({
+              icon: <GiftCardIcon />,
+              title: 'Donate to support further development',
+              description: 'Support the person who forked Tab Snooze into Ya Snooze, Ya Win',
+              href: LATESR_DEVELOPER_DONATE_URL,
+            })}
+
             {renderButtonSetting({
               icon: <GiftCardIcon />,
               title: 'Donate to support further development',
@@ -384,7 +393,7 @@ const SettingsPage = (props: Props): Node => {
             {renderButtonSetting({
               icon: <CodeIcon />,
               title: 'Open Source Code',
-              description: 'Share ideas or contribute to the Tab Snooze code base',
+              description: 'Share ideas or contribute to the Ya Snooze, Ya Win code base',
               href: GITHUB_REPO_URL,
             })}
             {renderButtonSetting({

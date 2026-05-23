@@ -23,7 +23,6 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Tooltip from '@mui/material/Tooltip';
 import { Link } from 'react-router-dom';
 import { TODO_PATH } from '../../paths';
-// import { track, EVENTS } from '../../core/analytics';
 
 // A tab group represents a collection of tabs that are in the same
 // wakeup time range
@@ -84,10 +83,6 @@ const SleepingTabsPage = (props: Props): React.Node => {
       chrome.storage.onChanged.removeListener(storageListener);
     }
   }, [refreshSnoozedTabs]);
-
-  // componentDidMount() {
-  //   // track(EVENTS.SLEEPING_TABS_VIEW);
-  // }
 
   const deleteTab = (tab: SnoozedTab, event: any) => {
     // so that openTab() won't be called
@@ -208,7 +203,7 @@ const SleepingTabsPage = (props: Props): React.Node => {
   return (
     <Root>
       <Helmet>
-        <title>Sleeping Tabs - Tab Snooze</title>
+        <title>Ya Snooze, Ya Win</title>
       </Helmet>
       {visibleTabGroupsState.length > 0 ? (
         <StyledList>

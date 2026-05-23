@@ -65,11 +65,7 @@ const Root = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-
   height: 100%;
-
-  /* background: #fff url('./images/bg_decoration.svg')
-    no-repeat bottom right; */
 `;
 
 const Content = styled.div`

@@ -17,12 +17,12 @@ const CHANGELOG_ITEMS = [
 export default function WhatsNewDialog(): React.Node {
   return (
     <TSDialog
-      title={`What's New in Tab Snooze ${APP_VERSION}`}
+      title={`What's New in Ya Snooze, Ya Win ${APP_VERSION}`}
       image={congratsImage}
-      headline={`Tab Snooze ${APP_VERSION}`}
+      headline={`Ya Snooze, Ya Win ${APP_VERSION}`}
       subheader={
         <Fragment>
-          Thanks for sticking with Tab Snooze. I appreciate your patience for this update. Here&apos;s what&apos;s new:
+          Thanks for sticking with Ya Snooze, Ya Win. I appreciate your patience for this update. Here&apos;s what&apos;s new:
           <ChangelogList>
             {CHANGELOG_ITEMS.map((item, i) => (
               <li key={i}>{item}</li>

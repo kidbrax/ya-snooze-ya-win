@@ -19,12 +19,12 @@ export default function SupportTSDialog(): React.Node {
 
   return (
     <TSDialog
-      title="Support Tab Snooze"
+      title="Support Ya Snooze, Ya Win"
       image={loveImage}
-      headline="Enjoying Tab Snooze?"
+      headline="Enjoying Ya Snooze, Ya Win?"
       subheader={
         <Fragment>
-          Thanks for using Tab Snooze! It's free and community-supported. Here are some ways to show your appreciation:
+          Thanks for using Ya Snooze, Ya Win! It's free and community-supported. Here are some ways to show your appreciation:
         </Fragment>
       }
       closeBtnText={null}
@@ -39,7 +39,7 @@ export default function SupportTSDialog(): React.Node {
         >
           <CWSLogo />
           <ButtonText>
-            <Primary>Rate Tab Snooze</Primary>
+            <Primary>Rate Ya Snooze, Ya Win</Primary>
             <Secondary>Chrome Web Store</Secondary>
           </ButtonText>
         </ActionButton>

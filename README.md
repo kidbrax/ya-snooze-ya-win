@@ -1,17 +1,16 @@
-# Tab Snooze
+# Ya Snooze, Ya Win
 
 A Chrome extension that lets you temporarily "snooze" browser tabs — hiding them and automatically reopening them at a scheduled time. Never lose track of tabs you want to revisit later.
 
 ## Install
 
-[**Get Tab Snooze on the Chrome Web Store**](https://chromewebstore.google.com/detail/kgnigbfnfjgpfaiaafcbgdkpalapiinb)
+[**Get Ya Snooze, Ya Win on the Chrome Web Store**](https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg)
 
 ## Features
 
 - **Snooze tabs** to hide them now and have them reopen automatically later
 - **One-time and recurring schedules** — snooze until tomorrow morning, next week, or on a custom recurring schedule
 - **Snoozed tabs dashboard** to view and manage all your snoozed tabs
-- **Todo management** built into the extension
 - **Keyboard shortcuts** for quick snoozing
 - **Audio notifications** when snoozed tabs wake up
 
@@ -53,10 +52,27 @@ npm run build
 
 Load unpacked on chrome browser
 
+## Release
+
+To create a new release, just push yur changes and the Github Action should cut the release and publish it automtatically.
+
+To create the pull request:
+
+```shell
+
+gh pr create \
+  --base main \
+  --body $pr_message \
+  --label patch # or major? minor?
+  --title 'updating name throughout and other cleanup'
+```
+
+
 ## Links
 
-- [Chrome Web Store](https://chromewebstore.google.com/detail/kgnigbfnfjgpfaiaafcbgdkpalapiinb)
-- [Leave a Review](https://chromewebstore.google.com/detail/kgnigbfnfjgpfaiaafcbgdkpalapiinb/reviews)
+- [Chrome Web Store](https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg)
+- [Chrome Web Store](https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg)
+- [Leave a Review](https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg/reviews)
 - [GitHub Repository](https://github.com/csandapp/tab-snooze-extension-continued)
 - [Support the Current Developer](https://ko-fi.com/csandapp)
 - [Support the Original Developer](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=82HLJCDURLVME&currency_code=USD&source=url)
@@ -69,5 +85,6 @@ Load unpacked on chrome browser
 - add auto-versioning upon pull request
 - add auto-deploy on merge to main/master
 - re-implement bugsnag?
-- Update to use MUI instead of styled-components?
-
+- use MUI?
+- test release action
+- auto-version, update package.json, manifest, etc

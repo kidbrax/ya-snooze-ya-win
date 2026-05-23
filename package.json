@@ -1,6 +1,6 @@
 {
-  "name": "tab-snooze-extension",
-  "version": "13.0.4",
+  "name": "ya-snooze-ya-win-extension",
+  "version": "13.0.5",
   "private": false,
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
+    "build:dev": "BUILD_TARGET=dev vite build",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
