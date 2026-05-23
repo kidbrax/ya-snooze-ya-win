@@ -87,3 +87,4 @@ gh pr create \
 - re-implement bugsnag?
 - use MUI?
 - test release action
+- auto-version, update package.json, manifest, etc

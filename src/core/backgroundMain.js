@@ -15,8 +15,6 @@ import {
   TODO_PATH,
   SLEEPING_TABS_PATH,
   SUPPORT_TS_PATH,
-  // CHANGELOG_URL,
-  // getTrackUninstallUrl,
   TUTORIAL_PATH,
   WHATS_NEW_PATH,
 } from '../paths';

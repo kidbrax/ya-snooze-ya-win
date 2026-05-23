@@ -16,7 +16,7 @@ if (import.meta.env.DEV) {
     runtime: {
       getManifest: () => ({
         name: "Ya Snooze, Ya Win",
-        version: "13.0.3",
+        version: "13.0.5",
         manifest_version: 3,
         description: "Snooze a tab or group of tabs and they will reopen automatically later."
       }),
