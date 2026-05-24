@@ -54,7 +54,7 @@ Load unpacked on chrome browser
 
 ## Release
 
-To create a new release, just push yur changes and the Github Action should cut the release and publish it automtatically.
+To create a new release, just push your changes and the Github Action should cut the release and publish it automatically. FIrst, it will bump the version in package.json and in the manifest.json.
 
 To create the pull request:
 
