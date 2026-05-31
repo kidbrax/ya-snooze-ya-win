@@ -15,7 +15,8 @@
     "alarms",
     "storage",
     "notifications",
-    "idle"
+    "idle",
+    "contextMenus"
   ],
   "web_accessible_resources": [
     {

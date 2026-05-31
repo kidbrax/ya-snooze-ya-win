@@ -54,12 +54,11 @@ Load unpacked on chrome browser
 
 ## Release
 
-To create a new release, just push your changes and the Github Action should cut the release and publish it automatically. FIrst, it will bump the version in package.json and in the manifest.json. You must update the CHANGELOG.md with your commit or the jobs will fail.
+To create a new release, first make sure the CHANGELOG.md is updated and then run the `gh pr creaete` command below. The PR Action will cut the Github release and publish it automatically. FIrst, it will bump the version in package.json and in the manifest.json.
 
 To create the pull request:
 
 ```shell
-
 gh pr create \
   --base main \
   --body $pr_message \

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- can now snooze a tab by right-clicking on the page
+
 ## [13.0.8] - 2026-05-31
 
 - fix release action
