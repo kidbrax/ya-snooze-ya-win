@@ -138,7 +138,7 @@ jobs:
             "${{ env.zip_path }}" \
             --title "v$VERSION" \
             --notes "$NOTES" \
-            --target "v$VERSION"
+            --target main
 
 
 #  test change
