@@ -66,11 +66,9 @@ export default function calcSnoozeOptions(settings: Settings): Array<SnoozeOptio
     }
     const m = moment(when);
     if (opt.type === 'offset') {
-      const hours = (opt.offsetMinutes ?? 60) / 60;
-      return `${m.calendar()}`;
+      return m.calendar();
     }
-    if (opt.type === 'in_a_month' || opt.type === 'someday') return m.format('LL');
-    return m.calendar();
+    return m.format('YYYY.MM.DD');
   };
 
   const options = customSnoozeOptions ?? [];

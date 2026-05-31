@@ -24,6 +24,10 @@ import {
   COMMAND_OPEN_SLEEPING_TABS,
 } from './commands';
 import { createTab, createCenteredWindow, IS_BETA, APP_VERSION } from './utils';
+import {
+  rebuildContextMenus,
+  registerContextMenuListeners,
+} from './contextMenu';
 // import { track, EVENTS } from './analytics';
 
 import {
@@ -62,6 +66,9 @@ export function runBackgroundScript() {
 
   // Make badge module listen to storage changes and update badge
   registerBadgeEventListeners();
+
+  // Register right-click context menu listener (must be sync)
+  registerContextMenuListeners();
 
   // Show CHANGELOG doc when extension updates
   chrome.runtime.onInstalled.addListener(async function ({
@@ -218,6 +225,9 @@ async function extensionMain() {
 
   // update badge after chrome startup
   await updateBadge();
+
+  // Build right-click context menu items from current settings
+  await rebuildContextMenus();
 
   // Periodically show support reminder (every ~90 days for active users)
   const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
