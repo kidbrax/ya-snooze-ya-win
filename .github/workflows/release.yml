@@ -117,14 +117,66 @@ jobs:
 
       # ── Publish to Chrome Web Store ───────────────────────────────────────
       - name: Upload to Chrome Web Store
-        uses: mnao305/chrome-extension-upload@v6.0.0
-        with:
-          file-path: ${{ env.zip_path }}
-          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
-          client-id: ${{ secrets.CHROME_CLIENT_ID }}
-          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
-          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
-          publish: true
+        env:
+          EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          AUTO_PUBLISH: 'true' # auto-submit to Chrome store for review after upload
+        run: |
+          set -e
+          ZIP_PATH="${{ env.zip_path }}"
+
+          echo "▶ Getting OAuth access token..."
+          TOKEN_RESPONSE=$(curl -s -X POST https://oauth2.googleapis.com/token \
+            -d "client_id=${CLIENT_ID}" \
+            -d "client_secret=${CLIENT_SECRET}" \
+            -d "refresh_token=${REFRESH_TOKEN}" \
+            -d "grant_type=refresh_token")
+          echo "Token response: $TOKEN_RESPONSE"
+          ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>console.log(JSON.parse(d).access_token))")
+
+          if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" = "null" ]; then
+            echo "❌ Failed to get access token"
+            exit 1
+          fi
+          echo "✅ Got access token"
+
+          echo "▶ Uploading zip to Chrome Web Store..."
+          UPLOAD_RESPONSE=$(curl -s -X PUT \
+            "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${EXTENSION_ID}" \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "x-goog-api-version: 2" \
+            -T "$ZIP_PATH")
+          echo "Upload response: $UPLOAD_RESPONSE"
+
+          UPLOAD_STATE=$(echo "$UPLOAD_RESPONSE" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{ try { const r=JSON.parse(d); console.log(r.uploadState||r.error?.message||'UNKNOWN'); } catch(e){ console.log('PARSE_ERROR'); } })")
+
+          if [ "$UPLOAD_STATE" != "SUCCESS" ]; then
+            echo "❌ Upload failed with state: $UPLOAD_STATE"
+            exit 1
+          fi
+          echo "✅ Upload successful"
+
+          if [ "$AUTO_PUBLISH" = "true" ]; then
+            echo "▶ Submitting for review..."
+            PUBLISH_RESPONSE=$(curl -s -X POST \
+              "https://www.googleapis.com/chromewebstore/v1.1/items/${EXTENSION_ID}/publish" \
+              -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+              -H "x-goog-api-version: 2" \
+              -H "Content-Length: 0")
+            echo "Publish response: $PUBLISH_RESPONSE"
+
+            PUBLISH_STATUS=$(echo "$PUBLISH_RESPONSE" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{ try { const r=JSON.parse(d); console.log(r.status?.[0]||r.error?.message||'UNKNOWN'); } catch(e){ console.log('PARSE_ERROR'); } })")
+
+            if [ "$PUBLISH_STATUS" != "OK" ]; then
+              echo "❌ Publish failed with status: $PUBLISH_STATUS"
+              exit 1
+            fi
+            echo "✅ Submitted for review"
+          else
+            echo "ℹ️ AUTO_PUBLISH=false — skipping publish step (upload only)"
+          fi
 
       # ── GitHub Release ────────────────────────────────────────────────────
       - name: Create GitHub Release
