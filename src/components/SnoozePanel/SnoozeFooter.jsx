@@ -6,7 +6,6 @@ import CheckboxIcon from '@mui/icons-material/CheckBoxRounded';
 import { Link } from 'react-router-dom';
 import {
   SLEEPING_TABS_PATH,
-  TODO_PATH,
   SETTINGS_PATH,
   // getUpgradeUrl,
   BETA_PATH,

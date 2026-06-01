@@ -10,7 +10,6 @@ export const POPUP_PATH = '/popup';
 export const OPTIONS_PATH = '/options';
 export const SLEEPING_TABS_PATH = '/options/sleeping-tabs';
 export const SETTINGS_PATH = '/options/settings';
-export const TODO_PATH = '/todo';
 export const FIRST_SNOOZE_PATH = '/first-snooze';
 export const SUPPORT_TS_PATH = '/support-tab-snooze';
 export const BETA_PATH = '/beta';

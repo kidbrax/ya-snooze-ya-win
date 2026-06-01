@@ -8,7 +8,6 @@ if (import.meta.env.DEV) {
       defaultSnoozeTime: 60
     },
     snoozed_tabs: [],
-    todos: []
   };
 
   chrome = {
@@ -220,19 +219,8 @@ if (import.meta.env.DEV) {
       console.log('Added mock snoozed tab:', mockStorage.snoozed_tabs);
     },
 
-    addMockTodo: (text, completed = false) => {
-      mockStorage.todos.push({
-        id: Date.now(),
-        text: text || 'Mock Todo Item',
-        completed,
-        createdAt: Date.now()
-      });
-      console.log('Added mock todo:', mockStorage.todos);
-    },
-
     clearMockData: () => {
       mockStorage.snoozed_tabs = [];
-      mockStorage.todos = [];
       console.log('Cleared mock data');
     }
   };

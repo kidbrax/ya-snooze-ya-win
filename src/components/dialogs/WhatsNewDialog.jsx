@@ -37,7 +37,6 @@ export default function WhatsNewDialog(): React.Node {
       closeBtnText="Close"
     >
 
-      {/* TODO: update these */}
       <DonateButtons>
         <DonateButton
           raised

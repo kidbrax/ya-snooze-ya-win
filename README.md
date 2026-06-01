@@ -84,4 +84,4 @@ gh pr create \
 - re-implement bugsnag?
 - test release action
 - auto-version, update package.json, manifest, etc
-- remove TODO functionality
+- ensure all tests are passing again and add to github actions

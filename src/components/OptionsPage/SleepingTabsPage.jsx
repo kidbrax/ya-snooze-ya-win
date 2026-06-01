@@ -22,7 +22,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Tooltip from '@mui/material/Tooltip';
 import { Link } from 'react-router-dom';
-import { TODO_PATH } from '../../paths';
 
 // A tab group represents a collection of tabs that are in the same
 // wakeup time range
@@ -212,30 +211,10 @@ const SleepingTabsPage = (props: Props): React.Node => {
       ) : (
         <NoTabsPlaceholder />
       )}
-
-      <NewTodoBtn />
     </Root>
   );
 }
 
-const NewTodoBtn = () => (
-  <Zoom
-    in
-    style={{
-      transitionDelay: `500ms`,
-    }}
-  >
-    <StyledFab
-      component={Link}
-      to={TODO_PATH}
-      target="_blank"
-      color="secondary"
-      aria-label="Add"
-    >
-      <AddIcon />
-    </StyledFab>
-  </Zoom>
-);
 
 const NoTabsPlaceholder = () => (
   <Placeholder>

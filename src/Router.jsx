@@ -7,7 +7,6 @@ import {
   OPTIONS_PATH,
   SLEEPING_TABS_PATH,
   SETTINGS_PATH,
-  TODO_PATH,
   FIRST_SNOOZE_PATH,
   SUPPORT_TS_PATH,
   // BETA_PATH,
@@ -18,9 +17,6 @@ import {
 // Replace react-loadable with React.lazy
 const AsyncOptionsPage = React.lazy(() =>
   import('./components/OptionsPage')
-);
-const AsyncTodoPage = React.lazy(() =>
-  import('./components/TodoPage')
 );
 const AsyncFirstSnoozeDialog = React.lazy(() =>
   import('./components/dialogs/FirstSnoozeDialog')
@@ -50,7 +46,6 @@ const Router = () => (
         {/* Options routes - handle both base and sub-paths */}
         <Route path={`${OPTIONS_PATH}/*`} element={<AsyncOptionsPage />} />
 
-        <Route path={TODO_PATH} element={<AsyncTodoPage />} />
         <Route
           path={FIRST_SNOOZE_PATH}
           element={<AsyncFirstSnoozeDialog />}

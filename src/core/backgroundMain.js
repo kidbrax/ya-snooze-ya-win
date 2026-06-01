@@ -12,14 +12,12 @@ import {
   deleteSnoozedTabs,
 } from './wakeup';
 import {
-  TODO_PATH,
   SLEEPING_TABS_PATH,
   SUPPORT_TS_PATH,
   TUTORIAL_PATH,
   WHATS_NEW_PATH,
 } from '../paths';
 import {
-  COMMAND_NEW_TODO,
   COMMAND_REPEAT_LAST_SNOOZE,
   COMMAND_OPEN_SLEEPING_TABS,
 } from './commands';
@@ -109,11 +107,6 @@ export function runBackgroundScript() {
   });
 
   chrome.commands.onCommand.addListener(command => {
-    // create a new todo window!, and focus on it
-    if (command === COMMAND_NEW_TODO) {
-      createTab(TODO_PATH);
-    }
-
     if (command === COMMAND_REPEAT_LAST_SNOOZE) {
       repeatLastSnooze();
     }
