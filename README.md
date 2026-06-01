@@ -80,10 +80,8 @@ gh pr create \
 ## TODO
 
 - use Node 24
-- should I use flow?
-- add auto-versioning upon pull request
 - add auto-deploy on merge to main/master
 - re-implement bugsnag?
-- use MUI?
 - test release action
 - auto-version, update package.json, manifest, etc
+- remove TODO functionality

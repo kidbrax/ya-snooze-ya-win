@@ -30,7 +30,8 @@ export const CHROME_SETTINGS_SHORTCUTS = 'chrome://extensions/shortcuts';
 // TODO: update these
 export const CHROME_WEB_STORE = "https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg"
 export const CHROME_WEB_STORE_REVIEW = `${CHROME_WEB_STORE}/reviews`;
-export const ORIGINAL_DEVLOPER_DONATE_URL = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=82HLJCDURLVME&currency_code=USD&source=url';
-export const CURR_DEVELOPER_DONATE_URL = "https://ko-fi.com/csandapp"
-export const GITHUB_REPO_URL = "https://github.com/kidbrax/tab-snooze-extension-continued"
+export const DONATE_URL_DEVELOPER2 = "https://ko-fi.com/csandapp"
+export const DONATE_URL_DEVELOPER3 = "https://ko-fi.com/kidbrax"
+export const DONATE_URL_ORIGINAL_DEVELOPER = 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=82HLJCDURLVME&currency_code=USD&source=url';
+export const GITHUB_REPO_URL = "https://github.com/kidbrax/ya-snooze-ya-win"
 export const SUPPORT_EMAIL_URL = "mailto:support@braxtonbeyer.com"

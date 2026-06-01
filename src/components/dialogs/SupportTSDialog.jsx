@@ -1,7 +1,12 @@
 // @flow
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import { CHROME_WEB_STORE_REVIEW, CURR_DEVELOPER_DONATE_URL, ORIGINAL_DEVLOPER_DONATE_URL, GITHUB_REPO_URL } from '../../paths';
+import { CHROME_WEB_STORE_REVIEW, GITHUB_REPO_URL,
+DONATE_URL_DEVELOPER2,
+DONATE_URL_DEVELOPER3,
+DONATE_URL_ORIGINAL_DEVELOPER
+
+ } from '../../paths';
 import { saveSettings } from '../../core/settings';
 import TSDialog from './TSDialog';
 import Button from '../SnoozePanel/Button';
@@ -43,11 +48,20 @@ export default function SupportTSDialog(): React.Node {
             <Secondary>Chrome Web Store</Secondary>
           </ButtonText>
         </ActionButton>
+
+        <ActionButton raised as="a" color="#FF5E5B" href={DONATE_URL_DEVELOPER3} target="_blank">
+          <FavoriteIcon style={{ marginRight: 8 }} />
+          <ButtonText>
+            <Primary>Support Latest Developer</Primary>
+            <Secondary>Kofi donation</Secondary>
+          </ButtonText>
+        </ActionButton>
+
         <ActionButton
           raised
           as="a"
           color="#FF5E5B"
-          href={CURR_DEVELOPER_DONATE_URL}
+          href={DONATE_URL_DEVELOPER2}
           target="_blank"
         >
           <FavoriteIcon style={{ marginRight: 8 }} />
@@ -56,6 +70,7 @@ export default function SupportTSDialog(): React.Node {
             <Secondary>Kofi donation</Secondary>
           </ButtonText>
         </ActionButton>
+
         <ActionButton
           raised
           as="a"

@@ -101,9 +101,7 @@ export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }: Snooz
           </BadgeButton>
         )}
 
-        <IconBtn as={Link} to={TODO_PATH} target="_blank">
-          <CheckboxIcon />
-        </IconBtn>
+
 
         <IconBtn as={Link} to={SETTINGS_PATH} target="_blank">
           <SettingsIcon />

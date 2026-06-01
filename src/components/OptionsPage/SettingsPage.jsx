@@ -44,8 +44,9 @@ import {
   // getUpgradeUrl,
   CHROME_SETTINGS_SHORTCUTS,
   CHROME_WEB_STORE_REVIEW,
-  CURR_DEVELOPER_DONATE_URL,
-  ORIGINAL_DEVLOPER_DONATE_URL,
+  DONATE_URL_DEVELOPER2,
+  DONATE_URL_DEVELOPER3,
+  DONATE_URL_ORIGINAL_DEVELOPER,
   GITHUB_REPO_URL,
   SUPPORT_EMAIL_URL
 } from '../../paths';
@@ -77,8 +78,8 @@ const StyledList = muiStyled(List)(({ theme }) => ({
 }));
 
 const SettingsPage = (props: Props): Node => {
-  const [settingsState, setSettingsState] = useState<Settings>(DEFAULT_SETTINGS);
-  const [commandsState, setCommandsState] = useState<Array<ChromeCommand>>([]);
+  const [settingsState, setSettingsState] = useState < Settings > (DEFAULT_SETTINGS);
+  const [commandsState, setCommandsState] = useState < Array < ChromeCommand >> ([]);
   const isPro: boolean = true; // useState(true);
 
   useEffect(() => {
@@ -375,20 +376,20 @@ const SettingsPage = (props: Props): Node => {
               icon: <GiftCardIcon />,
               title: 'Donate to support further development',
               description: 'Support the person who forked Tab Snooze into Ya Snooze, Ya Win',
-              href: LATESR_DEVELOPER_DONATE_URL,
+              href: DONATE_URL_DEVELOPER3,
             })}
 
             {renderButtonSetting({
               icon: <GiftCardIcon />,
               title: 'Donate to support further development',
               description: 'Support the person who continued Tab Snooze',
-              href: CURR_DEVELOPER_DONATE_URL,
+              href: DONATE_URL_DEVELOPER2,
             })}
             {renderButtonSetting({
               icon: <LoveIcon />,
               title: 'Donate to support the original developer',
               description: 'Support the person who started Tab Snooze',
-              href: ORIGINAL_DEVLOPER_DONATE_URL,
+              href: DONATE_URL_ORIGINAL_DEVELOPER,
             })}
             {renderButtonSetting({
               icon: <CodeIcon />,
