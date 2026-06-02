@@ -115,6 +115,22 @@ jobs:
           cd build && zip -r "../dist/extension_v${VERSION}.zip" . && cd ..
           echo "zip_path=dist/extension_v${VERSION}.zip" >> "$GITHUB_ENV"
 
+      # ── GitHub Release ────────────────────────────────────────────────────
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${{ steps.bump.outputs.version }}
+          # Extract this version's section from CHANGELOG for release notes
+          NOTES=$(awk "/^## \[$VERSION\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
+          gh release create "v$VERSION" \
+            "${{ env.zip_path }}" \
+            --title "v$VERSION" \
+            --notes "$NOTES" \
+            --fail-on-no-commits \
+            --generate-notes \
+            --target main
+
       # ── Publish to Chrome Web Store ───────────────────────────────────────
       - name: Upload to Chrome Web Store
         env:
@@ -177,20 +193,3 @@ jobs:
           else
             echo "ℹ️ AUTO_PUBLISH=false — skipping publish step (upload only)"
           fi
-
-      # ── GitHub Release ────────────────────────────────────────────────────
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VERSION=${{ steps.bump.outputs.version }}
-          # Extract this version's section from CHANGELOG for release notes
-          NOTES=$(awk "/^## \[$VERSION\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
-          gh release create "v$VERSION" \
-            "${{ env.zip_path }}" \
-            --title "v$VERSION" \
-            --notes "$NOTES" \
-            --target main
-
-
-#  test change
