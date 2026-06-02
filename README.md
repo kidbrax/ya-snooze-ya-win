@@ -54,28 +54,19 @@ Load unpacked on chrome browser
 
 ## Release
 
-To create a new release, first make sure the CHANGELOG.md is updated and then run the `gh pr creaete` command below. The PR Action will cut the Github release and publish it automatically. FIrst, it will bump the version in package.json and in the manifest.json.
+To create a new release, first make sure the CHANGELOG.md is updated and then run `scripts/release.sh`. This will create a PR and the PR Action will bump the version in package.json and in the manifest.json. Then it will cut the Github release and publish it automatically.
 
 To create the pull request:
-
-```shell
-gh pr create \
-  --base main \
-  --body $pr_message \
-  --label patch # or major? minor?
-  --title 'updating name throughout and other cleanup'
-```
-
 
 ## Links
 
 - [Chrome Web Store](https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg)
-- [Chrome Web Store](https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg)
 - [Leave a Review](https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg/reviews)
 - [GitHub Repository](https://github.com/csandapp/tab-snooze-extension-continued)
-- [Support the Current Developer](https://ko-fi.com/csandapp)
+- [Support me](https://ko-fi.com/kidbrax)
+- [Support the next Developer](https://ko-fi.com/csandapp)
 - [Support the Original Developer](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=82HLJCDURLVME&currency_code=USD&source=url)
-- [Contact](mailto:csandapp@gmail.com)
+- [Contact](mailto:support@braxtonbeyer.com)
 
 ## TODO
 
