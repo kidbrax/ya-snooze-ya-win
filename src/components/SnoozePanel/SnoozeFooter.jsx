@@ -6,7 +6,6 @@ import CheckboxIcon from '@mui/icons-material/CheckBoxRounded';
 import { Link } from 'react-router-dom';
 import {
   SLEEPING_TABS_PATH,
-  TODO_PATH,
   SETTINGS_PATH,
   // getUpgradeUrl,
   BETA_PATH,
@@ -101,9 +100,7 @@ export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }: Snooz
           </BadgeButton>
         )}
 
-        <IconBtn as={Link} to={TODO_PATH} target="_blank">
-          <CheckboxIcon />
-        </IconBtn>
+
 
         <IconBtn as={Link} to={SETTINGS_PATH} target="_blank">
           <SettingsIcon />

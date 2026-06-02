@@ -1,7 +1,11 @@
 // @flow
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
-import { CURR_DEVELOPER_DONATE_URL, ORIGINAL_DEVLOPER_DONATE_URL, GITHUB_REPO_URL } from '../../paths';
+import {
+  DONATE_URL_DEVELOPER2,
+  DONATE_URL_DEVELOPER3,
+  DONATE_URL_ORIGINAL_DEVELOPER, GITHUB_REPO_URL
+} from '../../paths';
 import { APP_VERSION } from '../../core/utils';
 import TSDialog from './TSDialog';
 import Button from '../SnoozePanel/Button';
@@ -33,13 +37,12 @@ export default function WhatsNewDialog(): React.Node {
       closeBtnText="Close"
     >
 
-      {/* TODO: update these */}
       <DonateButtons>
         <DonateButton
           raised
           as="a"
           color="#FF5E5B"
-          href={CURR_DEVELOPER_DONATE_URL}
+          href={DONATE_URL_DEVELOPER2}
           target="_blank"
         >
           <FavoriteIcon />
@@ -49,7 +52,7 @@ export default function WhatsNewDialog(): React.Node {
           raised
           as="a"
           color="#4A90E2"
-          href={ORIGINAL_DEVLOPER_DONATE_URL}
+          href={DONATE_URL_ORIGINAL_DEVELOPER}
           target="_blank"
         >
           <FavoriteIcon />

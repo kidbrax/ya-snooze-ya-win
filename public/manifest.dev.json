@@ -61,13 +61,6 @@
         "default": "Alt+J"
       },
       "description": "Open snoozed tabs list"
-    },
-    "new_todo_page": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+1"
-      },
-      "description": "New todo tab",
-      "global": true
     }
   }
 }

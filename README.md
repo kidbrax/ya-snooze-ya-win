@@ -47,43 +47,41 @@ Manifest V3 extension built around a Service Worker background script.
 
 ```bash
 npm install
+```
+
+**Production build** (uses `public/manifest.json`):
+```bash
 npm run build
 ```
 
-Load unpacked on chrome browser
+**Development build** (uses `public/manifest.dev.json` — separate extension ID so it runs alongside the production extension):
+```bash
+npm run build:dev
+```
+
+Load the `build/` folder as an unpacked extension in Chrome via `chrome://extensions` → "Load unpacked".
 
 ## Release
 
-To create a new release, first make sure the CHANGELOG.md is updated and then run the `gh pr creaete` command below. The PR Action will cut the Github release and publish it automatically. FIrst, it will bump the version in package.json and in the manifest.json.
+To create a new release, first make sure the CHANGELOG.md is updated and then run `scripts/release.sh`. This will create a PR and the PR Action will bump the version in package.json and in the manifest.json. Then it will cut the Github release and publish it automatically.
 
 To create the pull request:
-
-```shell
-gh pr create \
-  --base main \
-  --body $pr_message \
-  --label patch # or major? minor?
-  --title 'updating name throughout and other cleanup'
-```
-
 
 ## Links
 
 - [Chrome Web Store](https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg)
-- [Chrome Web Store](https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg)
 - [Leave a Review](https://chromewebstore.google.com/detail/ya-snooze-ya-win/gkllapkgbpaichomaefmmpdebcocpeeg/reviews)
 - [GitHub Repository](https://github.com/csandapp/tab-snooze-extension-continued)
-- [Support the Current Developer](https://ko-fi.com/csandapp)
+- [Support me](https://ko-fi.com/kidbrax)
+- [Support the next Developer](https://ko-fi.com/csandapp)
 - [Support the Original Developer](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=82HLJCDURLVME&currency_code=USD&source=url)
-- [Contact](mailto:csandapp@gmail.com)
+- [Contact](mailto:support@braxtonbeyer.com)
 
 ## TODO
 
 - use Node 24
-- should I use flow?
-- add auto-versioning upon pull request
 - add auto-deploy on merge to main/master
 - re-implement bugsnag?
-- use MUI?
 - test release action
 - auto-version, update package.json, manifest, etc
+- ensure all tests are passing again and add to github actions

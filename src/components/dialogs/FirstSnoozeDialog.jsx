@@ -12,35 +12,33 @@ import congratsImage from './images/congrats.png';
 
 export default function FirstSnoozeDialog(): React.Node {
   return (
-      <TSDialog
-        // title="Congrats!"
-        image={congratsImage}
-        headline="Awesome! You snoozed your first Tab!"
-        subheader={
-          <Fragment>
-            Your tab will sleep and magically reopen when you asked
-            for it.
-            <br />
-            You can always wake it up earlier if you need to from the
-            Sleeping Tabs list.
-          </Fragment>
-        }
-        closeBtnText="Got it, thanks!"
-      >
-        <Root>
-          <Button
-            raised="true"
-            as={Link}
-            color="#4A90E2"
-            to={SLEEPING_TABS_PATH}
-            target="_blank"
-            // TODO $FlowFixMe
-            // $FlowFixMe
-            onClick={() => window.close()}
-          >
-            <HotelIcon /> Sleeping Tabs
-          </Button>
-          {/*
+    <TSDialog
+      // title="Congrats!"
+      image={congratsImage}
+      headline="Awesome! You snoozed your first Tab!"
+      subheader={
+        <Fragment>
+          Your tab will sleep and magically reopen when you asked for it.
+          <br />
+          You can always wake it up earlier if you need to from the Sleeping Tabs list.
+        </Fragment>
+      }
+      closeBtnText="Got it, thanks!"
+    >
+      <Root>
+        <Button
+          raised="true"
+          as={Link}
+          color="#4A90E2"
+          to={SLEEPING_TABS_PATH}
+          target="_blank"
+          // TODO $FlowFixMe
+          // $FlowFixMe
+          onClick={() => window.close()}
+        >
+          <HotelIcon /> Sleeping Tabs
+        </Button>
+        {/*
           <Button
             raised
             as="a"
@@ -61,8 +59,8 @@ export default function FirstSnoozeDialog(): React.Node {
             Share on Twitter
           </Button>
           */}
-        </Root>
-      </TSDialog>
+      </Root>
+    </TSDialog>
   );
 }
 
