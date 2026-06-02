@@ -25,7 +25,28 @@ if [ "$BRANCH" = "main" ]; then
 fi
 echo "✅ On branch: $BRANCH"
 
-# ── 3. Check CHANGELOG has an [Unreleased] section with content ───────────────
+# ── 3. Sync main and rebase current branch onto it ───────────────────────────
+echo "▶ Fetching latest main..."
+git fetch origin main
+LOCAL_MAIN=$(git rev-parse main)
+REMOTE_MAIN=$(git rev-parse origin/main)
+if [ "$LOCAL_MAIN" != "$REMOTE_MAIN" ]; then
+  echo "▶ main is behind remote, fast-forwarding..."
+  git fetch origin main:main
+fi
+echo "✅ main is up to date"
+
+echo "▶ Checking $BRANCH is up to date with main..."
+MERGE_BASE=$(git merge-base HEAD origin/main)
+if [ "$MERGE_BASE" != "$REMOTE_MAIN" ]; then
+  echo "▶ Rebasing $BRANCH onto main..."
+  git rebase origin/main
+  echo "✅ Rebase complete"
+else
+  echo "✅ $BRANCH is already up to date with main"
+fi
+
+# ── 4. Check CHANGELOG has an [Unreleased] section with content ───────────────
 echo "▶ Checking CHANGELOG..."
 UNRELEASED_CONTENT=$(awk '/^## \[Unreleased\]/{found=1; next} found && /^## \[/{exit} found && /[^ \t]/{print}' CHANGELOG.md)
 if [ -z "$UNRELEASED_CONTENT" ]; then
@@ -36,7 +57,7 @@ echo "✅ CHANGELOG has unreleased content:"
 echo "$UNRELEASED_CONTENT" | head -5
 echo ""
 
-# ── 4. Determine current version ─────────────────────────────────────────────
+# ── 5. Determine current version ─────────────────────────────────────────────
 CURRENT=$(node -p "require('./public/manifest.json').version")
 IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
 
@@ -53,12 +74,12 @@ esac
 NEW_VERSION="$MAJOR.$MINOR.$PATCH"
 echo "▶ Version: $CURRENT → $NEW_VERSION"
 
-# ── 5. Push branch to remote ─────────────────────────────────────────────────
+# ── 6. Push branch to remote ─────────────────────────────────────────────────
 echo "▶ Pushing branch to remote..."
 git push -u origin "$BRANCH"
 echo "✅ Branch pushed"
 
-# ── 6. Create the PR ──────────────────────────────────────────────────────────
+# ── 7. Create the PR ──────────────────────────────────────────────────────────
 echo "▶ Creating PR..."
 PR_TITLE="v$NEW_VERSION"
 PR_BODY=$(printf "## What's changed\n\n%s\n\n---\n*Version bump: %s → %s (%s)*" \
@@ -73,6 +94,6 @@ PR_URL=$(gh pr create \
 
 echo "✅ PR created: $PR_URL"
 
-# ── 7. Open the PR in the browser ────────────────────────────────────────────
+# ── 8. Open the PR in the browser ────────────────────────────────────────────
 echo "▶ Opening PR in browser..."
 open "$PR_URL"
