@@ -5,13 +5,17 @@ on:
     branches: [main]
 
 jobs:
+  # ── Job 1: Bump version, build, and cut GitHub release ───────────────────
   release:
-    name: Bump version, tag, and publish
+    name: Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      zip_name: ${{ steps.zip.outputs.zip_name }}
 
     steps:
       - uses: actions/checkout@v4
@@ -24,13 +28,28 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
-      # ── Determine bump type from the merged PR label ──────────────────────
-      - name: Get merged PR labels
-        id: pr_labels
+      # ── Detect if this commit is already tagged (re-run case) ─────────────
+      - name: Check for existing release tag
+        id: existing
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Find the PR that was just merged into this commit
+          EXISTING_TAG=$(git tag --points-at HEAD | grep '^v' | head -1)
+          if [ -n "$EXISTING_TAG" ]; then
+            echo "⚠️ Commit already tagged as $EXISTING_TAG — skipping version bump."
+            echo "version=${EXISTING_TAG#v}" >> "$GITHUB_OUTPUT"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── Determine bump type from the merged PR label ──────────────────────
+      - name: Get merged PR labels
+        id: pr_labels
+        if: steps.existing.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
           PR_NUMBER=$(gh pr list --state merged --base main --json number,mergeCommit \
             --jq ".[] | select(.mergeCommit.oid == \"${{ github.sha }}\") | .number" | head -1)
 
@@ -52,7 +71,8 @@ jobs:
 
       # ── Bump version in manifest.json and package.json ────────────────────
       - name: Bump version
-        id: bump
+        id: bumped
+        if: steps.existing.outputs.skip == 'false'
         run: |
           BUMP=${{ steps.pr_labels.outputs.bump }}
           CURRENT=$(node -p "require('./public/manifest.json').version")
@@ -70,7 +90,6 @@ jobs:
           echo "New version: $NEW_VERSION"
           echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
-          # Update manifest.json
           node -e "
             const fs = require('fs');
             const m = JSON.parse(fs.readFileSync('./public/manifest.json', 'utf8'));
@@ -78,27 +97,37 @@ jobs:
             fs.writeFileSync('./public/manifest.json', JSON.stringify(m, null, 2) + '\n');
           "
 
-          # Update package.json
           npm version "$NEW_VERSION" --no-git-tag-version
 
       # ── Update CHANGELOG [Unreleased] → versioned entry ──────────────────
       - name: Stamp CHANGELOG
+        if: steps.existing.outputs.skip == 'false'
         run: |
-          VERSION=${{ steps.bump.outputs.version }}
+          VERSION=${{ steps.bumped.outputs.version }}
           DATE=$(date +%Y-%m-%d)
-          # Replace "## [Unreleased]" with versioned heading and add new Unreleased section
           sed -i "s/## \[Unreleased\]/## [Unreleased]\n\n## [$VERSION] - $DATE/" CHANGELOG.md
 
       # ── Commit, tag, push ─────────────────────────────────────────────────
       - name: Commit and tag
+        if: steps.existing.outputs.skip == 'false'
         run: |
-          VERSION=${{ steps.bump.outputs.version }}
+          VERSION=${{ steps.bumped.outputs.version }}
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add public/manifest.json package.json package-lock.json CHANGELOG.md
           git commit -m "chore: release v$VERSION [skip ci]"
           git tag "v$VERSION"
           git push origin main --follow-tags
+
+      # ── Resolve version for remaining steps ───────────────────────────────
+      - name: Resolve version
+        id: version
+        run: |
+          if [ "${{ steps.existing.outputs.skip }}" = "true" ]; then
+            echo "version=${{ steps.existing.outputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${{ steps.bumped.outputs.version }}" >> "$GITHUB_OUTPUT"
+          fi
 
       # ── Build ─────────────────────────────────────────────────────────────
       - name: Install dependencies
@@ -109,29 +138,56 @@ jobs:
 
       # ── Zip the build ─────────────────────────────────────────────────────
       - name: Zip build
+        id: zip
         run: |
-          VERSION=${{ steps.bump.outputs.version }}
+          VERSION=${{ steps.version.outputs.version }}
+          ZIP_NAME="extension_v${VERSION}.zip"
           mkdir -p dist
-          cd build && zip -r "../dist/extension_v${VERSION}.zip" . && cd ..
-          echo "zip_path=dist/extension_v${VERSION}.zip" >> "$GITHUB_ENV"
+          cd build && zip -r "../dist/${ZIP_NAME}" . && cd ..
+          echo "zip_name=${ZIP_NAME}" >> "$GITHUB_OUTPUT"
 
-      # ── GitHub Release ────────────────────────────────────────────────────
+      # ── Upload zip as artifact for the publish job ────────────────────────
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-zip
+          path: dist/${{ steps.zip.outputs.zip_name }}
+          retention-days: 7
+
+      # ── GitHub Release (skipped on re-run if release already exists) ─────
       - name: Create GitHub Release
+        if: steps.existing.outputs.skip == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION=${{ steps.bump.outputs.version }}
-          # Extract this version's section from CHANGELOG for release notes
+          VERSION=${{ steps.version.outputs.version }}
           NOTES=$(awk "/^## \[$VERSION\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
           gh release create "v$VERSION" \
-            "${{ env.zip_path }}" \
+            "dist/${{ steps.zip.outputs.zip_name }}" \
             --title "v$VERSION" \
             --notes "$NOTES" \
-            --fail-on-no-commits \
-            --generate-notes \
             --target main
 
-      # ── Publish to Chrome Web Store ───────────────────────────────────────
+  # ── Job 2: Publish to Chrome Web Store ───────────────────────────────────
+  publish:
+    name: Publish to Chrome Web Store
+    runs-on: ubuntu-latest
+    needs: release
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      # ── Download the zip built by the release job ─────────────────────────
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: extension-zip
+          path: dist
+
       - name: Upload to Chrome Web Store
         env:
           EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
@@ -141,7 +197,7 @@ jobs:
           AUTO_PUBLISH: 'true' # auto-submit to Chrome store for review after upload
         run: |
           set -e
-          ZIP_PATH="${{ env.zip_path }}"
+          ZIP_PATH="dist/${{ needs.release.outputs.zip_name }}"
 
           echo "▶ Getting OAuth access token..."
           TOKEN_RESPONSE=$(curl -s -X POST https://oauth2.googleapis.com/token \
@@ -149,7 +205,6 @@ jobs:
             -d "client_secret=${CLIENT_SECRET}" \
             -d "refresh_token=${REFRESH_TOKEN}" \
             -d "grant_type=refresh_token")
-          echo "Token response: $TOKEN_RESPONSE"
           ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>console.log(JSON.parse(d).access_token))")
 
           if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" = "null" ]; then
@@ -170,6 +225,7 @@ jobs:
 
           if [ "$UPLOAD_STATE" != "SUCCESS" ]; then
             echo "❌ Upload failed with state: $UPLOAD_STATE"
+            echo "ℹ️ If a previous version is still in review, wait for it to be approved then re-run the 'publish' job."
             exit 1
           fi
           echo "✅ Upload successful"
