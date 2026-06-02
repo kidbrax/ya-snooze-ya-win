@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- move Github release before uploading to Chrome Store
+
 ## [13.0.11] - 2026-06-02
 
 - added a release script to streamline the process
