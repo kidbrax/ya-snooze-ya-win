@@ -47,10 +47,19 @@ Manifest V3 extension built around a Service Worker background script.
 
 ```bash
 npm install
+```
+
+**Production build** (uses `public/manifest.json`):
+```bash
 npm run build
 ```
 
-Load unpacked on chrome browser
+**Development build** (uses `public/manifest.dev.json` — separate extension ID so it runs alongside the production extension):
+```bash
+npm run build:dev
+```
+
+Load the `build/` folder as an unpacked extension in Chrome via `chrome://extensions` → "Load unpacked".
 
 ## Release
 

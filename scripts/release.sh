@@ -53,7 +53,12 @@ esac
 NEW_VERSION="$MAJOR.$MINOR.$PATCH"
 echo "▶ Version: $CURRENT → $NEW_VERSION"
 
-# ── 5. Create the PR ──────────────────────────────────────────────────────────
+# ── 5. Push branch to remote ─────────────────────────────────────────────────
+echo "▶ Pushing branch to remote..."
+git push -u origin "$BRANCH"
+echo "✅ Branch pushed"
+
+# ── 6. Create the PR ──────────────────────────────────────────────────────────
 echo "▶ Creating PR..."
 PR_TITLE="v$NEW_VERSION"
 PR_BODY=$(printf "## What's changed\n\n%s\n\n---\n*Version bump: %s → %s (%s)*" \
@@ -68,6 +73,6 @@ PR_URL=$(gh pr create \
 
 echo "✅ PR created: $PR_URL"
 
-# ── 6. Open the PR in the browser ────────────────────────────────────────────
+# ── 7. Open the PR in the browser ────────────────────────────────────────────
 echo "▶ Opening PR in browser..."
 open "$PR_URL"
