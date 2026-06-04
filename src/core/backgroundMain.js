@@ -1,4 +1,3 @@
-// @flow
 /**
  * This script is executed only as a Chrome Extensions
  * Background Page - a page that opens in the background

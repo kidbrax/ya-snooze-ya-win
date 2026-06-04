@@ -1,16 +1,7 @@
-// @flow
 import moment from 'moment';
 import { getSettings } from '../../core/settings';
 
-export type WakeupTimeRange = {
-  title: string,
-  maxDate: Object,
-  dateFormat?: string,
-};
-
-export async function getWakeupTimeRanges(): Promise<
-  Array<WakeupTimeRange>
-> {
+export async function getWakeupTimeRanges() {
   const settings = await getSettings();
 
   return [
@@ -90,7 +81,7 @@ export async function getWakeupTimeRanges(): Promise<
   ];
 }
 
-function futureDay(day: number): moment {
+function futureDay(day) {
   const thisWeekDay = moment().day(day);
   const now = moment();
   return now.isBefore(thisWeekDay)

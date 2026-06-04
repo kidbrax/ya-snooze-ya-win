@@ -1,18 +1,9 @@
-// @flow
 import moment from 'moment';
 
 export const SNOOZE_TYPE_REPEATED = 'periodically';
 export const SNOOZE_TYPE_SPECIFIC_DATE = 'specific_date';
 
-export type SnoozeOption = {
-  id: string,
-  title: string,
-  tooltip: string,
-  when?: Date,
-  isProFeature?: boolean,
-};
-
-export default function calcSnoozeOptions(settings: Settings): Array<SnoozeOption> {
+export default function calcSnoozeOptions(settings) {
   const {
     workdayEnd,
     weekStartDay,
@@ -27,10 +18,10 @@ export default function calcSnoozeOptions(settings: Settings): Array<SnoozeOptio
   const isWeekend =
     moment().day() === weekEndDay || moment().day() === (weekEndDay + 1) % 7;
 
-  const roundDate = (m: any) => m.minutes(0).seconds(0).millisecond(0);
-  const dayStart = (m: any) => roundDate(m.hour(workdayStart));
+  const roundDate = (m) => m.minutes(0).seconds(0).millisecond(0);
+  const dayStart = (m) => roundDate(m.hour(workdayStart));
 
-  const resolveWhen = (opt: CustomSnoozeOption): ?Date => {
+  const resolveWhen = (opt) => {
     switch (opt.type) {
       case 'offset':
         return moment().add(opt.offsetMinutes ?? 60, 'minutes').toDate();
@@ -58,7 +49,7 @@ export default function calcSnoozeOptions(settings: Settings): Array<SnoozeOptio
     }
   };
 
-  const formatTooltip = (opt: CustomSnoozeOption, when: ?Date): string => {
+  const formatTooltip = (opt, when) => {
     if (!when) {
       if (opt.type === SNOOZE_TYPE_REPEATED) return 'Open this tab on a periodic basis';
       if (opt.type === SNOOZE_TYPE_SPECIFIC_DATE) return 'Select a specific date & time';

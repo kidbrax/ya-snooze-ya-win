@@ -1,4 +1,3 @@
-// @flow
 import React, { Fragment, useState } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
@@ -13,27 +12,10 @@ import {
 } from './periodOptions';
 import Button from './Button';
 
-type Props = {
-  visible: boolean,
-  onPeriodSelected: SnoozePeriod => void,
-};
-
-type PeriodType = 'daily' | 'weekly' | 'monthly' | 'yearly';
-
-type State = {
-  periodType: PeriodType,
-  selectedHour: number,
-  selectedMonth: number,
-  selectedDay: number,
-  selectedWeekdays: Array<boolean>,
-};
-
-
-
-const PeriodSelector = (props: Props): React.Node => {
+const PeriodSelector = (props) => {
   const { visible, onPeriodSelected } = props;
 
-  const [ periodType, setPeriodType ] = useState<PeriodType>('weekly');
+  const [ periodType, setPeriodType ] = useState('weekly');
   const [ selectedHour, setSelectedHour ] = useState(9); // Default to 9 AM
   const [ selectedMonth, setSelectedMonth ] = useState(moment().month());
   const [ selectedDay, setSelectedDay ] = useState(moment().date() - 1); // date() counts from 1, so subtract 1
@@ -42,7 +24,7 @@ const PeriodSelector = (props: Props): React.Node => {
   );
 
   const onSnoozeClicked = () => {
-    let snoozePeriod: ?SnoozePeriod;
+    let snoozePeriod;
 
     if (periodType === 'daily') {
       snoozePeriod = {
@@ -145,9 +127,7 @@ const PeriodSelector = (props: Props): React.Node => {
 
 export default PeriodSelector;
 
-function getSelectedWeekdaysIndexes(
-  selectedWeekdays: Array<boolean>
-) {
+function getSelectedWeekdaysIndexes(selectedWeekdays) {
   return selectedWeekdays
     .map((y, i) => (y ? i : -1))
     .filter(y => y >= 0);

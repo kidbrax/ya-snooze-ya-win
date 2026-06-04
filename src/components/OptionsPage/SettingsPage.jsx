@@ -1,5 +1,3 @@
-// @flow
-import type { Node } from 'react';
 import React, { useState, useEffect, Fragment } from 'react';
 import { styled as muiStyled } from '@mui/material/styles';
 import { Helmet } from 'react-helmet-async';
@@ -60,27 +58,15 @@ import {
 import { isProUser } from '../../core/license';
 import Button from '../SnoozePanel/Button';
 
-type ChromeCommand = {
-  description: string,
-  shortcut: string,
-};
-
-type Props = {};
-
-type StyledProps = {
-  locked?: boolean,
-  small?: boolean,
-};
-
 // MUI v5 styled components
 const StyledList = muiStyled(List)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-const SettingsPage = (props: Props): Node => {
-  const [settingsState, setSettingsState] = useState < Settings > (DEFAULT_SETTINGS);
-  const [commandsState, setCommandsState] = useState < Array < ChromeCommand >> ([]);
-  const isPro: boolean = true; // useState(true);
+const SettingsPage = (props) => {
+  const [settingsState, setSettingsState] = useState(DEFAULT_SETTINGS);
+  const [commandsState, setCommandsState] = useState([]);
+  const isPro = true; // useState(true);
 
   useEffect(() => {
     loadSettings();
@@ -94,10 +80,8 @@ const SettingsPage = (props: Props): Node => {
   }, []);
 
   const loadSettings = async () => {
-    const settings: Settings = await getSettings();
+    const settings = await getSettings();
     // shortcut settings are loaded from chrome api
-    // TODO $FlowFixMe
-    // $FlowFixMe
     const commands = await chrome.commands.getAll();
     const isPro = true; // await isProUser();
 
@@ -106,8 +90,8 @@ const SettingsPage = (props: Props): Node => {
     // setIsPro(isProValue);  // make everyone a pro user for now
   };
 
-  const bindSettings = (stateKey: $Keys<Settings>, valueProp: string = 'value') => {
-    const currentSettings: Settings = settingsState;
+  const bindSettings = (stateKey, valueProp = 'value') => {
+    const currentSettings = settingsState;
     const value = currentSettings[stateKey];
 
     if (value === undefined) {
@@ -118,12 +102,10 @@ const SettingsPage = (props: Props): Node => {
 
     return {
       [valueProp]: value,
-      onChange: (eventOrValue: Event | any) => {
+      onChange: (eventOrValue) => {
         const nextSettings = { ...currentSettings };
         nextSettings[stateKey] = eventOrValue.target
-          //$FlowFixMe
           ? eventOrValue.target[valueProp]
-          // $FlowFixMe
           : eventOrValue;
 
         saveSettings(nextSettings);
@@ -132,15 +114,7 @@ const SettingsPage = (props: Props): Node => {
     };
   };
 
-  const renderGeneralSetting = (options: {
-    icon?: Node,
-    title: Node,
-    description?: string,
-    component: Node,
-    locked?: boolean,
-    href?: string,
-    key?: string,
-  }) => {
+  const renderGeneralSetting = (options) => {
     return (
       <ListItem
         key={options.key}
@@ -164,12 +138,7 @@ const SettingsPage = (props: Props): Node => {
     );
   };
 
-  const renderCheckboxSetting = (options: {
-    icon: Node,
-    title: Node,
-    description?: string,
-    stateKey: string,
-  }) => {
+  const renderCheckboxSetting = (options) => {
     const { stateKey, ...renderProps } = options;
     return renderGeneralSetting({
       ...renderProps,
@@ -177,13 +146,7 @@ const SettingsPage = (props: Props): Node => {
     });
   };
 
-  const renderDropdownSetting = (options: {
-    icon?: Node,
-    title: Node,
-    description?: string,
-    stateKey: string,
-    options: Array<{ label: string, value: any }>,
-  }) => {
+  const renderDropdownSetting = (options) => {
     return renderGeneralSetting({
       ...options,
       component: (
@@ -195,12 +158,7 @@ const SettingsPage = (props: Props): Node => {
     });
   };
 
-  const renderShortcutSetting = (options: {
-    key: string,
-    title: string,
-    description?: string,
-    shortcut: string,
-  }) => {
+  const renderShortcutSetting = (options) => {
     return renderGeneralSetting({
       ...options,
       key: options.key,
@@ -215,12 +173,7 @@ const SettingsPage = (props: Props): Node => {
     });
   };
 
-  const renderButtonSetting = (options: {
-    icon: Node,
-    title: string,
-    description?: string,
-    href: string,
-  }) => {
+  const renderButtonSetting = (options) => {
     return renderGeneralSetting({
       ...options,
       component: <div />,
@@ -569,7 +522,7 @@ const LogInButton = styled(Button).attrs({
 `;
 
 const LockedContent = styled.div`
-  ${(props: StyledProps) =>
+  ${(props) =>
     props.locked &&
     css`
       pointer-events: none;
@@ -591,7 +544,7 @@ const SettingsSelect = styled(Select).attrs({
   line-height: inherit;
   outline: none;
   padding-left: 5px;
-  width: ${(props: StyledProps) => (props.small ? 94 : 200)}px;
+  width: ${(props) => (props.small ? 94 : 200)}px;
   height: 40px;
   margin-right: 12px;
   :hover {

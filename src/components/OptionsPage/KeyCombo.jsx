@@ -1,9 +1,8 @@
-// @flow
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import Button from '../SnoozePanel/Button';
 
-export default (props: { combo: string, onClick: () => void }) : React.Node => (
+export default (props) => (
   <Root onClick={props.onClick}>
     {props.combo
       ? splitKeys(props.combo).map((key, index) => (
@@ -16,7 +15,7 @@ export default (props: { combo: string, onClick: () => void }) : React.Node => (
   </Root>
 );
 
-function splitKeys(keyCombo: string) {
+function splitKeys(keyCombo) {
   // Windows and Mac Chrome act differently
   // Windows retuns - 'Alt+S'
   // Mac return - '⌥S'

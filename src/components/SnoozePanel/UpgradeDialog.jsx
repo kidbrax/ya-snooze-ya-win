@@ -1,4 +1,3 @@
-// @flow
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import SnoozeModal from './SnoozeModal';
@@ -9,15 +8,10 @@ import { FREE_WEEKLY_SNOOZE_COUNT } from '../../core/license';
 
 import starImage from './images/super_star.svg';
 
-type Props = {
-  visible: boolean,
-  onDismiss: void => void,
-};
-
 // Delay the user 7 seconds until they can continue without paying
 const CONTINUE_DELAY = 6000;
 
-const UpgradeDialog = (props: Props): React.Node => {
+const UpgradeDialog = (props) => {
   const { visible, onDismiss } = props;
   const [canContinue, setCanContinue] = useState(false);
 

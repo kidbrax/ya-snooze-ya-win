@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import NativeSelect from '@mui/material/NativeSelect';
 import { styled as muiStyled } from '@mui/material/styles';
@@ -9,12 +8,7 @@ const StyledNativeSelect = muiStyled(NativeSelect)(({ theme }) => ({
   lineHeight: 'initial',
 }));
 
-export default (props: {
-  component: any, // ReactElement
-  value: any,
-  onChange: any => void,
-  options: Array<{ label: string, value: string }>,
-}): React.Node => {
+export default (props) => {
   const SelectComp = props.component || StyledNativeSelect;
 
   return (

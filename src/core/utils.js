@@ -1,4 +1,3 @@
-// @flow
 
 import moment from 'moment';
 import { APP_BASE_PATH, BACKGROUND_PATH } from '../paths';
@@ -27,10 +26,7 @@ export function isMacOS() {
 /*
     Create tabs and call callback() when they are all created.
 */
-export function createTabs(
-  tabInfos: Array<SnoozedTab>,
-  makeActive: boolean
-): Promise<{ created: Array<ChromeTab>, failedTabs: Array<SnoozedTab>, customHandled: Array<SnoozedTab> }> {
+export function createTabs(tabInfos, makeActive) {
   // Generate a unique call ID to track this specific invocation
   const callId = `CT-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
 
@@ -69,7 +65,7 @@ export function createTabs(
 }
 
 // Attach affiliate tracking ID for amazon product links
-function attachAffiliationTag(url: string) {
+function attachAffiliationTag(url) {
   if (!url.includes('amazon.')) {
     return url; // as is
   }
@@ -81,11 +77,7 @@ function attachAffiliationTag(url: string) {
   return URL.format(parsedUrl);
 }
 
-export async function createCenteredWindow(
-  path: string,
-  width: number,
-  height: number
-) {
+export async function createCenteredWindow(path, width, height) {
   const currentWindow = await chrome.windows.getCurrent();
   const screenWidth = currentWindow.width || 1920;
   const screenHeight = currentWindow.height || 1080;
@@ -106,7 +98,7 @@ export async function createCenteredWindow(
   chrome.windows.update(newWindow.id, { focused: true });
 }
 
-export async function createTab(path: string) {
+export async function createTab(path) {
   if (!path.startsWith('http')) {
     path = APP_BASE_PATH + path;
   }
@@ -123,10 +115,7 @@ export async function createTab(path: string) {
   Show desktop notification for the given tabs,
   and make the jumpToTab active, if notification is clicked.
 */
-export async function notifyUserAboutNewTabs(
-  tabs: Array<SnoozedTab>,
-  jumpToTab: ChromeTab
-) {
+export async function notifyUserAboutNewTabs(tabs, jumpToTab) {
   const message = tabs.map(tab => tab.title).join('\n');
 
   const title =
@@ -180,7 +169,7 @@ export async function notifyUserAboutNewTabs(
   });
 }
 
-export function addMinutes(date: Date, minutes: number) {
+export function addMinutes(date, minutes) {
   return new Date(date.getTime() + minutes * 60000);
 }
 
@@ -192,7 +181,7 @@ export async function getActiveTab() {
   return tabs[0];
 }
 
-export async function getSelectedTabs(): Promise<Array<ChromeTab>> {
+export async function getSelectedTabs() {
   // highlighted = selected in Chrome (includes active tab)
   const tabs = await chrome.tabs.query({
     highlighted: true,
@@ -209,9 +198,7 @@ export async function getSelectedTabs(): Promise<Array<ChromeTab>> {
         time: 23 // 11pm
     }
 */
-export function calcNextOccurrenceForPeriod(
-  period: SnoozePeriod
-): Date {
+export function calcNextOccurrenceForPeriod(period) {
   let occurrences = [];
 
   if (period.type === 'daily') {
@@ -272,7 +259,7 @@ export function calcNextOccurrenceForPeriod(
   return nextFutureOccurrence.toDate();
 }
 
-function momentWithHour(aMoment: any, hour: number) {
+function momentWithHour(aMoment, hour) {
   const h = Math.floor(hour);
   const m = Math.floor((hour - h) * 60); // 0.5h--> 30m
 
@@ -283,15 +270,15 @@ function momentWithHour(aMoment: any, hour: number) {
     .milliseconds(0);
 }
 
-export const compareTabs = (tab1: SnoozedTab, tab2: SnoozedTab) =>
+export const compareTabs = (tab1, tab2) =>
   tab1.when === tab2.when
     ? tab1.sleepStart - tab2.sleepStart
     : tab1.when - tab2.when;
 
-export const areTabsEqual = (tab1: SnoozedTab, tab2: SnoozedTab) =>
+export const areTabsEqual = (tab1, tab2) =>
   tab1.url === tab2.url && tab1.when === tab2.when;
 
-export function ordinalNum(n: number) {
+export function ordinalNum(n) {
   return moment.localeData().ordinal(n);
 }
 
@@ -299,10 +286,7 @@ export function ordinalNum(n: number) {
  * Returns how many snooze events occured consecutively, with no more
  * than 10s between them.
  */
-export function countConsecutiveSnoozes(
-  snoozedTabs: Array<SnoozedTab>,
-  consecutiveSnoozeTimeout: number
-): number {
+export function countConsecutiveSnoozes(snoozedTabs, consecutiveSnoozeTimeout) {
   // Sort tabs by sleep start. Most recently snoozed first.
   snoozedTabs.sort((tabA, tabB) => tabB.sleepStart - tabA.sleepStart);
 
@@ -319,18 +303,14 @@ export function countConsecutiveSnoozes(
   return snoozedTabs.length;
 }
 
-export function getRecentlySnoozedTab(
-  snoozedTabs: Array<SnoozedTab>
-): SnoozedTab {
+export function getRecentlySnoozedTab(snoozedTabs) {
   // Sort tabs by sleep start. Most recently snoozed first.
   snoozedTabs.sort((tabA, tabB) => tabB.sleepStart - tabA.sleepStart);
 
   return snoozedTabs[0];
 }
 
-export function getFirstTabToWakeup(
-  snoozedTabs: Array<SnoozedTab>
-): SnoozedTab {
+export function getFirstTabToWakeup(snoozedTabs) {
   // Sort tabs by sleep start. Most recently snoozed first.
   snoozedTabs.sort((tabA, tabB) => tabA.when - tabB.when);
 
@@ -370,7 +350,7 @@ export function getFirstTabToWakeup(
 //   });
 // }
 
-export async function imageUrlToBase64(url: string): Promise<string> {
+export async function imageUrlToBase64(url) {
   // if already base64 encoded, just return url.
   if (url.startsWith('data:')) {
     return url;

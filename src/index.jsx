@@ -1,4 +1,3 @@
-// @flow
 
 import './setupChromeMock.js'; // Setup Chrome Extension environment
 import React from 'react';

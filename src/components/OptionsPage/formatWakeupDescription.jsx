@@ -1,14 +1,12 @@
-// @flow
-import type { WakeupTimeRange } from './wakeupTimeRanges';
 import moment from 'moment';
 import { ordinalNum } from '../../core/utils';
 import React, { Fragment } from 'react';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 export function formatWakeupDescription(
-  timeRange: WakeupTimeRange,
-  tab: SnoozedTab
-): React.Node {
+  timeRange,
+  tab
+) {
   const wakeupDateText = formatWakeupTime(timeRange, tab);
 
   return tab.period ? (
@@ -24,8 +22,8 @@ export function formatWakeupDescription(
 }
 
 function formatWakeupTime(
-  timeRange: WakeupTimeRange,
-  tab: SnoozedTab
+  timeRange,
+  tab
 ) {
   const date = moment(tab.when);
   const { dateFormat } = timeRange;
@@ -38,7 +36,7 @@ function formatWakeupTime(
   // return date.format('MMM D');
 }
 
-function formatWakeupPeriod(tab: SnoozedTab) {
+function formatWakeupPeriod(tab) {
   if (!tab.period) {
     throw new Error(
       'formatWakeupPeriod was called with a non-periodic tab'

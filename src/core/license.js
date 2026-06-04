@@ -1,4 +1,3 @@
-// @flow
 import { getSettings, saveSettings } from './settings';
 import moment from 'moment';
 
@@ -35,7 +34,7 @@ export async function isProUser() {
 //   return true;
 // }
 
-export async function isInPaywallTest(): Promise<boolean> {
+export async function isInPaywallTest() {
   // const { installDate } = await getSettings();
 
   // REMOVED FAKE PAYWALL :( 20 May...
@@ -45,7 +44,7 @@ export async function isInPaywallTest(): Promise<boolean> {
   // return moment(installDate) > moment('20190301', 'YYYYMMDD');
 }
 
-export async function incrementWeeklyUsage(): Promise<void> {
+export async function incrementWeeklyUsage() {
   const { weeklyUsage } = await getSettings();
   let weeklyUsageCount = weeklyUsage.usageCount;
 
@@ -63,7 +62,7 @@ export async function incrementWeeklyUsage(): Promise<void> {
   });
 }
 
-export async function isOverFreeWeeklyQuota(): Promise<boolean> {
+export async function isOverFreeWeeklyQuota() {
   const { weeklyUsage } = await getSettings();
   let weeklyUsageCount = weeklyUsage.usageCount;
   const isInPaywallTestResult = await isInPaywallTest();

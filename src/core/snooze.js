@@ -1,4 +1,3 @@
-// @flow
 import { addSnoozedTabs, getSnoozedTabs } from './storage';
 import {
   getActiveTab,
@@ -13,11 +12,7 @@ import { scheduleWakeupAlarm } from './wakeup';
 import { FIRST_SNOOZE_PATH } from '../paths';
 import { incrementWeeklyUsage } from './license';
 
-export async function snoozeTab(
-  tab: ChromeTab,
-  config: SnoozeConfig,
-  groupId?: string
-) {
+export async function snoozeTab(tab, config, groupId) {
   let { wakeupTime, period, type, closeTab = true } = config;
 
   if (period) {
@@ -37,7 +32,7 @@ export async function snoozeTab(
   );
 
   // The info to store about this tab
-  const snoozedTab: SnoozedTab = {
+  const snoozedTab = {
     url: tab.url,
     title: tab.title,
     favicon: tab.favIconUrl,
@@ -83,7 +78,7 @@ export async function snoozeTab(
   //   addTabToHistory(snoozedTabInfo, onAddedToHistory);
 }
 
-export async function snoozeActiveTab(config: SnoozeConfig) {
+export async function snoozeActiveTab(config) {
   const activeTab = await getActiveTab();
   return snoozeTab(activeTab, config);
 }
@@ -92,10 +87,7 @@ export async function snoozeActiveTab(config: SnoozeConfig) {
  * Snooze multiple tabs together as a group.
  * All tabs share the same groupId so they can be restored together.
  */
-export async function snoozeTabs(
-  tabs: Array<ChromeTab>,
-  config: SnoozeConfig
-) {
+export async function snoozeTabs(tabs, config) {
   const groupId = `group_${Date.now()}`;
   for (const tab of tabs) {
     // closeTab is handled by the popup after confirmation — don't close here
@@ -125,7 +117,7 @@ export async function repeatLastSnooze() {
   });
 }
 
-export async function resnoozePeriodicTab(snoozedTab: SnoozedTab) {
+export async function resnoozePeriodicTab(snoozedTab) {
   if (!snoozedTab.period) {
     throw new Error(
       'resnoozePeriodicTab received a tab without a period'

@@ -1,4 +1,3 @@
-// @flow
 
 // Message action types for chrome.runtime.sendMessage communication.
 // Used by popup/options → service worker, and SW → offscreen document.

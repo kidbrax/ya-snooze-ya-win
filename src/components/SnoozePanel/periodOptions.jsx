@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
@@ -19,16 +18,11 @@ const MONTHS = indexLabels(moment.monthsShort());
 const DAYS = indexLabels(ordinalNumbers(31));
 const HOURS = indexLabels(getHoursInDay(), 0.5);
 
-type OptionsProps = {
-  value: any,
-  onChange: any => void,
-};
-
-export const PeriodOptions = (props: OptionsProps) => (
+export const PeriodOptions = (props) => (
   <Select options={PERIOD_TYPES} autoFocus {...props} />
 );
 
-export const WeekdayOptions = ({ value, onChange }: OptionsProps) => (
+export const WeekdayOptions = ({ value, onChange }) => (
   <Row>
     {WEEKDAYS.map((weekday, index) => (
       <WeekdayOption key={index}>
@@ -51,18 +45,18 @@ export const WeekdayOptions = ({ value, onChange }: OptionsProps) => (
   </Row>
 );
 
-export const DayOptions = (props: OptionsProps) => (
+export const DayOptions = (props) => (
   <Select options={DAYS} {...props} />
 );
 
-export const HourOptions = (props: OptionsProps) => (
+export const HourOptions = (props) => (
   <Select options={HOURS} {...props} />
 );
 
 export const DateOptions = ({
   value: { day, month },
   onChange,
-}: OptionsProps) => (
+}) => (
   <Row>
     <Select
       options={MONTHS}
@@ -112,7 +106,7 @@ function getHoursInDay() {
   return hours;
 }
 
-function ordinalNumbers(n: number) {
+function ordinalNumbers(n) {
   const nums = [];
   for (let i = 1; i <= n; i++) {
     nums.push(ordinalNum(i));
