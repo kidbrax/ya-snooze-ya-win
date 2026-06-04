@@ -1,13 +1,10 @@
-// @flow
 import React, { useRef, useState, useEffect } from 'react';
-
-type Props = {};
 
 const TOOLTIP_SHOW_TIMEOUT = 600;
 const TOOLTIP_HIDE_TIMEOUT = 100;
 
-export default (WrappedComponent: any) => {
-  const TooltipHelper = (props: Props) => {
+export default (WrappedComponent) => {
+  const TooltipHelper = (props) => {
     // counts down until tooltip appears/hides
     const tooltipShowTimeout = useRef(null);
     const tooltipHideTimeout = useRef(null);
@@ -24,7 +21,7 @@ export default (WrappedComponent: any) => {
       };
     }, []);
 
-    const onTooltipAreaMouseEnter = (tooltipText: string) => {
+    const onTooltipAreaMouseEnter = (tooltipText) => {
       setTooltipTextState(tooltipText);
 
       if (tooltipHideTimeout.current) {

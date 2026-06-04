@@ -13,7 +13,7 @@ export default [
         projectService: true,
         requireConfigFile: false,
         babelOptions: {
-          presets: ["@babel/preset-flow", "@babel/preset-react"],
+          presets: ["@babel/preset-react"],
         },
         ecmaFeatures: {
           jsx: true,

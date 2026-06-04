@@ -1,7 +1,3 @@
-// @flow
-import type { SnoozeOption } from './calcSnoozeOptions';
-import type { Props as SnoozeButtonProps } from './SnoozeButton';
-
 import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import styled from 'styled-components';
 // import bugsnag from '../../bugsnag';
@@ -36,18 +32,7 @@ import {
 const AsyncPeriodSelector = lazy(() => import('./PeriodSelector'));
 const AsyncDateSelector = lazy(() => import('./DateSelector'));
 
-type Props = {
-  hideFooter: boolean,
-  // Props passed by TooltipHelper
-  tooltipVisible: boolean,
-  tooltipText: ?string,
-  preventTooltip: () => void,
-  onTooltipAreaMouseEnter: string => void,
-  onTooltipAreaMouseLeave: () => void,
-};
-
-
-export function SnoozePanel(props: Props): React.Node {
+export function SnoozePanel(props) {
   const { hideFooter, tooltipVisible, tooltipText, preventTooltip, onTooltipAreaMouseEnter, onTooltipAreaMouseLeave } = props;
 
   const [selectedSnoozeOptionId, setSelectedSnoozeOptionId] = useState(null);
@@ -91,7 +76,7 @@ export function SnoozePanel(props: Props): React.Node {
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, []);
-  const onSnoozeButtonClicked = useCallback((event: Event, snoozeOption: SnoozeOption) => {
+  const onSnoozeButtonClicked = useCallback((event, snoozeOption) => {
     if (selectedSnoozeOptionId != null) {
       // ignore additional selections after first one
       return;
@@ -109,7 +94,7 @@ export function SnoozePanel(props: Props): React.Node {
       delayedSnooze(selectedTabs, {
         type: snoozeOption.id,
         wakeupTime,
-        closeTab: !(event: any).altKey,
+        closeTab: !(event).altKey,
       });
     } else {
       // either period or date selector opens as dialog
@@ -118,7 +103,7 @@ export function SnoozePanel(props: Props): React.Node {
   }, [selectedSnoozeOptionId, setSelectedSnoozeOptionId, preventTooltip, setSelectorDialogOpen, selectedTabs]);
 
 
-  const onKeyPress = useCallback((event: KeyboardEvent) => {
+  const onKeyPress = useCallback((event) => {
     if (isOverFreePlanLimit) {
       // ignore shortcuts when Upgrade dialog is visible
       return;
@@ -167,7 +152,7 @@ export function SnoozePanel(props: Props): React.Node {
   }, [focusedButtonIndex, snoozeOptions, isOverFreePlanLimit, onSnoozeButtonClicked]);
 
 
-  const onSnoozeSpecificDateSelected = useCallback((date: Date) => {
+  const onSnoozeSpecificDateSelected = useCallback((date) => {
     delayedSnooze(selectedTabs, {
       type: selectedSnoozeOptionId || '',
       wakeupTime: date.getTime(),
@@ -175,7 +160,7 @@ export function SnoozePanel(props: Props): React.Node {
     });
   }, [selectedSnoozeOptionId, selectedTabs]);
 
-  const onSnoozePeriodSelected = useCallback((period: SnoozePeriod) => {
+  const onSnoozePeriodSelected = useCallback((period) => {
     if (!isProUser) {
       return;
     }
@@ -186,15 +171,14 @@ export function SnoozePanel(props: Props): React.Node {
     });
   }, [selectedSnoozeOptionId, isProUser, selectedTabs]);
 
-  // decide whether or not to use callback here...
-  const getSnoozeButtons = (): Array<SnoozeButtonProps> => {
+  const getSnoozeButtons = () => {
     return snoozeOptions.map(
-      (snoozeOpt: SnoozeOption, index) => ({
+      (snoozeOpt, index) => ({
         ...snoozeOpt,
         proBadge: !isProUser && Boolean(snoozeOpt.isProFeature),
         focused: focusedButtonIndex === index,
         pressed: selectedSnoozeOptionId === snoozeOpt.id,
-        onClick: (ev: Event) => onSnoozeButtonClicked(ev, snoozeOpt),
+        onClick: (ev) => onSnoozeButtonClicked(ev, snoozeOpt),
         onMouseEnter: () => onTooltipAreaMouseEnter(snoozeOpt.tooltip),
         onMouseLeave: () => onTooltipAreaMouseLeave(),
       })
@@ -262,7 +246,7 @@ export function SnoozePanel(props: Props): React.Node {
   );
 }
 
-const SNOOZE_SHORTCUT_KEYS: { [any]: number } = {
+const SNOOZE_SHORTCUT_KEYS = {
   L: 0,
   E: 1,
   T: 2,
@@ -278,7 +262,7 @@ const SNOOZE_SHORTCUT_KEYS: { [any]: number } = {
 const CONSECUTIVE_SNOOZE_TIMEOUT = 20 * 1000; //10s
 
 // give time for animation & sound to finish before snoozing (closing) tab
-async function delayedSnooze(tabs: Array<ChromeTab>, config: SnoozeConfig) {
+async function delayedSnooze(tabs, config) {
   const isMulti = tabs.length > 1;
 
   const snoozePromise = isMulti
@@ -318,9 +302,9 @@ async function delayedSnooze(tabs: Array<ChromeTab>, config: SnoozeConfig) {
 }
 
 
-let cachedSnoozeAudio: ?HTMLAudioElement = null;
+let cachedSnoozeAudio = null;
 
-function getSnoozeAudio(): HTMLAudioElement {
+function getSnoozeAudio() {
   if (!cachedSnoozeAudio) {
     cachedSnoozeAudio = loadAudio(SOUND_SNOOZE);
   }

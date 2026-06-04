@@ -1,4 +1,3 @@
-// @flow
 
 // import { addTrackingIdToUrl } from './core/analytics';
 

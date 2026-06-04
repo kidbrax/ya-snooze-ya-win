@@ -39,14 +39,10 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
-    "check-whitespace": "bash scripts/check-trailing-whitespace.sh",
-    "flow": "flow",
-    "flow:init": "flow init",
-    "flow:check": "flow check"
+    "check-whitespace": "bash scripts/check-trailing-whitespace.sh"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.28.0",
-    "@babel/preset-flow": "7.27.1",
     "@babel/preset-react": "^7.28.5",
     "@crxjs/vite-plugin": "^2.0.3",
     "@testing-library/jest-dom": "^6.6.3",
@@ -54,12 +50,8 @@
     "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^4.6.0",
     "@vitest/coverage-v8": "^2.1.9",
-    "esbuild-plugin-flow": "^0.3.2",
     "eslint": "^9.0.0",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "flow-bin": "^0.275.0",
-    "flow-interfaces-chrome": "^0.7.0",
-    "flow-typed": "^4.1.1",
     "jsdom": "^26.1.0",
     "vite": "^7.0.4",
     "vite-plugin-svgr": "^4.3.0",

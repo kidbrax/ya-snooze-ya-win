@@ -1,4 +1,3 @@
-// @flow
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import {
@@ -18,7 +17,7 @@ const CHANGELOG_ITEMS = [
   'Fixed a bug where snoozed tabs could re-open repeatedly',
 ];
 
-export default function WhatsNewDialog(): React.Node {
+export default function WhatsNewDialog() {
   return (
     <TSDialog
       title={`What's New in Ya Snooze, Ya Win ${APP_VERSION}`}

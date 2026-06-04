@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { crx } from '@crxjs/vite-plugin'
 import { resolve } from 'path'
-import flow from 'esbuild-plugin-flow'
 import manifest from './public/manifest.json'
 import devManifest from './public/manifest.dev.json'
 
@@ -13,7 +12,7 @@ export default defineConfig({
     react({
       babel: {
         presets: [
-          ['@babel/preset-flow', { all: true }]
+          ['@babel/preset-react', {}]
         ]
       }
     }),
@@ -41,7 +40,7 @@ export default defineConfig({
         '.js': 'jsx',
         '.jsx': 'jsx'
       },
-      plugins: [flow(/\.(js|jsx)$/, true)]
+      plugins: []
     }
   },
 

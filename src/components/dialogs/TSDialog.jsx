@@ -1,6 +1,3 @@
-// @flow
-
-import type { Node } from 'react';
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet-async';
@@ -8,10 +5,6 @@ import Fade from '@mui/material/Fade';
 import Button from '../SnoozePanel/Button';
 
 import logoImage from './images/logo.svg';
-
-type StyledProps = {
-  noPadding?: boolean,
-};
 
 export default function TSDialog({
   image,
@@ -21,15 +14,7 @@ export default function TSDialog({
   closeBtnText,
   children,
   noPadding
-}: {
-  image: string,
-  title?: string,
-  headline: string | Node,
-  subheader: string | Node,
-  closeBtnText?: ?string,
-  children: Node,
-  noPadding?: boolean
-}): React.Node {
+}) {
   return (
     <Fragment>
       <Helmet>
@@ -69,7 +54,7 @@ const Root = styled.div`
 `;
 
 const Content = styled.div`
-  padding: ${(props: StyledProps) => (props.noPadding ? 0 : PADDING)}px;
+  padding: ${(props) => (props.noPadding ? 0 : PADDING)}px;
   padding-top: 60px;
 
   display: flex;
@@ -108,8 +93,6 @@ const Subheader = styled.div`
 
 const NoThanksButton = styled(Button).attrs(props => ({
   color: '#fff',
-  // TODO $FlowFixMe
-  // $FlowFixMe
   onClick: () => window.close(),
 }))`
   margin-top: 20px;

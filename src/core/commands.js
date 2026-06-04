@@ -1,4 +1,3 @@
-// @flow
 
 export const COMMAND_SNOOZE_ACTIVE_TAB = '_execute_browser_action';
 export const COMMAND_REPEAT_LAST_SNOOZE = 'repeat_last_snooze';

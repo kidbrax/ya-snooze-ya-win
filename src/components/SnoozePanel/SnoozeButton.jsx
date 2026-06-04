@@ -1,46 +1,10 @@
-// @flow
 import React from 'react';
-import type { ComponentType } from 'react';
 import styled, { css, withTheme } from 'styled-components';
 import ProCornerRibbon from './ProCornerRibbon';
 
-// Theme type definition
-type Theme = {
-  primary: string,
-  snoozePanel: {
-    bgColor: string,
-    hoverColor: string,
-    buttonTextColor: string,
-    whiteIcons: boolean,
-  },
-};
-
-type StyledProps = {
-  theme: Theme,
-  focused?: boolean,
-  pressed?: boolean,
-};
-
-export type Props = {
-  id: string,
-  title: string,
-  icon: string,
-  activeIcon: string,
-  tooltip: string,
-  focused: boolean,
-  pressed: boolean,
-  proBadge: boolean,
-  when?: Date,
-  onClick: Event => void,
-  onMouseEnter: () => void,
-  onMouseLeave: () => void,
-  // passed by withTheme:
-  theme?: Theme,
-};
-
 const SNOOZE_CLICK_EFFECT_TIME = 400;
 
-const SnoozeButton: ComponentType<Props> = (props: Props): React.Node => {
+const SnoozeButton = (props) => {
   const {
     title,
     tooltip,
@@ -71,7 +35,7 @@ const SnoozeButton: ComponentType<Props> = (props: Props): React.Node => {
   );
 }
 
-export default (withTheme(SnoozeButton): ComponentType<Props>);
+export default withTheme(SnoozeButton);
 
 const Button = styled.button`
   display: flex;
@@ -88,7 +52,7 @@ const Button = styled.button`
   border: none;
   cursor: pointer;
   outline: inherit;
-  background-color: ${(props: StyledProps) => props.theme.snoozePanel.bgColor};
+  background-color: ${(props) => props.theme.snoozePanel.bgColor};
   transition: background-color 0.1s;
 
   & * {
@@ -96,16 +60,16 @@ const Button = styled.button`
   }
 
   :hover {
-    background-color: ${(props: StyledProps) => props.theme.snoozePanel.hoverColor};
+    background-color: ${(props) => props.theme.snoozePanel.hoverColor};
   }
 
-  ${(props: StyledProps) =>
+  ${(props) =>
     props.$focused &&
     css`
       background-color: ${props.theme.snoozePanel.hoverColor};
     `}
 
-  ${(props: StyledProps) =>
+  ${(props) =>
     props.$pressed &&
     css`
       transition: background-color ${SNOOZE_CLICK_EFFECT_TIME}ms;
@@ -115,11 +79,11 @@ const Button = styled.button`
 
 const Title = styled.div`
   font-size: 15px;
-  color: ${(props: StyledProps) => props.theme.snoozePanel.buttonTextColor};
+  color: ${(props) => props.theme.snoozePanel.buttonTextColor};
   font-weight: 500;
   transition: color ${SNOOZE_CLICK_EFFECT_TIME}ms;
 
-  ${(props: StyledProps) =>
+  ${(props) =>
     props.$pressed &&
     css`
       color: #fff;
@@ -130,10 +94,10 @@ const TimeLabel = styled.div`
   margin-left: 8px;
   font-size: 13px;
   opacity: 0.6;
-  color: ${(props: StyledProps) => props.theme.snoozePanel.buttonTextColor};
+  color: ${(props) => props.theme.snoozePanel.buttonTextColor};
   transition: color ${SNOOZE_CLICK_EFFECT_TIME}ms;
 
-  ${(props: StyledProps) =>
+  ${(props) =>
     props.$pressed &&
     css`
       color: #fff;

@@ -1,4 +1,3 @@
-// @flow
 import React, { Suspense } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import SnoozePanel from './components/SnoozePanel';

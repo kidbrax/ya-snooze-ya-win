@@ -1,5 +1,3 @@
-// @flow
-import type { Node } from 'react';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import List from '@mui/material/List';
@@ -34,29 +32,24 @@ const OPTION_TYPES = [
   { value: 'specific_date', label: 'Pick a Date' },
 ];
 
-const EMPTY_OPTION: CustomSnoozeOption = {
+const EMPTY_OPTION = {
   id: '',
   label: '',
   type: 'offset',
   offsetMinutes: 60,
 };
 
-type Props = {
-  options: Array<CustomSnoozeOption>,
-  onChange: (Array<CustomSnoozeOption>) => void,
-};
-
-export default function SnoozeOptionsEditor({ options, onChange }: Props): Node {
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [draft, setDraft] = useState<CustomSnoozeOption>(EMPTY_OPTION);
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
+export default function SnoozeOptionsEditor({ options, onChange }) {
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [draft, setDraft] = useState(EMPTY_OPTION);
+  const [dragIndex, setDragIndex] = useState(null);
 
   const openAdd = () => {
     setDraft({ ...EMPTY_OPTION, id: `custom_${Date.now()}` });
     setEditingIndex(-1); // -1 = new
   };
 
-  const openEdit = (index: number) => {
+  const openEdit = (index) => {
     setDraft({ ...options[index] });
     setEditingIndex(index);
   };
@@ -75,14 +68,14 @@ export default function SnoozeOptionsEditor({ options, onChange }: Props): Node 
     closeDialog();
   };
 
-  const deleteOption = (index: number) => {
+  const deleteOption = (index) => {
     const next = options.filter((_, i) => i !== index);
     onChange(next);
   };
 
   // drag-to-reorder
-  const onDragStart = (index: number) => setDragIndex(index);
-  const onDragOver = (e: any, index: number) => {
+  const onDragStart = (index) => setDragIndex(index);
+  const onDragOver = (e, index) => {
     e.preventDefault();
     if (dragIndex == null || dragIndex === index) return;
     const next = [...options];
@@ -149,7 +142,7 @@ export default function SnoozeOptionsEditor({ options, onChange }: Props): Node 
             <MuiSelect
               value={draft.type}
               label="Type"
-              onChange={e => setDraft({ ...draft, type: (e.target.value: any), offsetMinutes: 60 })}
+              onChange={e => setDraft({ ...draft, type: e.target.value, offsetMinutes: 60 })}
             >
               {OPTION_TYPES.map(t => (
                 <MenuItem key={t.value} value={t.value}>{t.label}</MenuItem>
@@ -179,7 +172,7 @@ export default function SnoozeOptionsEditor({ options, onChange }: Props): Node 
   );
 }
 
-function describeType(opt: CustomSnoozeOption): string {
+function describeType(opt) {
   if (opt.type === 'offset') {
     const h = (opt.offsetMinutes ?? 60) / 60;
     return `${h} hour${h !== 1 ? 's' : ''} from now`;

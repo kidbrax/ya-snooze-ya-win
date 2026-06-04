@@ -1,4 +1,3 @@
-// @flow
 /**
  * Right-click context menu on tabs for quick snoozing.
  * Registers a "Snooze tab" parent menu with snooze option submenus.
@@ -15,7 +14,7 @@ const SKIPPED_TYPES = ['periodically', 'specific_date'];
  * Build or rebuild all context menu items based on current settings.
  * Called on install/update and when settings change.
  */
-export async function rebuildContextMenus(): Promise<void> {
+export async function rebuildContextMenus() {
   await chrome.contextMenus.removeAll();
 
   const settings = await getSettings();
@@ -50,7 +49,7 @@ export async function rebuildContextMenus(): Promise<void> {
  * Register the context menu click handler.
  * Must be called synchronously during SW startup.
  */
-export function registerContextMenuListeners(): void {
+export function registerContextMenuListeners() {
   chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     if (!info.menuItemId || !String(info.menuItemId).startsWith('snooze-')) return;
     if (!tab) return;

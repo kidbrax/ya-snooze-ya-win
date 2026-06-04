@@ -1,4 +1,3 @@
-// @flow
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import styled from 'styled-components';
 import moment from 'moment';
@@ -13,11 +12,7 @@ import { getSettings } from '../../core/settings';
 import leftIcon from './icons/left.svg';
 import rightIcon from './icons/right.svg';
 
-type Props = { visible: boolean, onDateSelected: Date => void };
-
-
-
-const DateSelector = (props: Props): React.Node => {
+const DateSelector = (props) => {
   const { visible, onDateSelected } = props;
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedHour, setSelectedHour] = useState(9);
@@ -101,15 +96,6 @@ const DateSelector = (props: Props): React.Node => {
 export default DateSelector;
 
 
-type NavbarProps = {
-  hour: number,
-  onHourChange: (hour: number) => void,
-  gotoToday: () => void,
-  month: Date,
-  onNextClick: () => void,
-  onPreviousClick: () => void,
-};
-
 const Navbar = ({
   hour,
   onHourChange,
@@ -117,7 +103,7 @@ const Navbar = ({
   month,
   onNextClick,
   onPreviousClick,
-}: NavbarProps) => (
+}) => (
   <NavbarDiv>
     <NavButton onClick={() => onPreviousClick()}>
       <img src={leftIcon} alt="Previous Month" />

@@ -1,5 +1,3 @@
-// @flow
-import type { WakeupTimeRange } from './wakeupTimeRanges';
 import React, { useEffect, useState, Fragment, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { styled as muiStyled } from '@mui/material/styles';
@@ -22,14 +20,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Tooltip from '@mui/material/Tooltip';
 import { Link } from 'react-router-dom';
-
-// A tab group represents a collection of tabs that are in the same
-// wakeup time range
-type TabGroup = {
-  timeRange: WakeupTimeRange,
-  tabs: Array<SnoozedTab>,
-};
-type Props = {};
 
 // MUI v5 styled components
 const StyledList = muiStyled(List)(({ theme }) => ({
@@ -58,12 +48,12 @@ const StyledFab = muiStyled(Fab)(({ theme }) => ({
   right: theme.spacing(3),
 }));
 
-const SleepingTabsPage = (props: Props): React.Node => {
-  const [ visibleTabGroupsState, setVisibleTabGroupsState ] = useState<Array<TabGroup>>([]);
+const SleepingTabsPage = (props) => {
+  const [ visibleTabGroupsState, setVisibleTabGroupsState ] = useState([]);
   const [ hidePeriodicState, setHidePeriodicState ] = useState(false);
 
   const refreshSnoozedTabs = useCallback(async () => {
-    const groups: Array<TabGroup> = await getSleepingTabByWakeupGroups(hidePeriodicState);
+    const groups = await getSleepingTabByWakeupGroups(hidePeriodicState);
     setVisibleTabGroupsState(groups);
   }, [hidePeriodicState]);
 
@@ -83,7 +73,7 @@ const SleepingTabsPage = (props: Props): React.Node => {
     }
   }, [refreshSnoozedTabs]);
 
-  const deleteTab = (tab: SnoozedTab, event: any) => {
+  const deleteTab = (tab, event) => {
     // so that openTab() won't be called
     event.stopPropagation();
 
@@ -98,7 +88,7 @@ const SleepingTabsPage = (props: Props): React.Node => {
     }, 150);
   }
 
-  const wakeupTab = (tab: SnoozedTab, event: any) => {
+  const wakeupTab = (tab, event) => {
     const makeTabActive = !(
       event.which === 2 ||
       event.button === 4 ||
@@ -107,11 +97,11 @@ const SleepingTabsPage = (props: Props): React.Node => {
     setTimeout(() => openTabs({ tabs: [tab], makeActive: makeTabActive }), 300);
   }
 
-  const wakeupGroup = (tabs: Array<SnoozedTab>) => {
+  const wakeupGroup = (tabs) => {
     setTimeout(() => openTabs({ tabs, makeActive: true }), 300);
   }
 
-  const deleteGroup = (tabs: Array<SnoozedTab>, event: any) => {
+  const deleteGroup = (tabs, event) => {
     event.stopPropagation();
     setTimeout(() => {
       chrome.runtime.sendMessage({
@@ -122,9 +112,9 @@ const SleepingTabsPage = (props: Props): React.Node => {
   }
 
   // Group tabs within a time range by their groupId
-  const splitIntoSubgroups = (tabs: Array<SnoozedTab>): Array<{ groupId: ?string, tabs: Array<SnoozedTab> }> => {
-    const groups: Array<{ groupId: ?string, tabs: Array<SnoozedTab> }> = [];
-    const seen: { [string]: number } = {};
+  const splitIntoSubgroups = (tabs) => {
+    const groups = [];
+    const seen = {};
     for (const tab of tabs) {
       const key = tab.groupId ?? null;
       if (key && seen[key] != null) {
@@ -138,7 +128,7 @@ const SleepingTabsPage = (props: Props): React.Node => {
     return groups;
   }
 
-  const renderTabGroup = (tabGroup: TabGroup, index: number) => {
+  const renderTabGroup = (tabGroup, index) => {
     const subgroups = splitIntoSubgroups(tabGroup.tabs);
     return (
       <Fragment key={index}>

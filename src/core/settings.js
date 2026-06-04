@@ -1,10 +1,9 @@
-// @flow
 
 import { BADGE_HIDDEN } from './badge';
 
 export const STORAGE_KEY_SETTINGS = 'settings';
 
-export const DEFAULT_CUSTOM_SNOOZE_OPTIONS: Array<CustomSnoozeOption> = [
+export const DEFAULT_CUSTOM_SNOOZE_OPTIONS = [
   { id: 'one_hour',   label: '1 Hour from Now',  type: 'offset', offsetMinutes: 60 },
   { id: 'two_hours',  label: '2 Hours from Now',  type: 'offset', offsetMinutes: 120 },
   { id: 'later',      label: 'Later Today',        type: 'offset', offsetMinutes: 180 },
@@ -18,7 +17,7 @@ export const DEFAULT_CUSTOM_SNOOZE_OPTIONS: Array<CustomSnoozeOption> = [
   { id: 'specific_date', label: 'Pick a Date',    type: 'specific_date' },
 ];
 
-export const DEFAULT_SETTINGS: Settings = {
+export const DEFAULT_SETTINGS = {
   // General
   badge: BADGE_HIDDEN,
   playSoundEffects: true,
@@ -51,12 +50,12 @@ export const DEFAULT_SETTINGS: Settings = {
   lastSupportReminderDate: 0,
 };
 
-export async function getSettings(): Promise<Settings> {
+export async function getSettings() {
   let { settings } = await chrome.storage.local.get(STORAGE_KEY_SETTINGS);
   return Object.assign({}, DEFAULT_SETTINGS, settings);
 }
 
-export async function saveSettings(newSettings: $Shape<Settings>): Promise<void> {
+export async function saveSettings(newSettings) {
   const currentSettings = await getSettings();
   newSettings = Object.assign(currentSettings, newSettings);
   return chrome.storage.local.set({ [STORAGE_KEY_SETTINGS]: newSettings });

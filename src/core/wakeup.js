@@ -1,4 +1,3 @@
-// @flow
 import { getSnoozedTabs, addSnoozedTabs, removeSnoozedTabs, getRecentlyWokenTabs, saveRecentlyWokenTabs } from './storage';
 
 import {
@@ -30,7 +29,7 @@ console.log(`🔵 [${SERVICE_WORKER_INSTANCE_ID}] Service worker instance starte
  * Generate a unique key for a snoozed tab.
  * Uses the same identity logic as areTabsEqual (url + when).
  */
-function getTabKey(tab: SnoozedTab): string {
+function getTabKey(tab) {
   return `${tab.url}|${tab.when}`;
 }
 
@@ -47,11 +46,7 @@ let wakeupInProgress = false;
  * This handles the "Could not establish connection. Receiving end does not exist" error
  * that can occur when the offscreen document is still loading.
  */
-async function sendMessageWithRetry(
-  message: Object,
-  maxRetries: number = 3,
-  delayMs: number = 100
-): Promise<any> {
+async function sendMessageWithRetry(message, maxRetries = 3, delayMs = 100) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const response = await chrome.runtime.sendMessage(message);
@@ -90,10 +85,7 @@ async function sendMessageWithRetry(
 export async function deleteSnoozedTabs({
   tabsToDelete,
   scheduleAlarm = true,
-}: {
-  tabsToDelete: Array<SnoozedTab>,
-  scheduleAlarm?: boolean,
-}): Promise<void> {
+}) {
   console.log(`🗑️ [${SERVICE_WORKER_INSTANCE_ID}] deleteSnoozedTabs() - Deleting ${tabsToDelete.length} tabs (scheduleAlarm: ${scheduleAlarm})`);
 
   await removeSnoozedTabs(tabsToDelete);
@@ -112,10 +104,7 @@ export async function deleteSnoozedTabs({
 export async function openTabs({
   tabs,
   makeActive = false,
-}: {
-  tabs: Array<SnoozedTab>,
-  makeActive?: boolean,
-}): Promise<{ created: Array<ChromeTab>, failedTabs: Array<SnoozedTab>, customHandled: Array<SnoozedTab> }> {
+}) {
   const result = await createTabs(tabs, makeActive);
   console.log(`✅ [${SERVICE_WORKER_INSTANCE_ID}] openTabs() - Created ${result.created.length} browser tabs, ${result.customHandled.length} externally handled, ${result.failedTabs.length} failed`);
 
@@ -128,10 +117,7 @@ export async function openTabs({
 export async function wakeupDeleteAndReschedule({
   tabs,
   makeActive = false,
-}: {
-  tabs: Array<SnoozedTab>,
-  makeActive?: boolean,
-}): Promise<Array<ChromeTab>> {
+}) {
   console.log(`🚀 [${SERVICE_WORKER_INSTANCE_ID}] wakeupDeleteAndReschedule() - Waking ${tabs.length} tabs`);
 
   // Create tabs FIRST to prevent data loss if crash occurs
@@ -171,7 +157,7 @@ export async function wakeupDeleteAndReschedule({
   return createdTabs;
 }
 
-export async function handleScheduledWakeup(): Promise<void> {
+export async function handleScheduledWakeup() {
   // In-memory mutex: prevent concurrent executions
   if (wakeupInProgress) {
     return;
@@ -271,7 +257,7 @@ export async function handleScheduledWakeup(): Promise<void> {
     Clear all existing alarms and reschedule new alarms
     based on current snoozedTabs array.
 */
-export async function scheduleWakeupAlarm(when: 'auto' | '1min'): Promise<void> {
+export async function scheduleWakeupAlarm(when) {
   await cancelWakeupAlarm();
 
   const snoozedTabs = await getSnoozedTabs();
@@ -299,14 +285,14 @@ export async function scheduleWakeupAlarm(when: 'auto' | '1min'): Promise<void> 
   });
 }
 
-export function cancelWakeupAlarm(): Promise<void> {
+export function cancelWakeupAlarm() {
   return chrome.alarms.clear(WAKEUP_TABS_ALARM_NAME);
 }
 
 /**
  * Init the automatic wake up methods
  */
-export function registerEventListeners(): void {
+export function registerEventListeners() {
   // Note: registerEventListeners is only called in background script
 
   // Wake up tabs on scheduled dates
