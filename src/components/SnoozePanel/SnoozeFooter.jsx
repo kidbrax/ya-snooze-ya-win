@@ -1,50 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import SettingsIcon from '@mui/icons-material/Settings';
-import CheckboxIcon from '@mui/icons-material/CheckBoxRounded';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import styled from 'styled-components'
+import SettingsIcon from '@mui/icons-material/Settings'
+import CheckboxIcon from '@mui/icons-material/CheckBoxRounded'
+import { Link } from 'react-router-dom'
 import {
   SLEEPING_TABS_PATH,
   SETTINGS_PATH,
   // getUpgradeUrl,
   BETA_PATH,
-} from '../../paths';
-import { getSnoozedTabs } from '../../core/storage';
-import { createTab } from '../../core/utils';
+} from '../../paths'
+import { getSnoozedTabs } from '../../core/storage'
+import { createTab } from '../../core/utils'
 
 export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }) {
-  const [sleepingTabsCount, setSleepingTabsCount] = useState(0);
+  const [sleepingTabsCount, setSleepingTabsCount] = useState(0)
 
   useEffect(() => {
-    let cancelled = false; // Flag to track if component is still mounted
+    let cancelled = false // Flag to track if component is still mounted
 
     const fetchSnoozedTabs = async () => {
       try {
-        const snoozedTabs = await getSnoozedTabs();
+        const snoozedTabs = await getSnoozedTabs()
 
         // Only update state if component is still mounted
         if (!cancelled) {
-          setSleepingTabsCount(snoozedTabs.length);
+          setSleepingTabsCount(snoozedTabs.length)
         }
       } catch (error) {
-        console.error('Failed to fetch snoozed tabs:', error);
+        console.error('Failed to fetch snoozed tabs:', error)
       }
-    };
+    }
 
-    fetchSnoozedTabs();
+    fetchSnoozedTabs()
 
     // The return function is React's cleanup function
     // It will be called when the component unmounts
     // or before the next effect runs
     // This prevents state updates on unmounted components
     return () => {
-      cancelled = true;  // Set the flag to true when component unmounts
-    };
-  }, []);
+      cancelled = true // Set the flag to true when component unmounts
+    }
+  }, [])
 
   const handleBetaClick = () => {
-    createTab(BETA_PATH);
-  };
+    createTab(BETA_PATH)
+  }
 
   return (
     <Footer>
@@ -55,11 +55,7 @@ export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }) {
         </SleepingTabsBtn>
 
         {!betaBadge && upgradeBadge && (
-          <BadgeButton
-            as="a"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <BadgeButton as="a" target="_blank" rel="noopener noreferrer">
             <UpgradeBadge>Upgrade</UpgradeBadge>
           </BadgeButton>
         )}
@@ -70,18 +66,14 @@ export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }) {
           </BadgeButton>
         )}
 
-
-
         <IconBtn as={Link} to={SETTINGS_PATH} target="_blank">
           <SettingsIcon />
         </IconBtn>
       </Buttons>
 
-      <SnoozeTooltip visible={tooltip.visible ? "true" : undefined}>
-        {tooltip.text}
-      </SnoozeTooltip>
+      <SnoozeTooltip visible={tooltip.visible ? 'true' : undefined}>{tooltip.text}</SnoozeTooltip>
     </Footer>
-  );
+  )
 }
 
 // Styled Components
@@ -92,7 +84,7 @@ const Footer = styled.div`
   height: 56px;
   border-top: 1px solid ${(props) => props.theme.snoozePanel.border};
   position: relative;
-`;
+`
 
 const SnoozeTooltip = styled.div`
   position: absolute;
@@ -110,13 +102,13 @@ const SnoozeTooltip = styled.div`
   color: ${(props) => props.theme.snoozePanel.footerTextColor};
   /* font-weight: 500; */
   font-size: 17px;
-`;
+`
 
 const Buttons = styled.div`
   flex: 1;
   display: flex;
   align-items: stretch;
-`;
+`
 
 const FooterBtn = styled.button`
   border: none;
@@ -132,9 +124,9 @@ const FooterBtn = styled.button`
   }
 
   &:active {
-    background-color: ${(props) => props.theme.dark ? props.theme.black : '#d7e3e3'};
+    background-color: ${(props) => (props.theme.dark ? props.theme.black : '#d7e3e3')};
   }
-`;
+`
 
 const SleepingCountBadge = styled.div`
   background-color: ${(props) => props.theme.snoozePanel.countBadgeColor};
@@ -144,7 +136,7 @@ const SleepingCountBadge = styled.div`
   font-weight: 700;
   font-size: 15px;
   margin-right: 11px;
-`;
+`
 
 const SleepingTabsBtn = styled(FooterBtn)`
   display: flex;
@@ -155,11 +147,11 @@ const SleepingTabsBtn = styled(FooterBtn)`
   font-weight: 500;
   font-size: 17px;
   flex: 1;
-`;
+`
 
 const BadgeButton = styled(FooterBtn)`
   padding: 0 14px;
-`;
+`
 
 const UpgradeBadge = styled.div`
   background-color: ${(props) => props.theme.primary};
@@ -169,13 +161,13 @@ const UpgradeBadge = styled.div`
   /* color: ${(props) => props.theme.snoozePanel.bgColor}; */
   font-weight: 700;
   font-size: 16px;
-`;
+`
 
 const BetaBadge = styled(UpgradeBadge)`
   background-color: ${(props) => props.theme.beta};
   padding-right: 15px;
   padding-left: 15px;
-`;
+`
 
 const IconBtn = styled(FooterBtn)`
   width: 50px;
@@ -183,4 +175,4 @@ const IconBtn = styled(FooterBtn)`
   align-items: center;
   justify-content: center;
   color: ${(props) => props.theme.snoozePanel.countBadgeColor};
-`;
+`

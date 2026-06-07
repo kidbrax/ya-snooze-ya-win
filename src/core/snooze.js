@@ -1,35 +1,33 @@
-import { addSnoozedTabs, getSnoozedTabs } from './storage';
+import { addSnoozedTabs, getSnoozedTabs } from './storage'
 import {
   getActiveTab,
   calcNextOccurrenceForPeriod,
   getRecentlySnoozedTab,
   createCenteredWindow,
-} from './utils';
+} from './utils'
 // import { trackTabSnooze, track, EVENTS } from './analytics';
-import { getSettings, saveSettings } from './settings';
-import { scheduleWakeupAlarm } from './wakeup';
+import { getSettings, saveSettings } from './settings'
+import { scheduleWakeupAlarm } from './wakeup'
 
-import { FIRST_SNOOZE_PATH } from '../paths';
-import { incrementWeeklyUsage } from './license';
+import { FIRST_SNOOZE_PATH } from '../paths'
+import { incrementWeeklyUsage } from './license'
 
 export async function snoozeTab(tab, config, groupId) {
-  let { wakeupTime, period, type, closeTab = true } = config;
+  let { wakeupTime, period, type, closeTab = true } = config
 
   if (period) {
-    const nextOccurrenceDate = calcNextOccurrenceForPeriod(period);
-    wakeupTime = nextOccurrenceDate.getTime();
+    const nextOccurrenceDate = calcNextOccurrenceForPeriod(period)
+    wakeupTime = nextOccurrenceDate.getTime()
   }
 
   if (!wakeupTime) {
-    throw new Error('No wakeup date and no period given');
+    throw new Error('No wakeup date and no period given')
   }
 
   // Uncomment for debugging only:
   // wakeupTime = Date.now() + 1000 * 10;
 
-  console.log(
-    'Snoozing tab until ' + new Date(wakeupTime).toString()
-  );
+  console.log('Snoozing tab until ' + new Date(wakeupTime).toString())
 
   // The info to store about this tab
   const snoozedTab = {
@@ -41,37 +39,36 @@ export async function snoozeTab(tab, config, groupId) {
     period,
     when: wakeupTime,
     ...(groupId ? { groupId } : {}),
-  };
+  }
 
   // Store & persist snoozed tab for later
   // addSnoozedTabs handles dedup internally (prevents duplicates when rapidly re-snoozing)
-  await addSnoozedTabs([snoozedTab]);
+  await addSnoozedTabs([snoozedTab])
 
   // Schedule a wake-up for the Chrome extension on snoozed time
-  await scheduleWakeupAlarm('auto');
+  await scheduleWakeupAlarm('auto')
 
   // usage tracking
   // trackTabSnooze(snoozedTab);
 
-  let { totalSnoozeCount } = await getSettings();
-  totalSnoozeCount++;
+  let { totalSnoozeCount } = await getSettings()
+  totalSnoozeCount++
 
   await saveSettings({
     totalSnoozeCount,
-  });
+  })
 
-  await incrementWeeklyUsage();
+  await incrementWeeklyUsage()
 
   // open share / rate dialog
   if (totalSnoozeCount === 1) {
-    createCenteredWindow(FIRST_SNOOZE_PATH, 830, 485);
+    createCenteredWindow(FIRST_SNOOZE_PATH, 830, 485)
   }
-
 
   // ORDER MATTERS!  Closing a tab will close the snooze popup, and might terminate
   // the flow of this code before finish. so close tab at the end.
   if (closeTab && tab.id != null) {
-    chrome.tabs.remove(tab.id);
+    chrome.tabs.remove(tab.id)
   }
 
   // Add tab to history
@@ -79,8 +76,8 @@ export async function snoozeTab(tab, config, groupId) {
 }
 
 export async function snoozeActiveTab(config) {
-  const activeTab = await getActiveTab();
-  return snoozeTab(activeTab, config);
+  const activeTab = await getActiveTab()
+  return snoozeTab(activeTab, config)
 }
 
 /**
@@ -88,24 +85,21 @@ export async function snoozeActiveTab(config) {
  * All tabs share the same groupId so they can be restored together.
  */
 export async function snoozeTabs(tabs, config) {
-  const groupId = `group_${Date.now()}`;
+  const groupId = `group_${Date.now()}`
   for (const tab of tabs) {
     // closeTab is handled by the popup after confirmation — don't close here
-    await snoozeTab(tab, { ...config, closeTab: false }, groupId);
+    await snoozeTab(tab, { ...config, closeTab: false }, groupId)
   }
 }
 
 export async function repeatLastSnooze() {
-  const snoozedTabs = await getSnoozedTabs();
-  const lastSnooze = getRecentlySnoozedTab(snoozedTabs);
+  const snoozedTabs = await getSnoozedTabs()
+  const lastSnooze = getRecentlySnoozedTab(snoozedTabs)
 
   // ignore "Repeat snooze" if no last snooze,
   // or last snooze was more than 10 minutes ago
-  if (
-    !lastSnooze ||
-    Date.now() - lastSnooze.sleepStart > 1000 * 60 * 10
-  ) {
-    return;
+  if (!lastSnooze || Date.now() - lastSnooze.sleepStart > 1000 * 60 * 10) {
+    return
   }
 
   // track(EVENTS.REPEAT_SNOOZE);
@@ -114,24 +108,22 @@ export async function repeatLastSnooze() {
     wakeupTime: lastSnooze.period ? undefined : lastSnooze.when,
     period: lastSnooze.period,
     type: lastSnooze.type,
-  });
+  })
 }
 
 export async function resnoozePeriodicTab(snoozedTab) {
   if (!snoozedTab.period) {
-    throw new Error(
-      'resnoozePeriodicTab received a tab without a period'
-    );
+    throw new Error('resnoozePeriodicTab received a tab without a period')
   }
 
   // Update sleep end for the next date
-  let newWakeupDate = calcNextOccurrenceForPeriod(snoozedTab.period);
+  let newWakeupDate = calcNextOccurrenceForPeriod(snoozedTab.period)
 
-  console.log('Re-snoozing tab until ' + newWakeupDate.toString());
+  console.log('Re-snoozing tab until ' + newWakeupDate.toString())
 
   // Assumes tab's wakeup time has already passed because tabs passed in have been scheduled for wakeup
-  snoozedTab.when = newWakeupDate.getTime();
+  snoozedTab.when = newWakeupDate.getTime()
 
   // Store & persist rescheduled tab for later
-  await addSnoozedTabs([snoozedTab]);
+  await addSnoozedTabs([snoozedTab])
 }

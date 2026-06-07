@@ -1,13 +1,13 @@
 // TODO I don't think this thing pops up
 
-import React, { Fragment } from 'react';
-import styled from 'styled-components';
-import { SLEEPING_TABS_PATH } from '../../paths';
-import TSDialog from './TSDialog';
-import Button from '../SnoozePanel/Button';
-import HotelIcon from '@mui/icons-material/Hotel';
-import { Link } from 'react-router-dom';
-import congratsImage from './images/congrats.png';
+import React, { Fragment } from 'react'
+import styled from 'styled-components'
+import { SLEEPING_TABS_PATH } from '../../paths'
+import TSDialog from './TSDialog'
+import Button from '../SnoozePanel/Button'
+import HotelIcon from '@mui/icons-material/Hotel'
+import { Link } from 'react-router-dom'
+import congratsImage from './images/congrats.png'
 
 export default function FirstSnoozeDialog() {
   return (
@@ -58,7 +58,7 @@ export default function FirstSnoozeDialog() {
           */}
       </Root>
     </TSDialog>
-  );
+  )
 }
 
-const Root = styled.div``;
+const Root = styled.div``

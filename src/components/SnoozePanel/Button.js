@@ -1,11 +1,9 @@
-import styled, { css } from 'styled-components';
-import Color from 'color';
+import styled, { css } from 'styled-components'
+import Color from 'color'
 
-export default styled.button.attrs(
-  (props) => ({
-    color: props.color || props.theme.primary,
-  }),
-)`
+export default styled.button.attrs((props) => ({
+  color: props.color || props.theme.primary,
+}))`
   display: inline-block;
   border: none;
   cursor: pointer;
@@ -22,21 +20,21 @@ export default styled.button.attrs(
     vertical-align: center;
   }
 
-  ${(props) => props.raised &&
+  ${(props) =>
+    props.raised &&
     css`
-      box-shadow: 0 3px 0 0
-        ${(props) => Color(
-          props.color,
-        ).darken(0.3).hex()};
+      box-shadow: 0 3px 0 0 ${(props) => Color(props.color).darken(0.3).hex()};
     `}
 
-  ${(props) => props.disabled &&
+  ${(props) =>
+    props.disabled &&
     css`
       pointer-events: none;
       opacity: 0.6;
     `}
 
-  ${(props) => props.icon &&
+  ${(props) =>
+    props.icon &&
     css`
       background-image: url('${props.icon}');
       background-position: 12px center;
@@ -52,4 +50,4 @@ export default styled.button.attrs(
     transform: scale(0.95);
     background-color: ${(props) => Color(props.color).darken(0.3).hex()};
   }
-`;
+`

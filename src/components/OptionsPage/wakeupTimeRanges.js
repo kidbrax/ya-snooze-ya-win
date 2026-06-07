@@ -1,8 +1,8 @@
-import moment from 'moment';
-import { getSettings } from '../../core/settings';
+import moment from 'moment'
+import { getSettings } from '../../core/settings'
 
 export async function getWakeupTimeRanges() {
-  const settings = await getSettings();
+  const settings = await getSettings()
 
   return [
     {
@@ -12,18 +12,14 @@ export async function getWakeupTimeRanges() {
     },
     {
       title: 'Tomorrow',
-      maxDate: moment()
-        .add(1, 'd')
-        .endOf('day'),
+      maxDate: moment().add(1, 'd').endOf('day'),
       // dateFormat: 'h:mm a [tomorrow]',
     },
     {
       title: 'Later This Week',
       // TODO: Not sure what is it doing, but it uses weekday
       // Which should be locale aware but is not.
-      maxDate: moment()
-        .day(settings.weekEndDay)
-        .startOf('day'), // before weekend
+      maxDate: moment().day(settings.weekEndDay).startOf('day'), // before weekend
       // dateFormat: 'dddd',
     },
     {
@@ -33,44 +29,32 @@ export async function getWakeupTimeRanges() {
     },
     {
       title: 'Next Week',
-      maxDate: moment()
-        .add(1, 'week')
-        .endOf('week'),
+      maxDate: moment().add(1, 'week').endOf('week'),
       dateFormat: 'dddd [at] h:mm A',
     },
     {
       title: 'In Two Weeks',
-      maxDate: moment()
-        .add(2, 'weeks')
-        .endOf('week'),
+      maxDate: moment().add(2, 'weeks').endOf('week'),
       dateFormat: 'LL [at] h:mm A',
     },
     {
       title: 'In Three Weeks',
-      maxDate: moment()
-        .add(3, 'weeks')
-        .endOf('week'),
+      maxDate: moment().add(3, 'weeks').endOf('week'),
       dateFormat: 'LL [at] h:mm A',
     },
     {
       title: 'In One Month',
-      maxDate: moment()
-        .add(6, 'weeks')
-        .endOf('week'),
+      maxDate: moment().add(6, 'weeks').endOf('week'),
       dateFormat: 'LL [at] h:mm A',
     },
     {
       title: 'In Two Months',
-      maxDate: moment()
-        .add(10, 'weeks')
-        .endOf('week'),
+      maxDate: moment().add(10, 'weeks').endOf('week'),
       dateFormat: 'LL [at] h:mm A',
     },
     {
       title: 'In Three Months',
-      maxDate: moment()
-        .add(14, 'weeks')
-        .endOf('week'),
+      maxDate: moment().add(14, 'weeks').endOf('week'),
       dateFormat: 'LL [at] h:mm A',
     },
     {
@@ -78,13 +62,11 @@ export async function getWakeupTimeRanges() {
       maxDate: moment(9999999999999), // year 2286 .....
       dateFormat: 'LL',
     },
-  ];
+  ]
 }
 
 function futureDay(day) {
-  const thisWeekDay = moment().day(day);
-  const now = moment();
-  return now.isBefore(thisWeekDay)
-    ? thisWeekDay
-    : moment().day(7 + day);
+  const thisWeekDay = moment().day(day)
+  const now = moment()
+  return now.isBefore(thisWeekDay) ? thisWeekDay : moment().day(7 + day)
 }

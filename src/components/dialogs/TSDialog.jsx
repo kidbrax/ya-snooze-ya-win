@@ -1,20 +1,12 @@
-import React, { Fragment } from 'react';
-import styled from 'styled-components';
-import { Helmet } from 'react-helmet-async';
-import Fade from '@mui/material/Fade';
-import Button from '../SnoozePanel/Button';
+import React, { Fragment } from 'react'
+import styled from 'styled-components'
+import { Helmet } from 'react-helmet-async'
+import Fade from '@mui/material/Fade'
+import Button from '../SnoozePanel/Button'
 
-import logoImage from './images/logo.svg';
+import logoImage from './images/logo.svg'
 
-export default function TSDialog({
-  image,
-  title,
-  headline,
-  subheader,
-  closeBtnText,
-  children,
-  noPadding
-}) {
+export default function TSDialog({ image, title, headline, subheader, closeBtnText, children, noPadding }) {
   return (
     <Fragment>
       <Helmet>
@@ -31,19 +23,15 @@ export default function TSDialog({
             <Headline>{headline}</Headline>
             <Subheader>{subheader}</Subheader>
             {children}
-            {closeBtnText !== null && (
-              <NoThanksButton>
-                {closeBtnText || 'No thanks'}
-              </NoThanksButton>
-            )}
+            {closeBtnText !== null && <NoThanksButton>{closeBtnText || 'No thanks'}</NoThanksButton>}
           </Content>
         </Root>
       </Fade>
     </Fragment>
-  );
+  )
 }
 
-const PADDING = 18;
+const PADDING = 18
 const Root = styled.div`
   position: absolute;
   top: 0;
@@ -51,7 +39,7 @@ const Root = styled.div`
   right: 0;
   bottom: 0;
   height: 100%;
-`;
+`
 
 const Content = styled.div`
   padding: ${(props) => (props.noPadding ? 0 : PADDING)}px;
@@ -61,7 +49,7 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-`;
+`
 
 const Logo = styled.img.attrs({
   src: logoImage,
@@ -69,7 +57,7 @@ const Logo = styled.img.attrs({
   position: absolute;
   top: ${PADDING}px;
   left: ${PADDING}px;
-`;
+`
 
 const Headline = styled.div`
   font-weight: 300;
@@ -78,7 +66,7 @@ const Headline = styled.div`
   margin-top: 10px;
   margin-bottom: 20px;
   text-align: center;
-`;
+`
 
 const Subheader = styled.div`
   font-weight: 400;
@@ -89,9 +77,9 @@ const Subheader = styled.div`
   margin-bottom: 38px;
   text-align: center;
   padding: 0 30px;
-`;
+`
 
-const NoThanksButton = styled(Button).attrs(props => ({
+const NoThanksButton = styled(Button).attrs((props) => ({
   color: '#fff',
   onClick: () => window.close(),
 }))`
@@ -99,4 +87,4 @@ const NoThanksButton = styled(Button).attrs(props => ({
   color: #999;
   border-radius: 10px;
   padding: 8px 12px;
-`;
+`

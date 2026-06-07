@@ -1,1 +1,1 @@
-export { default } from './SnoozePanel';
+export { default } from './SnoozePanel'

@@ -70,7 +70,6 @@ export default defineConfig({
   define: {
     'global': 'globalThis',
     'process.env.NODE_ENV': '"production"',
-    'chrome': 'chrome'
   },
 
   // Configure for Chrome extension development
@@ -93,9 +92,12 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/__tests__/setupTests.js'],
     globals: true,
-    // Mock Chrome APIs for testing
     deps: {
-      inline: ['@testing-library/jest-dom']
+      optimizer: {
+        web: {
+          include: ['@testing-library/jest-dom']
+        }
+      }
     },
     coverage: {
       provider: 'v8',

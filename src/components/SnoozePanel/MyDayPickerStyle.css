@@ -58,7 +58,6 @@
 
 .rdp-day:not(.rdp-disabled):not(.rdp-selected):not(.rdp-outside) .rdp-day_button:hover {
   background-color: #f0f0f0;
-
 }
 
 .rdp-outside:not(.rdp-disabled) .rdp-day_button:hover {

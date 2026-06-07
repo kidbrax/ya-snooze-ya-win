@@ -79,9 +79,13 @@ To create the pull request:
 
 ## TODO
 
+- add React component tests (SnoozePanel, OptionsPage, dialogs)
+- add more core logic tests (snooze.js, wakeup.js, calcSnoozeOptions.js)
 - use Node 24
-- add auto-deploy on merge to main/master
 - re-implement bugsnag?
-- test release action
-- auto-version, update package.json, manifest, etc
-- ensure all tests are passing again and add to github actions
+- change alert style (optional)
+- replace images
+  - public/images/extension_icon_128.png
+  - src/components/OptionsPage/images/navbar_logo.svg
+  - src/components/dialogs/images/congrats.png
+  - src/components/dialogs/images/logo.svg

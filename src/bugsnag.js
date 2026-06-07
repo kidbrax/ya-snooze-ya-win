@@ -1,4 +1,3 @@
-
 // import bugsnag from '@bugsnag/js';
 // import bugsnagReact from '@bugsnag/plugin-react';
 // import React from 'react';

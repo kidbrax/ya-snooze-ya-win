@@ -1,18 +1,16 @@
+import moment from 'moment'
+import { APP_BASE_PATH, BACKGROUND_PATH } from '../paths'
+import URL from 'url'
 
-import moment from 'moment';
-import { APP_BASE_PATH, BACKGROUND_PATH } from '../paths';
-import URL from 'url';
-
-
-const AMAZON_AFFILIATE_ID = 'tabsnooze-20';
+const AMAZON_AFFILIATE_ID = 'tabsnooze-20'
 
 export function isBackgroundScript() {
-  const hashPath = window.location.hash.substring(1);
-  return hashPath === BACKGROUND_PATH;
+  const hashPath = window.location.hash.substring(1)
+  return hashPath === BACKGROUND_PATH
 }
 
 export function isMacOS() {
-  return navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  return navigator.platform.toUpperCase().indexOf('MAC') >= 0
 }
 
 // export function exposeFunctionForDebug(functions: Array<Function>) {
@@ -28,61 +26,66 @@ export function isMacOS() {
 */
 export function createTabs(tabInfos, makeActive) {
   // Generate a unique call ID to track this specific invocation
-  const callId = `CT-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+  const callId = `CT-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`
 
-  console.log(`🌐 [${callId}] createTabs() CALLED with ${tabInfos.length} tabs, makeActive: ${makeActive}`);
-  console.log(`🌐 [${callId}] Tab URLs:`, tabInfos.map(t => t.url));
+  console.log(`🌐 [${callId}] createTabs() CALLED with ${tabInfos.length} tabs, makeActive: ${makeActive}`)
+  console.log(
+    `🌐 [${callId}] Tab URLs:`,
+    tabInfos.map((t) => t.url)
+  )
 
   return Promise.allSettled(
     tabInfos.map((tabInfo) => {
       return chrome.tabs.create({
         url: tabInfo.url, // attachAffiliationTag(tabInfo.url),
         active: makeActive,
-      });
+      })
     })
-  ).then(results => {
-    const created = [];
-    const failedTabs = [];
-    const customHandled = [];
+  ).then((results) => {
+    const created = []
+    const failedTabs = []
+    const customHandled = []
 
     results.forEach((result, index) => {
       if (result.status === 'fulfilled') {
-        created.push(result.value);
+        created.push(result.value)
       } else if (result.reason?.message?.includes('handled by Atlas')) {
         // Some browsers (e.g. Atlas) physically open the tab but reject the promise.
         // Not a real failure — tab is open, just no ChromeTab object returned.
-        customHandled.push(tabInfos[index]);
-        console.log(`ℹ️ [${callId}] Tab handled externally: ${tabInfos[index].url}`, result.reason?.message);
+        customHandled.push(tabInfos[index])
+        console.log(`ℹ️ [${callId}] Tab handled externally: ${tabInfos[index].url}`, result.reason?.message)
       } else {
-        console.warn(`⚠️ [${callId}] Failed to create tab: ${tabInfos[index].url}`, result.reason);
-        failedTabs.push(tabInfos[index]);
+        console.warn(`⚠️ [${callId}] Failed to create tab: ${tabInfos[index].url}`, result.reason)
+        failedTabs.push(tabInfos[index])
       }
-    });
+    })
 
-    console.log(`✅ [${callId}] createTabs() done: ${created.length} created, ${customHandled.length} externally handled, ${failedTabs.length} failed`);
-    return { created, failedTabs, customHandled };
-  });
+    console.log(
+      `✅ [${callId}] createTabs() done: ${created.length} created, ${customHandled.length} externally handled, ${failedTabs.length} failed`
+    )
+    return { created, failedTabs, customHandled }
+  })
 }
 
 // Attach affiliate tracking ID for amazon product links
 function attachAffiliationTag(url) {
   if (!url.includes('amazon.')) {
-    return url; // as is
+    return url // as is
   }
-  const parsedUrl = URL.parse(url, true /* parse query too */);
+  const parsedUrl = URL.parse(url, true /* parse query too */)
 
-  parsedUrl.query.tag = AMAZON_AFFILIATE_ID;
-  delete parsedUrl.search; // delete search so 'query' will be used for formatting
+  parsedUrl.query.tag = AMAZON_AFFILIATE_ID
+  delete parsedUrl.search // delete search so 'query' will be used for formatting
 
-  return URL.format(parsedUrl);
+  return URL.format(parsedUrl)
 }
 
 export async function createCenteredWindow(path, width, height) {
-  const currentWindow = await chrome.windows.getCurrent();
-  const screenWidth = currentWindow.width || 1920;
-  const screenHeight = currentWindow.height || 1080;
-  const left = Math.round(currentWindow.left + (screenWidth - width) / 2);
-  const top = Math.round(currentWindow.top + (screenHeight - height) / 3);
+  const currentWindow = await chrome.windows.getCurrent()
+  const screenWidth = currentWindow.width || 1920
+  const screenHeight = currentWindow.height || 1080
+  const left = Math.round(currentWindow.left + (screenWidth - width) / 2)
+  const top = Math.round(currentWindow.top + (screenHeight - height) / 3)
 
   const newWindow = await chrome.windows.create({
     type: 'popup',
@@ -93,22 +96,22 @@ export async function createCenteredWindow(path, width, height) {
     width,
     height,
     focused: true,
-  });
+  })
 
-  chrome.windows.update(newWindow.id, { focused: true });
+  chrome.windows.update(newWindow.id, { focused: true })
 }
 
 export async function createTab(path) {
   if (!path.startsWith('http')) {
-    path = APP_BASE_PATH + path;
+    path = APP_BASE_PATH + path
   }
 
   const newTab = await chrome.tabs.create({
     url: path,
     active: true,
-  });
+  })
 
-  chrome.windows.update(newTab.windowId, { focused: true });
+  chrome.windows.update(newTab.windowId, { focused: true })
 }
 
 /*
@@ -116,13 +119,11 @@ export async function createTab(path) {
   and make the jumpToTab active, if notification is clicked.
 */
 export async function notifyUserAboutNewTabs(tabs, jumpToTab) {
-  const message = tabs.map(tab => tab.title).join('\n');
+  const message = tabs.map((tab) => tab.title).join('\n')
 
-  const title =
-    'Ya Snooze, Ya Win woke up ' +
-    (tabs.length > 1 ? `${tabs.length} tabs` : 'a tab'); // plural handling
+  const title = 'Ya Snooze, Ya Win woke up ' + (tabs.length > 1 ? `${tabs.length} tabs` : 'a tab') // plural handling
   // Console log
-  console.log(title);
+  console.log(title)
 
   // This section kept throwing a
   // Access to fetch at [iconurl] from origin [tabsnooze] has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
@@ -142,7 +143,7 @@ export async function notifyUserAboutNewTabs(tabs, jumpToTab) {
   //   faviconURI = 'images/extension_icon_128.png';
   // }
 
-  let faviconURI = chrome.runtime.getURL('images/extension_icon_128.png');
+  let faviconURI = chrome.runtime.getURL('images/extension_icon_128.png')
 
   // Desktop notification
   const createdNotifId = await chrome.notifications.create('', {
@@ -150,35 +151,33 @@ export async function notifyUserAboutNewTabs(tabs, jumpToTab) {
     title,
     message,
     iconUrl: faviconURI,
-  });
+  })
 
   // chrome.windows.update(jumpToTab.windowId, {drawAttention: true});
 
-  chrome.notifications.onClicked.addListener(function makeTabActive(
-    notifId
-  ) {
+  chrome.notifications.onClicked.addListener(function makeTabActive(notifId) {
     if (notifId === createdNotifId) {
-      chrome.tabs.update(jumpToTab.id, { active: true });
+      chrome.tabs.update(jumpToTab.id, { active: true })
       chrome.windows.update(jumpToTab.windowId, {
         focused: true,
-      });
+      })
 
-      chrome.notifications.clear(createdNotifId);
-      chrome.notifications.onClicked.removeListener(makeTabActive);
+      chrome.notifications.clear(createdNotifId)
+      chrome.notifications.onClicked.removeListener(makeTabActive)
     }
-  });
+  })
 }
 
 export function addMinutes(date, minutes) {
-  return new Date(date.getTime() + minutes * 60000);
+  return new Date(date.getTime() + minutes * 60000)
 }
 
 export async function getActiveTab() {
   const tabs = await chrome.tabs.query({
     active: true,
     currentWindow: true,
-  });
-  return tabs[0];
+  })
+  return tabs[0]
 }
 
 export async function getSelectedTabs() {
@@ -186,8 +185,8 @@ export async function getSelectedTabs() {
   const tabs = await chrome.tabs.query({
     highlighted: true,
     currentWindow: true,
-  });
-  return tabs;
+  })
+  return tabs
 }
 
 /*
@@ -199,87 +198,72 @@ export async function getSelectedTabs() {
     }
 */
 export function calcNextOccurrenceForPeriod(period) {
-  let occurrences = [];
+  let occurrences = []
 
   if (period.type === 'daily') {
-    const today = moment();
-    const tomorrow = moment().add(1, 'day');
+    const today = moment()
+    const tomorrow = moment().add(1, 'day')
 
-    occurrences = [today, tomorrow];
+    occurrences = [today, tomorrow]
   }
 
   if (period.type === 'weekly') {
     // occurences for this week and the next week
     for (let weekIndex = 0; weekIndex < 2; weekIndex++) {
       for (let weekdayIndex of period.days) {
-        occurrences.push(
-          moment()
-            .add(weekIndex, 'week')
-            .day(weekdayIndex)
-        );
+        occurrences.push(moment().add(weekIndex, 'week').day(weekdayIndex))
       }
     }
   }
 
   if (period.type === 'monthly') {
-    const thisMonth = moment().date(period.day + 1); // +1, date() works not by index, by val
-    const nextMonth = moment(thisMonth).add(1, 'month');
+    const thisMonth = moment().date(period.day + 1) // +1, date() works not by index, by val
+    const nextMonth = moment(thisMonth).add(1, 'month')
 
-    occurrences = [thisMonth, nextMonth];
+    occurrences = [thisMonth, nextMonth]
   }
 
   if (period.type === 'yearly') {
     const thisYear = moment()
       .month(period.date[0])
-      .date(period.date[1] + 1); // +1, date() works not by index, by val
-    const nextYear = moment(thisYear).add(1, 'year');
+      .date(period.date[1] + 1) // +1, date() works not by index, by val
+    const nextYear = moment(thisYear).add(1, 'year')
 
-    occurrences = [thisYear, nextYear];
+    occurrences = [thisYear, nextYear]
   }
 
   // Find the first occurence that is in the future //
 
   // we add 2 mins to 'now', to avoid accidently selecting an
   // occurence that has just passed a second ago.
-  const now = moment().add(2, 'minute');
+  const now = moment().add(2, 'minute')
 
   // Add specific hour to occurrences
-  occurrences = occurrences.map(occurrence =>
-    momentWithHour(occurrence, period.hour)
-  );
+  occurrences = occurrences.map((occurrence) => momentWithHour(occurrence, period.hour))
 
-  const nextFutureOccurrence = occurrences.find(occurrence =>
-    occurrence.isAfter(now)
-  );
+  const nextFutureOccurrence = occurrences.find((occurrence) => occurrence.isAfter(now))
 
   if (!nextFutureOccurrence) {
-    throw new Error("Can't find next future occurrence");
+    throw new Error("Can't find next future occurrence")
   }
 
-  return nextFutureOccurrence.toDate();
+  return nextFutureOccurrence.toDate()
 }
 
 function momentWithHour(aMoment, hour) {
-  const h = Math.floor(hour);
-  const m = Math.floor((hour - h) * 60); // 0.5h--> 30m
+  const h = Math.floor(hour)
+  const m = Math.floor((hour - h) * 60) // 0.5h--> 30m
 
-  return aMoment
-    .hours(h)
-    .minutes(m)
-    .seconds(0)
-    .milliseconds(0);
+  return aMoment.hours(h).minutes(m).seconds(0).milliseconds(0)
 }
 
 export const compareTabs = (tab1, tab2) =>
-  tab1.when === tab2.when
-    ? tab1.sleepStart - tab2.sleepStart
-    : tab1.when - tab2.when;
+  tab1.when === tab2.when ? tab1.sleepStart - tab2.sleepStart : tab1.when - tab2.when
 
-export const areTabsEqual = (tab1, tab2) =>
-  tab1.url === tab2.url && tab1.when === tab2.when;
+export const areTabsEqual = (tab1, tab2) => tab1.url === tab2.url && tab1.when === tab2.when
 
 export function ordinalNum(n) {
-  return moment.localeData().ordinal(n);
+  return moment.localeData().ordinal(n)
 }
 
 /**
@@ -288,33 +272,32 @@ export function ordinalNum(n) {
  */
 export function countConsecutiveSnoozes(snoozedTabs, consecutiveSnoozeTimeout) {
   // Sort tabs by sleep start. Most recently snoozed first.
-  snoozedTabs.sort((tabA, tabB) => tabB.sleepStart - tabA.sleepStart);
+  snoozedTabs.sort((tabA, tabB) => tabB.sleepStart - tabA.sleepStart)
 
   for (let i = 0; i < snoozedTabs.length; i++) {
-    const previousTime =
-      i === 0 ? Date.now() : snoozedTabs[i - 1].sleepStart;
-    const timeGap = previousTime - snoozedTabs[i].sleepStart;
+    const previousTime = i === 0 ? Date.now() : snoozedTabs[i - 1].sleepStart
+    const timeGap = previousTime - snoozedTabs[i].sleepStart
 
     if (timeGap > consecutiveSnoozeTimeout) {
-      return i;
+      return i
     }
   }
 
-  return snoozedTabs.length;
+  return snoozedTabs.length
 }
 
 export function getRecentlySnoozedTab(snoozedTabs) {
   // Sort tabs by sleep start. Most recently snoozed first.
-  snoozedTabs.sort((tabA, tabB) => tabB.sleepStart - tabA.sleepStart);
+  snoozedTabs.sort((tabA, tabB) => tabB.sleepStart - tabA.sleepStart)
 
-  return snoozedTabs[0];
+  return snoozedTabs[0]
 }
 
 export function getFirstTabToWakeup(snoozedTabs) {
   // Sort tabs by sleep start. Most recently snoozed first.
-  snoozedTabs.sort((tabA, tabB) => tabA.when - tabB.when);
+  snoozedTabs.sort((tabA, tabB) => tabA.when - tabB.when)
 
-  return snoozedTabs[0];
+  return snoozedTabs[0]
 }
 
 // export async function imageUrlToBase64(url: string): Promise<string> {
@@ -353,35 +336,33 @@ export function getFirstTabToWakeup(snoozedTabs) {
 export async function imageUrlToBase64(url) {
   // if already base64 encoded, just return url.
   if (url.startsWith('data:')) {
-    return url;
+    return url
   }
 
-  const response = await fetch(url);
+  const response = await fetch(url)
 
   if (!response.body) {
-    throw new Error('No body in response');
+    throw new Error('No body in response')
   }
 
   const base64 = await response.body
     .getReader()
     .read()
-    .then(result =>
-      btoa(String.fromCharCode.apply(null, result.value))
-    );
+    .then((result) => btoa(String.fromCharCode.apply(null, result.value)))
 
-  const type = response.headers.get('Content-Type');
+  const type = response.headers.get('Content-Type')
 
   if (!type) {
-    throw new Error('Failed to get content type');
+    throw new Error('Failed to get content type')
   }
 
-  const dataURI = 'data:' + type + ';base64,' + base64;
+  const dataURI = 'data:' + type + ';base64,' + base64
 
-  return dataURI;
+  return dataURI
 }
 
-export const IS_BETA = process.env.REACT_APP_IS_BETA === 'true';
-export const APP_VERSION = chrome.runtime.getManifest().version;
+export const IS_BETA = process.env.REACT_APP_IS_BETA === 'true'
+export const APP_VERSION = chrome.runtime.getManifest().version
 
 // function findMinimum<T>(items: Array<T>, getValue: T => number) {
 //   let minimumItem = items[0];

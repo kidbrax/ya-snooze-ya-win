@@ -1,26 +1,24 @@
-import React from 'react';
-import styled from 'styled-components';
-import moment from 'moment';
-import Checkbox from '@mui/material/Checkbox';
-import Select from './Select';
-import { ordinalNum } from '../../core/utils';
+import React from 'react'
+import styled from 'styled-components'
+import moment from 'moment'
+import Checkbox from '@mui/material/Checkbox'
+import Select from './Select'
+import { ordinalNum } from '../../core/utils'
 
 const PERIOD_TYPES = [
   { value: 'daily', label: 'Daily' },
   { value: 'weekly', label: 'Weekly' },
   { value: 'monthly', label: 'Monthly' },
   { value: 'yearly', label: 'Yearly' },
-];
+]
 
 // init <select> dropdown values
-const WEEKDAYS = indexLabels(moment.weekdays());
-const MONTHS = indexLabels(moment.monthsShort());
-const DAYS = indexLabels(ordinalNumbers(31));
-const HOURS = indexLabels(getHoursInDay(), 0.5);
+const WEEKDAYS = indexLabels(moment.weekdays())
+const MONTHS = indexLabels(moment.monthsShort())
+const DAYS = indexLabels(ordinalNumbers(31))
+const HOURS = indexLabels(getHoursInDay(), 0.5)
 
-export const PeriodOptions = (props) => (
-  <Select options={PERIOD_TYPES} autoFocus {...props} />
-);
+export const PeriodOptions = (props) => <Select options={PERIOD_TYPES} autoFocus {...props} />
 
 export const WeekdayOptions = ({ value, onChange }) => (
   <Row>
@@ -30,9 +28,9 @@ export const WeekdayOptions = ({ value, onChange }) => (
         <Checkbox
           checked={value[index]}
           onChange={() => {
-            const nextValue = [...value];
-            nextValue[index] = !value[index];
-            onChange(nextValue);
+            const nextValue = [...value]
+            nextValue[index] = !value[index]
+            onChange(nextValue)
           }}
           color="primary"
           style={{
@@ -43,73 +41,61 @@ export const WeekdayOptions = ({ value, onChange }) => (
       </WeekdayOption>
     ))}
   </Row>
-);
+)
 
-export const DayOptions = (props) => (
-  <Select options={DAYS} {...props} />
-);
+export const DayOptions = (props) => <Select options={DAYS} {...props} />
 
-export const HourOptions = (props) => (
-  <Select options={HOURS} {...props} />
-);
+export const HourOptions = (props) => <Select options={HOURS} {...props} />
 
-export const DateOptions = ({
-  value: { day, month },
-  onChange,
-}) => (
+export const DateOptions = ({ value: { day, month }, onChange }) => (
   <Row>
     <Select
       options={MONTHS}
       value={month}
-      onChange={month => onChange({ day, month })}
+      onChange={(month) => onChange({ day, month })}
       style={{ marginRight: 16 }}
     />
-    <Select
-      options={DAYS}
-      value={day}
-      onChange={day => onChange({ day, month })}
-    />
+    <Select options={DAYS} value={day} onChange={(day) => onChange({ day, month })} />
   </Row>
-);
+)
 
 const Row = styled.div`
   display: flex;
-`;
+`
 const WeekdayOption = styled.div`
   text-align: center;
-`;
+`
 const DayName = styled.div`
   font-size: 20px;
-`;
+`
 
 function indexLabels(array, step = 1) {
-  const items = [];
-  for (let i = 0; i < array.length; i++)
-    items.push({ value: i * step, label: array[i] });
+  const items = []
+  for (let i = 0; i < array.length; i++) items.push({ value: i * step, label: array[i] })
 
-  return items;
+  return items
 }
 
 function getHoursInDay() {
-  const hours = [];
+  const hours = []
 
   for (let i = 0; i < 24; i++) {
-    const AMPM = i >= 12 ? 'pm' : 'am';
-    let hour = i % 12;
+    const AMPM = i >= 12 ? 'pm' : 'am'
+    let hour = i % 12
     if (hour === 0) {
-      hour = 12;
+      hour = 12
     }
 
-    hours.push(`${hour}:00 ${AMPM}`);
-    hours.push(`${hour}:30 ${AMPM}`);
+    hours.push(`${hour}:00 ${AMPM}`)
+    hours.push(`${hour}:30 ${AMPM}`)
   }
-  return hours;
+  return hours
 }
 
 function ordinalNumbers(n) {
-  const nums = [];
+  const nums = []
   for (let i = 1; i <= n; i++) {
-    nums.push(ordinalNum(i));
+    nums.push(ordinalNum(i))
   }
-  return nums;
+  return nums
 }
