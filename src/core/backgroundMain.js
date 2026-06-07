@@ -3,40 +3,26 @@
  * Background Page - a page that opens in the background
  * without a view.
  */
-import { repeatLastSnooze, snoozeTab, snoozeTabs } from './snooze';
-import { MSG_SNOOZE_TAB, MSG_SNOOZE_TABS, MSG_DELETE_SNOOZED_TABS } from './messages';
+import { repeatLastSnooze, snoozeTab, snoozeTabs } from './snooze'
+import { MSG_SNOOZE_TAB, MSG_SNOOZE_TABS, MSG_DELETE_SNOOZED_TABS } from './messages'
 import {
   registerEventListeners as registerWakeupEventListeners,
   scheduleWakeupAlarm,
   deleteSnoozedTabs,
-} from './wakeup';
-import {
-  SLEEPING_TABS_PATH,
-  SUPPORT_TS_PATH,
-  TUTORIAL_PATH,
-  WHATS_NEW_PATH,
-} from '../paths';
-import {
-  COMMAND_REPEAT_LAST_SNOOZE,
-  COMMAND_OPEN_SLEEPING_TABS,
-} from './commands';
-import { createTab, createCenteredWindow, IS_BETA, APP_VERSION } from './utils';
-import {
-  rebuildContextMenus,
-  registerContextMenuListeners,
-} from './contextMenu';
+} from './wakeup'
+import { SLEEPING_TABS_PATH, SUPPORT_TS_PATH, TUTORIAL_PATH, WHATS_NEW_PATH } from '../paths'
+import { COMMAND_REPEAT_LAST_SNOOZE, COMMAND_OPEN_SLEEPING_TABS } from './commands'
+import { createTab, createCenteredWindow, IS_BETA, APP_VERSION } from './utils'
+import { rebuildContextMenus, registerContextMenuListeners } from './contextMenu'
 // import { track, EVENTS } from './analytics';
 
-import {
-  updateBadge,
-  registerEventListeners as registerBadgeEventListeners,
-} from './badge';
-import { getSettings, saveSettings } from './settings';
-import { saveRecentlyWokenTabs } from './storage';
+import { updateBadge, registerEventListeners as registerBadgeEventListeners } from './badge'
+import { getSettings, saveSettings } from './settings'
+import { saveRecentlyWokenTabs } from './storage'
 
 // Clear recently woken tabs on every Service Worker startup.
 // This ensures tabs can retry if SW crashed mid-wakeup.
-saveRecentlyWokenTabs([]);
+saveRecentlyWokenTabs([])
 
 /**
  * runBackgroundScript() is called by index.js on the main thread of a Chrome Extension
@@ -54,36 +40,35 @@ saveRecentlyWokenTabs([]);
 export function runBackgroundScript() {
   // Make the main function run on Chrome startup
   chrome.runtime.onStartup.addListener(() => {
-    console.log(`🔵 chrome.runtime.onStartup FIRED`);
-    extensionMain();
-  });
+    console.log(`🔵 chrome.runtime.onStartup FIRED`)
+    extensionMain()
+  })
 
   // [1] Register more background events by the wakeup module (synchroneously)
-  registerWakeupEventListeners();
+  registerWakeupEventListeners()
 
   // Make badge module listen to storage changes and update badge
-  registerBadgeEventListeners();
+  registerBadgeEventListeners()
 
   // Register right-click context menu listener (must be sync)
-  registerContextMenuListeners();
+  registerContextMenuListeners()
 
   // Show CHANGELOG doc when extension updates
-  chrome.runtime.onInstalled.addListener(async function ({
-    reason,
-    previousVersion,
-  }) {
-    console.log(`🔵 chrome.runtime.onInstalled FIRED - reason: ${reason}, previousVersion: ${previousVersion}`);
+  chrome.runtime.onInstalled.addListener(async function ({ reason, previousVersion }) {
+    console.log(
+      `🔵 chrome.runtime.onInstalled FIRED - reason: ${reason}, previousVersion: ${previousVersion}`
+    )
 
     // [2] Make the main function run on Extension install/update
-    await extensionMain();
+    await extensionMain()
 
     // chrome.runtime.setUninstallURL(getTrackUninstallUrl());
 
     // Skip popups in developer mode (unpacked extension)
-    const self = await chrome.management.getSelf();
-    const isDevMode = self.installType === 'development';
+    const self = await chrome.management.getSelf()
+    const isDevMode = self.installType === 'development'
     if (isDevMode) {
-      console.log(`🔵 Developer mode detected — skipping install/update popups`);
+      console.log(`🔵 Developer mode detected — skipping install/update popups`)
     }
 
     if (reason === 'install' && !isDevMode) {
@@ -93,27 +78,27 @@ export function runBackgroundScript() {
       // Old users will have a 0 install date
       await saveSettings({
         installDate: Date.now(),
-      });
+      })
 
-      createTab(TUTORIAL_PATH);
+      createTab(TUTORIAL_PATH)
     }
 
     if (reason === 'update' && !isDevMode) {
       // track(EVENTS.EXT_UPDATED);
 
-      createTab(WHATS_NEW_PATH);
+      createTab(WHATS_NEW_PATH)
     }
-  });
+  })
 
-  chrome.commands.onCommand.addListener(command => {
+  chrome.commands.onCommand.addListener((command) => {
     if (command === COMMAND_REPEAT_LAST_SNOOZE) {
-      repeatLastSnooze();
+      repeatLastSnooze()
     }
 
     if (command === COMMAND_OPEN_SLEEPING_TABS) {
-      createTab(SLEEPING_TABS_PATH);
+      createTab(SLEEPING_TABS_PATH)
     }
-  });
+  })
 
   // Handle snooze/delete requests from popup and options page.
   // The service worker is the single writer for snoozedTabs storage.
@@ -121,85 +106,85 @@ export function runBackgroundScript() {
   // the tab info — getActiveTab() wouldn't return the right tab from SW context.
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === MSG_SNOOZE_TAB) {
-      const { tab, config } = message;
-      console.log(`📨 [SW] Received snoozeTab message for: ${tab?.url}`);
+      const { tab, config } = message
+      console.log(`📨 [SW] Received snoozeTab message for: ${tab?.url}`)
       snoozeTab(tab, config)
         .then(() => sendResponse({ success: true }))
-        .catch(error => {
-          console.error('snoozeTab message handler failed:', error);
-          sendResponse({ success: false, error: error.message });
-        });
-      return true;
+        .catch((error) => {
+          console.error('snoozeTab message handler failed:', error)
+          sendResponse({ success: false, error: error.message })
+        })
+      return true
     }
 
     if (message.action === MSG_SNOOZE_TABS) {
-      const { tabs, config } = message;
-      console.log(`📨 [SW] Received snoozeTabs message for ${tabs?.length} tab(s)`);
+      const { tabs, config } = message
+      console.log(`📨 [SW] Received snoozeTabs message for ${tabs?.length} tab(s)`)
       snoozeTabs(tabs, config)
         .then(() => sendResponse({ success: true }))
-        .catch(error => {
-          console.error('snoozeTabs message handler failed:', error);
-          sendResponse({ success: false, error: error.message });
-        });
-      return true;
+        .catch((error) => {
+          console.error('snoozeTabs message handler failed:', error)
+          sendResponse({ success: false, error: error.message })
+        })
+      return true
     }
 
     if (message.action === MSG_DELETE_SNOOZED_TABS) {
-      const { tabsToDelete } = message;
-      console.log(`📨 [SW] Received deleteSnoozedTabs message for ${tabsToDelete?.length} tab(s)`);
+      const { tabsToDelete } = message
+      console.log(`📨 [SW] Received deleteSnoozedTabs message for ${tabsToDelete?.length} tab(s)`)
       deleteSnoozedTabs({ tabsToDelete })
         .then(() => sendResponse({ success: true }))
-        .catch(error => {
-          console.error('deleteSnoozedTabs message handler failed:', error);
-          sendResponse({ success: false, error: error.message });
-        });
-      return true; // keep channel open for async sendResponse
+        .catch((error) => {
+          console.error('deleteSnoozedTabs message handler failed:', error)
+          sendResponse({ success: false, error: error.message })
+        })
+      return true // keep channel open for async sendResponse
     }
-  });
+  })
 }
 
 // Lock to prevent concurrent offscreen document creation
-let offscreenDocumentPromise = null;
+let offscreenDocumentPromise = null
 
 export async function ensureOffscreenDocument() {
   // If a creation/check is already in progress, wait for it
   if (offscreenDocumentPromise) {
-    return await offscreenDocumentPromise;
+    return await offscreenDocumentPromise
   }
 
   // Set the lock IMMEDIATELY before any async work
   offscreenDocumentPromise = (async () => {
-    const offscreenUrl = chrome.runtime.getURL('offscreen.html');
+    const offscreenUrl = chrome.runtime.getURL('offscreen.html')
     const existingContexts = await chrome.runtime.getContexts({
       contextTypes: ['OFFSCREEN_DOCUMENT'],
-      documentUrls: [offscreenUrl]
-    });
+      documentUrls: [offscreenUrl],
+    })
 
     if (existingContexts.length === 0) {
       try {
         await chrome.offscreen.createDocument({
           url: 'offscreen.html',
           reasons: ['AUDIO_PLAYBACK'],
-          justification: 'Play notification and alert sounds'
-        });
+          justification: 'Play notification and alert sounds',
+        })
         // Wait for the offscreen script to load and register its message listener
         // This prevents "Receiving end does not exist" errors when sending messages immediately
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100))
       } catch (error) {
         // Handle the case where document was created by another call despite our check
         if (error.message && error.message.includes('Only a single offscreen document')) {
         } else {
-          console.error("Error creating offscreen document:", error);
-          throw error;
+          console.error('Error creating offscreen document:', error)
+          throw error
         }
       }
     }
-  })();
+  })()
 
   try {
-    await offscreenDocumentPromise;
+    await offscreenDocumentPromise
   } finally {
-    offscreenDocumentPromise = null;
+    offscreenDocumentPromise = null
   }
 }
 
@@ -213,17 +198,17 @@ async function extensionMain() {
 
   // Set 1 mintue delay for Chrome to load after startup before
   // waking up tabs so chrome is not stuck
-  await scheduleWakeupAlarm('1min');
+  await scheduleWakeupAlarm('1min')
 
   // update badge after chrome startup
-  await updateBadge();
+  await updateBadge()
 
   // Build right-click context menu items from current settings
-  await rebuildContextMenus();
+  await rebuildContextMenus()
 
   // Periodically show support reminder (every ~90 days for active users)
-  const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
-  const settings = await getSettings();
+  const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000
+  const settings = await getSettings()
 
   console.log(`🔵 Support reminder check:`, {
     showSupportReminders: settings.showSupportReminders,
@@ -231,7 +216,7 @@ async function extensionMain() {
     lastSupportReminderDate: settings.lastSupportReminderDate
       ? new Date(settings.lastSupportReminderDate).toString()
       : 'never',
-  });
+  })
 
   if (
     settings.showSupportReminders &&
@@ -239,12 +224,12 @@ async function extensionMain() {
     Date.now() - settings.lastSupportReminderDate >= NINETY_DAYS_MS
   ) {
     // Skip support reminder in developer mode
-    const self = await chrome.management.getSelf();
+    const self = await chrome.management.getSelf()
     if (self.installType === 'development') {
-      console.log(`🔵 Developer mode — skipping support reminder popup`);
+      console.log(`🔵 Developer mode — skipping support reminder popup`)
     } else {
-      await saveSettings({ lastSupportReminderDate: Date.now() });
-      createCenteredWindow(SUPPORT_TS_PATH, 500, 875);
+      await saveSettings({ lastSupportReminderDate: Date.now() })
+      createCenteredWindow(SUPPORT_TS_PATH, 500, 875)
     }
   }
 }
@@ -252,8 +237,8 @@ async function extensionMain() {
 // CRITICAL: Only run background script registration in service worker context
 // This prevents duplicate event listeners when UI pages (popup/options) import this module
 if (typeof ServiceWorkerGlobalScope !== 'undefined' && self instanceof ServiceWorkerGlobalScope) {
-  console.log(`🔵 Running in SERVICE WORKER context - registering event listeners`);
-  runBackgroundScript();
+  console.log(`🔵 Running in SERVICE WORKER context - registering event listeners`)
+  runBackgroundScript()
 } else {
-  console.log(`⚠️ Running in UI context (popup/options) - SKIPPING event listener registration`);
+  console.log(`⚠️ Running in UI context (popup/options) - SKIPPING event listener registration`)
 }

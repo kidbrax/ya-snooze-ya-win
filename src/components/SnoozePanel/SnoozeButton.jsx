@@ -1,24 +1,14 @@
-import React from 'react';
-import styled, { css, withTheme } from 'styled-components';
-import ProCornerRibbon from './ProCornerRibbon';
+import React from 'react'
+import styled, { css, withTheme } from 'styled-components'
+import ProCornerRibbon from './ProCornerRibbon'
 
-const SNOOZE_CLICK_EFFECT_TIME = 400;
+const SNOOZE_CLICK_EFFECT_TIME = 400
 
 const SnoozeButton = (props) => {
-  const {
-    title,
-    tooltip,
-    when,
-    focused,
-    pressed,
-    proBadge,
-    onClick,
-    onMouseLeave,
-    onMouseEnter,
-  } = props;
+  const { title, tooltip, when, focused, pressed, proBadge, onClick, onMouseLeave, onMouseEnter } = props
 
   // Show the tooltip time string for options that have a concrete wakeup time
-  const timeLabel = when ? tooltip : null;
+  const timeLabel = when ? tooltip : null
 
   return (
     <Button
@@ -32,10 +22,10 @@ const SnoozeButton = (props) => {
       {timeLabel && <TimeLabel $pressed={pressed}>({timeLabel})</TimeLabel>}
       {proBadge && <ProCornerRibbon white={pressed ? true : undefined} />}
     </Button>
-  );
+  )
 }
 
-export default withTheme(SnoozeButton);
+export default withTheme(SnoozeButton)
 
 const Button = styled.button`
   display: flex;
@@ -75,7 +65,7 @@ const Button = styled.button`
       transition: background-color ${SNOOZE_CLICK_EFFECT_TIME}ms;
       background-color: ${props.theme.primary} !important;
     `};
-`;
+`
 
 const Title = styled.div`
   font-size: 15px;
@@ -88,7 +78,7 @@ const Title = styled.div`
     css`
       color: #fff;
     `};
-`;
+`
 
 const TimeLabel = styled.div`
   margin-left: 8px;
@@ -103,5 +93,4 @@ const TimeLabel = styled.div`
       color: #fff;
       opacity: 0.85;
     `};
-`;
-
+`

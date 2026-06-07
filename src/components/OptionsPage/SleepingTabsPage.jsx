@@ -1,140 +1,138 @@
-import React, { useEffect, useState, Fragment, useCallback } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { styled as muiStyled } from '@mui/material/styles';
-import styled from 'styled-components';
-import { openTabs } from '../../core/wakeup';
-import { MSG_DELETE_SNOOZED_TABS } from '../../core/messages';
-import { getSleepingTabByWakeupGroups } from './groupSleepingTabs';
-import { formatWakeupDescription } from './formatWakeupDescription';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
-import IconButton from '@mui/material/IconButton';
-import HotelIcon from '@mui/icons-material/Hotel';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
-import Zoom from '@mui/material/Zoom';
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import Tooltip from '@mui/material/Tooltip';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, Fragment, useCallback } from 'react'
+import { Helmet } from 'react-helmet-async'
+import { styled as muiStyled } from '@mui/material/styles'
+import styled from 'styled-components'
+import { openTabs } from '../../core/wakeup'
+import { MSG_DELETE_SNOOZED_TABS } from '../../core/messages'
+import { getSleepingTabByWakeupGroups } from './groupSleepingTabs'
+import { formatWakeupDescription } from './formatWakeupDescription'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemText from '@mui/material/ListItemText'
+import ListSubheader from '@mui/material/ListSubheader'
+import IconButton from '@mui/material/IconButton'
+import HotelIcon from '@mui/icons-material/Hotel'
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction'
+import Zoom from '@mui/material/Zoom'
+import Fab from '@mui/material/Fab'
+import AddIcon from '@mui/icons-material/Add'
+import DeleteIcon from '@mui/icons-material/Delete'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import Tooltip from '@mui/material/Tooltip'
+import { Link } from 'react-router-dom'
 
 // MUI v5 styled components
 const StyledList = muiStyled(List)(({ theme }) => ({
   marginBottom: theme.spacing(2),
-}));
+}))
 
 const StyledListSubheader = muiStyled(ListSubheader)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   paddingLeft: theme.spacing(3),
-}));
+}))
 
 const StyledListItem = muiStyled(ListItem)(({ theme }) => ({
   paddingLeft: theme.spacing(3),
-}));
+}))
 
 const StyledDeleteButton = muiStyled(IconButton)(({ theme }) => ({
   transition: 'opacity 0.2s',
   opacity: 1,
   marginRight: theme.spacing(2),
-}));
+}))
 
 const StyledFab = muiStyled(Fab)(({ theme }) => ({
   zIndex: 100,
   position: 'fixed',
   bottom: theme.spacing(3),
   right: theme.spacing(3),
-}));
+}))
 
 const SleepingTabsPage = (props) => {
-  const [ visibleTabGroupsState, setVisibleTabGroupsState ] = useState([]);
-  const [ hidePeriodicState, setHidePeriodicState ] = useState(false);
+  const [visibleTabGroupsState, setVisibleTabGroupsState] = useState([])
+  const [hidePeriodicState, setHidePeriodicState] = useState(false)
 
   const refreshSnoozedTabs = useCallback(async () => {
-    const groups = await getSleepingTabByWakeupGroups(hidePeriodicState);
-    setVisibleTabGroupsState(groups);
-  }, [hidePeriodicState]);
+    const groups = await getSleepingTabByWakeupGroups(hidePeriodicState)
+    setVisibleTabGroupsState(groups)
+  }, [hidePeriodicState])
 
   useEffect(() => {
-    refreshSnoozedTabs();
+    refreshSnoozedTabs()
 
     // Satisfy Flow that Promise is incompatible with undefined in the return value
     const storageListener = () => {
-      refreshSnoozedTabs();
-    };
+      refreshSnoozedTabs()
+    }
 
     // listen to storage changes
-    chrome.storage.onChanged.addListener(storageListener);
+    chrome.storage.onChanged.addListener(storageListener)
 
     return () => {
-      chrome.storage.onChanged.removeListener(storageListener);
+      chrome.storage.onChanged.removeListener(storageListener)
     }
-  }, [refreshSnoozedTabs]);
+  }, [refreshSnoozedTabs])
 
   const deleteTab = (tab, event) => {
     // so that openTab() won't be called
-    event.stopPropagation();
+    event.stopPropagation()
 
     // Delay deletion for animation.
     // Send to service worker (single writer for snoozedTabs).
     // UI updates reactively via chrome.storage.onChanged listener.
     setTimeout(() => {
-      chrome.runtime.sendMessage({
-        action: MSG_DELETE_SNOOZED_TABS,
-        tabsToDelete: [tab],
-      }).catch(error => console.error('Failed to send delete message to SW:', error));
-    }, 150);
+      chrome.runtime
+        .sendMessage({
+          action: MSG_DELETE_SNOOZED_TABS,
+          tabsToDelete: [tab],
+        })
+        .catch((error) => console.error('Failed to send delete message to SW:', error))
+    }, 150)
   }
 
   const wakeupTab = (tab, event) => {
-    const makeTabActive = !(
-      event.which === 2 ||
-      event.button === 4 ||
-      event.metaKey
-    );
-    setTimeout(() => openTabs({ tabs: [tab], makeActive: makeTabActive }), 300);
+    const makeTabActive = !(event.which === 2 || event.button === 4 || event.metaKey)
+    setTimeout(() => openTabs({ tabs: [tab], makeActive: makeTabActive }), 300)
   }
 
   const wakeupGroup = (tabs) => {
-    setTimeout(() => openTabs({ tabs, makeActive: true }), 300);
+    setTimeout(() => openTabs({ tabs, makeActive: true }), 300)
   }
 
   const deleteGroup = (tabs, event) => {
-    event.stopPropagation();
+    event.stopPropagation()
     setTimeout(() => {
-      chrome.runtime.sendMessage({
-        action: MSG_DELETE_SNOOZED_TABS,
-        tabsToDelete: tabs,
-      }).catch(error => console.error('Failed to send delete message to SW:', error));
-    }, 150);
+      chrome.runtime
+        .sendMessage({
+          action: MSG_DELETE_SNOOZED_TABS,
+          tabsToDelete: tabs,
+        })
+        .catch((error) => console.error('Failed to send delete message to SW:', error))
+    }, 150)
   }
 
   // Group tabs within a time range by their groupId
   const splitIntoSubgroups = (tabs) => {
-    const groups = [];
-    const seen = {};
+    const groups = []
+    const seen = {}
     for (const tab of tabs) {
-      const key = tab.groupId ?? null;
+      const key = tab.groupId ?? null
       if (key && seen[key] != null) {
-        groups[seen[key]].tabs.push(tab);
+        groups[seen[key]].tabs.push(tab)
       } else {
-        const idx = groups.length;
-        if (key) seen[key] = idx;
-        groups.push({ groupId: key, tabs: [tab] });
+        const idx = groups.length
+        if (key) seen[key] = idx
+        groups.push({ groupId: key, tabs: [tab] })
       }
     }
-    return groups;
+    return groups
   }
 
   const renderTabGroup = (tabGroup, index) => {
-    const subgroups = splitIntoSubgroups(tabGroup.tabs);
+    const subgroups = splitIntoSubgroups(tabGroup.tabs)
     return (
       <Fragment key={index}>
-        <StyledListSubheader disableSticky>
-          {tabGroup.timeRange.title}
-        </StyledListSubheader>
+        <StyledListSubheader disableSticky>{tabGroup.timeRange.title}</StyledListSubheader>
         {subgroups.map((subgroup, si) => (
           <Fragment key={si}>
             {subgroup.groupId && subgroup.tabs.length > 1 && (
@@ -146,7 +144,7 @@ const SleepingTabsPage = (props) => {
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Delete all tabs in group">
-                  <IconButton size="small" onClick={e => deleteGroup(subgroup.tabs, e)}>
+                  <IconButton size="small" onClick={(e) => deleteGroup(subgroup.tabs, e)}>
                     <DeleteIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
@@ -156,7 +154,7 @@ const SleepingTabsPage = (props) => {
               <StyledListItem
                 key={ti}
                 button
-                onClick={event => wakeupTab(tab, event)}
+                onClick={(event) => wakeupTab(tab, event)}
                 style={subgroup.groupId && subgroup.tabs.length > 1 ? { paddingLeft: 40 } : undefined}
               >
                 <Icon src={tab.favicon} alt="" />
@@ -168,7 +166,7 @@ const SleepingTabsPage = (props) => {
                 <ListItemSecondaryAction>
                   <StyledDeleteButton
                     className="delete-btn"
-                    onClick={event => deleteTab(tab, event)}
+                    onClick={(event) => deleteTab(tab, event)}
                     aria-label="Delete"
                   >
                     <DeleteIcon />
@@ -179,14 +177,13 @@ const SleepingTabsPage = (props) => {
           </Fragment>
         ))}
       </Fragment>
-    );
+    )
   }
 
-
   if (!visibleTabGroupsState) {
-      // avoid showing placeholder while loading, because
-      // it causes placeholder to flicker before the list renders on screen
-      return null;
+    // avoid showing placeholder while loading, because
+    // it causes placeholder to flicker before the list renders on screen
+    return null
   }
 
   return (
@@ -195,27 +192,24 @@ const SleepingTabsPage = (props) => {
         <title>Ya Snooze, Ya Win</title>
       </Helmet>
       {visibleTabGroupsState.length > 0 ? (
-        <StyledList>
-          {visibleTabGroupsState.map(renderTabGroup)}
-        </StyledList>
+        <StyledList>{visibleTabGroupsState.map(renderTabGroup)}</StyledList>
       ) : (
         <NoTabsPlaceholder />
       )}
     </Root>
-  );
+  )
 }
-
 
 const NoTabsPlaceholder = () => (
   <Placeholder>
     <HotelIcon />
     <span>No tabs are sleeping</span>
   </Placeholder>
-);
+)
 
 const Root = styled.div`
   padding-bottom: 50px;
-`;
+`
 
 const Placeholder = styled.div`
   display: flex;
@@ -234,7 +228,7 @@ const Placeholder = styled.div`
     width: 140px;
     height: 140px;
   }
-`;
+`
 
 const Icon = styled.img`
   width: 32px;
@@ -243,7 +237,7 @@ const Icon = styled.img`
   align-self: flex-start;
   margin-top: 8px;
   border-radius: 3px;
-`;
+`
 
 const GroupHeader = styled.div`
   display: flex;
@@ -251,13 +245,13 @@ const GroupHeader = styled.div`
   padding: 4px 16px 2px 24px;
   background-color: #f5f5f5;
   border-left: 3px solid #1a73e8;
-`;
+`
 
 const GroupLabel = styled.span`
   flex: 1;
   font-size: 12px;
   color: #666;
   font-style: italic;
-`;
+`
 
-export default SleepingTabsPage;
+export default SleepingTabsPage

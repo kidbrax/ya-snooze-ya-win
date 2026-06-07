@@ -1,53 +1,47 @@
-import React, { Fragment, useState } from 'react';
-import styled from 'styled-components';
-import moment from 'moment';
-import SnoozeModal from './SnoozeModal';
-import Collapse from '@mui/material/Collapse';
-import {
-  WeekdayOptions,
-  HourOptions,
-  DayOptions,
-  DateOptions,
-  PeriodOptions,
-} from './periodOptions';
-import Button from './Button';
+import React, { Fragment, useState } from 'react'
+import styled from 'styled-components'
+import moment from 'moment'
+import SnoozeModal from './SnoozeModal'
+import Collapse from '@mui/material/Collapse'
+import { WeekdayOptions, HourOptions, DayOptions, DateOptions, PeriodOptions } from './periodOptions'
+import Button from './Button'
 
 const PeriodSelector = (props) => {
-  const { visible, onPeriodSelected } = props;
+  const { visible, onPeriodSelected } = props
 
-  const [ periodType, setPeriodType ] = useState('weekly');
-  const [ selectedHour, setSelectedHour ] = useState(9); // Default to 9 AM
-  const [ selectedMonth, setSelectedMonth ] = useState(moment().month());
-  const [ selectedDay, setSelectedDay ] = useState(moment().date() - 1); // date() counts from 1, so subtract 1
-  const [ selectedWeekdays, setSelectedWeekdays ] = useState(
-    Array(7).fill(false).map((_, i) => i === moment().weekday()) // auto select current day in the week
-  );
+  const [periodType, setPeriodType] = useState('weekly')
+  const [selectedHour, setSelectedHour] = useState(9) // Default to 9 AM
+  const [selectedMonth, setSelectedMonth] = useState(moment().month())
+  const [selectedDay, setSelectedDay] = useState(moment().date() - 1) // date() counts from 1, so subtract 1
+  const [selectedWeekdays, setSelectedWeekdays] = useState(
+    Array(7)
+      .fill(false)
+      .map((_, i) => i === moment().weekday()) // auto select current day in the week
+  )
 
   const onSnoozeClicked = () => {
-    let snoozePeriod;
+    let snoozePeriod
 
     if (periodType === 'daily') {
       snoozePeriod = {
         type: 'daily',
         hour: selectedHour,
-      };
+      }
     }
 
     if (periodType === 'weekly') {
-      const daysIndexes = getSelectedWeekdaysIndexes(
-        selectedWeekdays
-      );
+      const daysIndexes = getSelectedWeekdaysIndexes(selectedWeekdays)
 
       // Must select at least one day
       if (daysIndexes.length === 0) {
-        return;
+        return
       }
 
       snoozePeriod = {
         type: 'weekly',
         hour: selectedHour,
         days: daysIndexes,
-      };
+      }
     }
 
     if (periodType === 'monthly') {
@@ -55,7 +49,7 @@ const PeriodSelector = (props) => {
         type: 'monthly',
         hour: selectedHour,
         day: selectedDay,
-      };
+      }
     }
 
     if (periodType === 'yearly') {
@@ -63,17 +57,15 @@ const PeriodSelector = (props) => {
         type: 'yearly',
         hour: selectedHour,
         date: [selectedMonth, selectedDay],
-      };
+      }
     }
 
     if (!snoozePeriod) {
-      throw new Error('unrecognized periodType');
+      throw new Error('unrecognized periodType')
     }
 
-    onPeriodSelected(snoozePeriod);
+    onPeriodSelected(snoozePeriod)
   }
-
-
 
   return (
     <SnoozeModal visible={visible}>
@@ -103,12 +95,10 @@ const PeriodSelector = (props) => {
                 day: selectedDay,
                 month: selectedMonth,
               }}
-              onChange={({ day, month }) =>
-                {
-                  setSelectedDay(day);
-                  setSelectedMonth(month);
-                }
-              }
+              onChange={({ day, month }) => {
+                setSelectedDay(day)
+                setSelectedMonth(month)
+              }}
             />
           </Fragment>
         </Collapse>
@@ -117,20 +107,16 @@ const PeriodSelector = (props) => {
         <HourOptions value={selectedHour} onChange={setSelectedHour} />
 
         <Spacer />
-        <SaveButton onMouseDown={onSnoozeClicked}>
-          SNOOZE
-        </SaveButton>
+        <SaveButton onMouseDown={onSnoozeClicked}>SNOOZE</SaveButton>
       </Root>
     </SnoozeModal>
-  );
+  )
 }
 
-export default PeriodSelector;
+export default PeriodSelector
 
 function getSelectedWeekdaysIndexes(selectedWeekdays) {
-  return selectedWeekdays
-    .map((y, i) => (y ? i : -1))
-    .filter(y => y >= 0);
+  return selectedWeekdays.map((y, i) => (y ? i : -1)).filter((y) => y >= 0)
 }
 
 const Root = styled.div`
@@ -140,7 +126,7 @@ const Root = styled.div`
   align-items: center;
   /* justify-content: center; */
   padding-top: 14px;
-`;
+`
 
 const Title = styled.div`
   font-size: 20px;
@@ -148,14 +134,14 @@ const Title = styled.div`
   margin-bottom: 6px;
   text-align: center;
   /* color: #999; */
-  color: ${props => props.theme.snoozePanel.footerTextColor};
-`;
+  color: ${(props) => props.theme.snoozePanel.footerTextColor};
+`
 
 const Spacer = styled.div`
   flex: 1;
-`;
+`
 
 const SaveButton = styled(Button)`
   width: 100%;
   margin-top: 10px;
-`;
+`

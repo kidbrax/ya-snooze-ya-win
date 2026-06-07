@@ -1,19 +1,18 @@
+import './debugStorage'
+import { areTabsEqual } from './utils'
 
-import './debugStorage';
-import { areTabsEqual } from './utils';
-
-export const STORAGE_KEY_TS_VERSION = 'tsVersion';
-export const STORAGE_KEY_TAB_COUNT = 'tabsCount';
-export const STORAGE_KEY_SNOOZED_TABS = 'snoozedTabs';
-export const STORAGE_KEY_SERVER_CONFIG = 'serverConfig';
-export const STORAGE_KEY_BACKUPS = 'backups';
-export const STORAGE_KEY_RECENTLY_WOKEN = 'recentlyWokenTabs';
+export const STORAGE_KEY_TS_VERSION = 'tsVersion'
+export const STORAGE_KEY_TAB_COUNT = 'tabsCount'
+export const STORAGE_KEY_SNOOZED_TABS = 'snoozedTabs'
+export const STORAGE_KEY_SERVER_CONFIG = 'serverConfig'
+export const STORAGE_KEY_BACKUPS = 'backups'
+export const STORAGE_KEY_RECENTLY_WOKEN = 'recentlyWokenTabs'
 
 // version 2.0
 // export const STORAGE_KEY_TAB_COUNT = 'tabsCount';
 // export const STORAGE_KEY_HISTORY = 'history';
 
-const includesTab = (list, tab) => list.some(t => areTabsEqual(t, tab));
+const includesTab = (list, tab) => list.some((t) => areTabsEqual(t, tab))
 
 /*
     Promise-chain mutex for serializing snoozedTabs storage writes.
@@ -21,13 +20,16 @@ const includesTab = (list, tab) => list.some(t => areTabsEqual(t, tab));
     read-modify-write sequences don't interleave within the
     same JS execution context (i.e., the service worker).
 */
-let snoozedTabMutex = Promise.resolve();
+let snoozedTabMutex = Promise.resolve()
 
 function withStorageLock(fn) {
-  const result = snoozedTabMutex.then(fn, fn);
+  const result = snoozedTabMutex.then(fn, fn)
   // Update mutex to track this operation. Swallow errors so chain never stays rejected.
-  snoozedTabMutex = result.then(() => {}, () => {});
-  return result;
+  snoozedTabMutex = result.then(
+    () => {},
+    () => {}
+  )
+  return result
 }
 
 /*
@@ -35,57 +37,55 @@ function withStorageLock(fn) {
     each tab in a different key... instead of one big array :( it's sad
 */
 export async function getSnoozedTabs() {
-  const { snoozedTabs } = await chrome.storage.local.get(
-    STORAGE_KEY_SNOOZED_TABS
-  );
+  const { snoozedTabs } = await chrome.storage.local.get(STORAGE_KEY_SNOOZED_TABS)
 
-  return snoozedTabs || [];
+  return snoozedTabs || []
 }
 
 export function addSnoozedTabs(tabsToAdd) {
   return withStorageLock(async () => {
-    const tabs = await getSnoozedTabs();
-    const newTabs = tabsToAdd.filter(toAdd => !includesTab(tabs, toAdd));
+    const tabs = await getSnoozedTabs()
+    const newTabs = tabsToAdd.filter((toAdd) => !includesTab(tabs, toAdd))
     if (newTabs.length > 0) {
-      console.log(`➕ Adding ${newTabs.length} tab(s) to storage (${tabsToAdd.length - newTabs.length} dedup'd)`);
-      await saveSnoozedTabs([...tabs, ...newTabs]);
+      console.log(
+        `➕ Adding ${newTabs.length} tab(s) to storage (${tabsToAdd.length - newTabs.length} dedup'd)`
+      )
+      await saveSnoozedTabs([...tabs, ...newTabs])
     } else if (tabsToAdd.length > 0) {
-      console.log(`⏭️ All ${tabsToAdd.length} tab(s) already in storage, skipping add`);
+      console.log(`⏭️ All ${tabsToAdd.length} tab(s) already in storage, skipping add`)
     }
-  });
+  })
 }
 
 export function removeSnoozedTabs(tabsToRemove) {
   return withStorageLock(async () => {
-    const tabs = await getSnoozedTabs();
-    const newTabs = tabs.filter(t => !includesTab(tabsToRemove, t));
+    const tabs = await getSnoozedTabs()
+    const newTabs = tabs.filter((t) => !includesTab(tabsToRemove, t))
     if (newTabs.length !== tabs.length) {
-      const removed = tabs.length - newTabs.length;
-      console.log(`🗑️ Removed ${removed} tab(s) from storage (${tabsToRemove.length - removed} not found)`);
-      await saveSnoozedTabs(newTabs);
+      const removed = tabs.length - newTabs.length
+      console.log(`🗑️ Removed ${removed} tab(s) from storage (${tabsToRemove.length - removed} not found)`)
+      await saveSnoozedTabs(newTabs)
     } else {
-      console.log(`⏭️ No matching tabs found to remove`);
+      console.log(`⏭️ No matching tabs found to remove`)
     }
-  });
+  })
 }
 
 function saveSnoozedTabs(snoozedTabs) {
   return chrome.storage.local.set({
     [STORAGE_KEY_SNOOZED_TABS]: snoozedTabs,
-  });
+  })
 }
 
 export async function getRecentlyWokenTabs() {
-  const { recentlyWokenTabs } = await chrome.storage.local.get(
-    STORAGE_KEY_RECENTLY_WOKEN
-  );
-  return recentlyWokenTabs || [];
+  const { recentlyWokenTabs } = await chrome.storage.local.get(STORAGE_KEY_RECENTLY_WOKEN)
+  return recentlyWokenTabs || []
 }
 
 export function saveRecentlyWokenTabs(tabKeys) {
   return chrome.storage.local.set({
     [STORAGE_KEY_RECENTLY_WOKEN]: tabKeys,
-  });
+  })
 }
 
 // export function getSnoozeHistory() {

@@ -1,94 +1,92 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
-import DragHandleIcon from '@mui/icons-material/DragHandle';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import TextField from '@mui/material/TextField';
-import MuiButton from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import MuiSelect from '@mui/material/Select';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
+import React, { useState } from 'react'
+import styled from 'styled-components'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction'
+import IconButton from '@mui/material/IconButton'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import AddIcon from '@mui/icons-material/Add'
+import DragHandleIcon from '@mui/icons-material/DragHandle'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import TextField from '@mui/material/TextField'
+import MuiButton from '@mui/material/Button'
+import MenuItem from '@mui/material/MenuItem'
+import MuiSelect from '@mui/material/Select'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
 
 const OPTION_TYPES = [
-  { value: 'offset',        label: 'X hours from now' },
-  { value: 'evening',       label: 'This Evening' },
-  { value: 'tomorrow',      label: 'Tomorrow morning' },
-  { value: 'weekend',       label: 'This Weekend' },
-  { value: 'next_week',     label: 'Next Week' },
-  { value: 'in_a_month',    label: 'In a Month' },
-  { value: 'someday',       label: 'Someday' },
-  { value: 'periodically',  label: 'Repeatedly (period selector)' },
+  { value: 'offset', label: 'X hours from now' },
+  { value: 'evening', label: 'This Evening' },
+  { value: 'tomorrow', label: 'Tomorrow morning' },
+  { value: 'weekend', label: 'This Weekend' },
+  { value: 'next_week', label: 'Next Week' },
+  { value: 'in_a_month', label: 'In a Month' },
+  { value: 'someday', label: 'Someday' },
+  { value: 'periodically', label: 'Repeatedly (period selector)' },
   { value: 'specific_date', label: 'Pick a Date' },
-];
+]
 
 const EMPTY_OPTION = {
   id: '',
   label: '',
   type: 'offset',
   offsetMinutes: 60,
-};
+}
 
 export default function SnoozeOptionsEditor({ options, onChange }) {
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [draft, setDraft] = useState(EMPTY_OPTION);
-  const [dragIndex, setDragIndex] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null)
+  const [draft, setDraft] = useState(EMPTY_OPTION)
+  const [dragIndex, setDragIndex] = useState(null)
 
   const openAdd = () => {
-    setDraft({ ...EMPTY_OPTION, id: `custom_${Date.now()}` });
-    setEditingIndex(-1); // -1 = new
-  };
+    setDraft({ ...EMPTY_OPTION, id: `custom_${Date.now()}` })
+    setEditingIndex(-1) // -1 = new
+  }
 
   const openEdit = (index) => {
-    setDraft({ ...options[index] });
-    setEditingIndex(index);
-  };
+    setDraft({ ...options[index] })
+    setEditingIndex(index)
+  }
 
-  const closeDialog = () => setEditingIndex(null);
+  const closeDialog = () => setEditingIndex(null)
 
   const saveDialog = () => {
-    if (!draft.label.trim()) return;
-    const next = [...options];
+    if (!draft.label.trim()) return
+    const next = [...options]
     if (editingIndex === -1) {
-      next.push(draft);
+      next.push(draft)
     } else if (editingIndex != null) {
-      next[editingIndex] = draft;
+      next[editingIndex] = draft
     }
-    onChange(next);
-    closeDialog();
-  };
+    onChange(next)
+    closeDialog()
+  }
 
   const deleteOption = (index) => {
-    const next = options.filter((_, i) => i !== index);
-    onChange(next);
-  };
+    const next = options.filter((_, i) => i !== index)
+    onChange(next)
+  }
 
   // drag-to-reorder
-  const onDragStart = (index) => setDragIndex(index);
+  const onDragStart = (index) => setDragIndex(index)
   const onDragOver = (e, index) => {
-    e.preventDefault();
-    if (dragIndex == null || dragIndex === index) return;
-    const next = [...options];
-    const [moved] = next.splice(dragIndex, 1);
-    next.splice(index, 0, moved);
-    setDragIndex(index);
-    onChange(next);
-  };
-  const onDragEnd = () => setDragIndex(null);
+    e.preventDefault()
+    if (dragIndex == null || dragIndex === index) return
+    const next = [...options]
+    const [moved] = next.splice(dragIndex, 1)
+    next.splice(index, 0, moved)
+    setDragIndex(index)
+    onChange(next)
+  }
+  const onDragEnd = () => setDragIndex(null)
 
-  const offsetHours = draft.type === 'offset'
-    ? (draft.offsetMinutes ?? 60) / 60
-    : null;
+  const offsetHours = draft.type === 'offset' ? (draft.offsetMinutes ?? 60) / 60 : null
 
   return (
     <Root>
@@ -98,16 +96,12 @@ export default function SnoozeOptionsEditor({ options, onChange }) {
             key={opt.id}
             draggable
             onDragStart={() => onDragStart(index)}
-            onDragOver={e => onDragOver(e, index)}
+            onDragOver={(e) => onDragOver(e, index)}
             onDragEnd={onDragEnd}
             style={{ opacity: dragIndex === index ? 0.5 : 1, cursor: 'grab' }}
           >
             <DragHandle />
-            <ListItemText
-              primary={opt.label}
-              secondary={describeType(opt)}
-              inset
-            />
+            <ListItemText primary={opt.label} secondary={describeType(opt)} inset />
             <ListItemSecondaryAction>
               <IconButton size="small" onClick={() => openEdit(index)}>
                 <EditIcon fontSize="small" />
@@ -132,7 +126,7 @@ export default function SnoozeOptionsEditor({ options, onChange }) {
           <TextField
             label="Label"
             value={draft.label}
-            onChange={e => setDraft({ ...draft, label: e.target.value })}
+            onChange={(e) => setDraft({ ...draft, label: e.target.value })}
             fullWidth
             margin="normal"
             autoFocus
@@ -142,10 +136,12 @@ export default function SnoozeOptionsEditor({ options, onChange }) {
             <MuiSelect
               value={draft.type}
               label="Type"
-              onChange={e => setDraft({ ...draft, type: e.target.value, offsetMinutes: 60 })}
+              onChange={(e) => setDraft({ ...draft, type: e.target.value, offsetMinutes: 60 })}
             >
-              {OPTION_TYPES.map(t => (
-                <MenuItem key={t.value} value={t.value}>{t.label}</MenuItem>
+              {OPTION_TYPES.map((t) => (
+                <MenuItem key={t.value} value={t.value}>
+                  {t.label}
+                </MenuItem>
               ))}
             </MuiSelect>
           </FormControl>
@@ -155,7 +151,9 @@ export default function SnoozeOptionsEditor({ options, onChange }) {
               type="number"
               inputProps={{ min: 0.25, step: 0.25 }}
               value={offsetHours ?? 1}
-              onChange={e => setDraft({ ...draft, offsetMinutes: Math.round(parseFloat(e.target.value) * 60) })}
+              onChange={(e) =>
+                setDraft({ ...draft, offsetMinutes: Math.round(parseFloat(e.target.value) * 60) })
+              }
               fullWidth
               margin="normal"
             />
@@ -169,27 +167,27 @@ export default function SnoozeOptionsEditor({ options, onChange }) {
         </DialogActions>
       </Dialog>
     </Root>
-  );
+  )
 }
 
 function describeType(opt) {
   if (opt.type === 'offset') {
-    const h = (opt.offsetMinutes ?? 60) / 60;
-    return `${h} hour${h !== 1 ? 's' : ''} from now`;
+    const h = (opt.offsetMinutes ?? 60) / 60
+    return `${h} hour${h !== 1 ? 's' : ''} from now`
   }
-  return OPTION_TYPES.find(t => t.value === opt.type)?.label ?? opt.type;
+  return OPTION_TYPES.find((t) => t.value === opt.type)?.label ?? opt.type
 }
 
 const Root = styled.div`
   padding: 0 16px;
-`;
+`
 
 const AddRow = styled.div`
   padding: 8px 0 4px 56px;
-`;
+`
 
 const DragHandle = styled(DragHandleIcon)`
   color: #bbb;
   margin-right: 8px;
   cursor: grab;
-`;
+`

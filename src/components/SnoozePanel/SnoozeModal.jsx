@@ -1,23 +1,18 @@
-import React, { useEffect } from "react";
-import styled from 'styled-components';
-import Zoom from '@mui/material/Zoom';
+import React, { useEffect } from 'react'
+import styled from 'styled-components'
+import Zoom from '@mui/material/Zoom'
 
 export default function SnoozeModal(props) {
-  const { visible, noAnimation, children } = props;
+  const { visible, noAnimation, children } = props
 
   return (
-    <Overlay active={visible ? "true" : undefined}>
+    <Overlay active={visible ? 'true' : undefined}>
       {/* mountOnEnter so to render fast and open the popup fast */}
-      <Zoom
-        in={visible}
-        timeout={{ enter: noAnimation ? 0 : 300, exit: 300 }}
-        direction="up"
-        mountOnEnter
-      >
+      <Zoom in={visible} timeout={{ enter: noAnimation ? 0 : 300, exit: 300 }} direction="up" mountOnEnter>
         <Modal visible={visible}>{children}</Modal>
       </Zoom>
     </Overlay>
-  );
+  )
 }
 
 const Overlay = styled.div`
@@ -32,7 +27,7 @@ const Overlay = styled.div`
   padding: 10px;
   transition: opacity 300ms;
   opacity: ${(props) => (props.active ? 1 : 0)};
-`;
+`
 
 const Modal = styled.div`
   background-color: ${(props) => props.theme.snoozePanel.bgColor};
@@ -42,4 +37,4 @@ const Modal = styled.div`
   height: 100%;
 
   box-shadow: 0 0px 10px 0 rgba(0, 0, 0, 0.28);
-`;
+`

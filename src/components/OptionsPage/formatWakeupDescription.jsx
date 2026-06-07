@@ -1,13 +1,10 @@
-import moment from 'moment';
-import { ordinalNum } from '../../core/utils';
-import React, { Fragment } from 'react';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import moment from 'moment'
+import { ordinalNum } from '../../core/utils'
+import React, { Fragment } from 'react'
+import RefreshIcon from '@mui/icons-material/Refresh'
 
-export function formatWakeupDescription(
-  timeRange,
-  tab
-) {
-  const wakeupDateText = formatWakeupTime(timeRange, tab);
+export function formatWakeupDescription(timeRange, tab) {
+  const wakeupDateText = formatWakeupTime(timeRange, tab)
 
   return tab.period ? (
     <Fragment>
@@ -18,49 +15,42 @@ export function formatWakeupDescription(
     </Fragment>
   ) : (
     wakeupDateText
-  );
+  )
 }
 
-function formatWakeupTime(
-  timeRange,
-  tab
-) {
-  const date = moment(tab.when);
-  const { dateFormat } = timeRange;
+function formatWakeupTime(timeRange, tab) {
+  const date = moment(tab.when)
+  const { dateFormat } = timeRange
 
   if (dateFormat) {
-    return date.format(dateFormat);
+    return date.format(dateFormat)
   }
 
-  return date.calendar();
+  return date.calendar()
   // return date.format('MMM D');
 }
 
 function formatWakeupPeriod(tab) {
   if (!tab.period) {
-    throw new Error(
-      'formatWakeupPeriod was called with a non-periodic tab'
-    );
+    throw new Error('formatWakeupPeriod was called with a non-periodic tab')
   }
 
-  const period = tab.period;
-  const hourText = moment(tab.when).format('h:mm a');
+  const period = tab.period
+  const hourText = moment(tab.when).format('h:mm a')
 
   if (period.type === 'daily') {
-    return 'Every day at ' + hourText;
+    return 'Every day at ' + hourText
   }
 
   if (period.type === 'weekly') {
-    const weekdayNames = moment.weekdaysShort();
-    const weekdaysText = period.days
-      .map(dayIndex => weekdayNames[dayIndex])
-      .join(', ');
+    const weekdayNames = moment.weekdaysShort()
+    const weekdaysText = period.days.map((dayIndex) => weekdayNames[dayIndex]).join(', ')
 
-    return 'Every ' + weekdaysText + ' at ' + hourText;
+    return 'Every ' + weekdaysText + ' at ' + hourText
   }
 
   if (period.type === 'monthly') {
-    return 'Every month on the ' + ordinalNum(period.day + 1);
+    return 'Every month on the ' + ordinalNum(period.day + 1)
   }
 
   if (period.type === 'yearly') {
@@ -71,11 +61,9 @@ function formatWakeupPeriod(tab) {
       ordinalNum(period.date[1] + 1) +
       ' at ' +
       hourText
-    );
+    )
   }
 
   // should never happen
-  throw new Error(
-    'formatWakeupPeriod did not recognize a period type'
-  );
+  throw new Error('formatWakeupPeriod did not recognize a period type')
 }

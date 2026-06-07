@@ -1,43 +1,48 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { styled as muiStyled } from '@mui/material/styles';
-import { Helmet } from 'react-helmet-async';
-import styled, { css } from 'styled-components';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
-import AudioIcon from '@mui/icons-material/Audiotrack';
-import SunIcon from '@mui/icons-material/WbSunny';
-import WeekendIcon from '@mui/icons-material/Weekend';
-import WorkIcon from '@mui/icons-material/Work';
-import SomedayIcon from '@mui/icons-material/BeachAccess';
-import EditIcon from '@mui/icons-material/Edit';
-import KeyboardIcon from '@mui/icons-material/Keyboard';
+import React, { useState, useEffect, Fragment } from 'react'
+import { styled as muiStyled } from '@mui/material/styles'
+import { Helmet } from 'react-helmet-async'
+import styled, { css } from 'styled-components'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemText from '@mui/material/ListItemText'
+import ListSubheader from '@mui/material/ListSubheader'
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction'
+import AudioIcon from '@mui/icons-material/Audiotrack'
+import SunIcon from '@mui/icons-material/WbSunny'
+import WeekendIcon from '@mui/icons-material/Weekend'
+import WorkIcon from '@mui/icons-material/Work'
+import SomedayIcon from '@mui/icons-material/BeachAccess'
+import EditIcon from '@mui/icons-material/Edit'
+import KeyboardIcon from '@mui/icons-material/Keyboard'
 
-import StarIcon from '@mui/icons-material/Star';
-import GiftCardIcon from '@mui/icons-material/CardGiftcard';
-import LoveIcon from '@mui/icons-material/Favorite';
-import CodeIcon from '@mui/icons-material/Code';
-import MailIcon from '@mui/icons-material/Mail';
+import StarIcon from '@mui/icons-material/Star'
+import GiftCardIcon from '@mui/icons-material/CardGiftcard'
+import LoveIcon from '@mui/icons-material/Favorite'
+import CodeIcon from '@mui/icons-material/Code'
+import MailIcon from '@mui/icons-material/Mail'
 
-import MoonIcon from '@mui/icons-material/Brightness2';
+import MoonIcon from '@mui/icons-material/Brightness2'
 // import UserIcon from '@mui/icons-material/AccountCircle';
-import CloudIcon from '@mui/icons-material/Cloud';
-import BadgeIcon from '@mui/icons-material/Looks5';
-import AlarmIcon from '@mui/icons-material/Alarm';
-import DarkIcon from '@mui/icons-material/InvertColors';
-import LocationIcon from '@mui/icons-material/LocationOn';
-import CafeIcon from '@mui/icons-material/LocalCafe';
-import NotificationIcon from '@mui/icons-material/Notifications';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Switch from '@mui/material/Switch';
-import Select from '../SnoozePanel/Select';
-import { getSettings, saveSettings, DEFAULT_SETTINGS, DEFAULT_CUSTOM_SNOOZE_OPTIONS } from '../../core/settings';
-import SnoozeOptionsEditor from './SnoozeOptionsEditor';
+import CloudIcon from '@mui/icons-material/Cloud'
+import BadgeIcon from '@mui/icons-material/Looks5'
+import AlarmIcon from '@mui/icons-material/Alarm'
+import DarkIcon from '@mui/icons-material/InvertColors'
+import LocationIcon from '@mui/icons-material/LocationOn'
+import CafeIcon from '@mui/icons-material/LocalCafe'
+import NotificationIcon from '@mui/icons-material/Notifications'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import Switch from '@mui/material/Switch'
+import Select from '../SnoozePanel/Select'
+import {
+  getSettings,
+  saveSettings,
+  DEFAULT_SETTINGS,
+  DEFAULT_CUSTOM_SNOOZE_OPTIONS,
+} from '../../core/settings'
+import SnoozeOptionsEditor from './SnoozeOptionsEditor'
 
-import moment from 'moment';
-import KeyCombo from './KeyCombo';
+import moment from 'moment'
+import KeyCombo from './KeyCombo'
 import {
   // getUpgradeUrl,
   CHROME_SETTINGS_SHORTCUTS,
@@ -46,73 +51,65 @@ import {
   DONATE_URL_DEVELOPER3,
   DONATE_URL_ORIGINAL_DEVELOPER,
   GITHUB_REPO_URL,
-  SUPPORT_EMAIL_URL
-} from '../../paths';
+  SUPPORT_EMAIL_URL,
+} from '../../paths'
 // import { EVENTS, track } from '../../core/analytics';
-import {
-  BADGE_HIDDEN,
-  BADGE_TOTAL_SNOOZED,
-  BADGE_DUE_TODAY,
-} from '../../core/badge';
+import { BADGE_HIDDEN, BADGE_TOTAL_SNOOZED, BADGE_DUE_TODAY } from '../../core/badge'
 // import ProBadge from './ProBadge';
-import { isProUser } from '../../core/license';
-import Button from '../SnoozePanel/Button';
+import { isProUser } from '../../core/license'
+import Button from '../SnoozePanel/Button'
 
 // MUI v5 styled components
 const StyledList = muiStyled(List)(({ theme }) => ({
   marginBottom: theme.spacing(2),
-}));
+}))
 
 const SettingsPage = (props) => {
-  const [settingsState, setSettingsState] = useState(DEFAULT_SETTINGS);
-  const [commandsState, setCommandsState] = useState([]);
-  const isPro = true; // useState(true);
+  const [settingsState, setSettingsState] = useState(DEFAULT_SETTINGS)
+  const [commandsState, setCommandsState] = useState([])
+  const isPro = true // useState(true);
 
   useEffect(() => {
-    loadSettings();
+    loadSettings()
 
-    const handleFocus = () => loadSettings();
-    window.addEventListener('focus', handleFocus);
+    const handleFocus = () => loadSettings()
+    window.addEventListener('focus', handleFocus)
 
     return () => {
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, []);
+      window.removeEventListener('focus', handleFocus)
+    }
+  }, [])
 
   const loadSettings = async () => {
-    const settings = await getSettings();
+    const settings = await getSettings()
     // shortcut settings are loaded from chrome api
-    const commands = await chrome.commands.getAll();
-    const isPro = true; // await isProUser();
+    const commands = await chrome.commands.getAll()
+    const isPro = true // await isProUser();
 
-    setSettingsState(settings);
-    setCommandsState(commands || []);
+    setSettingsState(settings)
+    setCommandsState(commands || [])
     // setIsPro(isProValue);  // make everyone a pro user for now
-  };
+  }
 
   const bindSettings = (stateKey, valueProp = 'value') => {
-    const currentSettings = settingsState;
-    const value = currentSettings[stateKey];
+    const currentSettings = settingsState
+    const value = currentSettings[stateKey]
 
     if (value === undefined) {
-      throw new Error(
-        `Tried to read a unknown settings key '${stateKey}'`
-      );
+      throw new Error(`Tried to read a unknown settings key '${stateKey}'`)
     }
 
     return {
       [valueProp]: value,
       onChange: (eventOrValue) => {
-        const nextSettings = { ...currentSettings };
-        nextSettings[stateKey] = eventOrValue.target
-          ? eventOrValue.target[valueProp]
-          : eventOrValue;
+        const nextSettings = { ...currentSettings }
+        nextSettings[stateKey] = eventOrValue.target ? eventOrValue.target[valueProp] : eventOrValue
 
-        saveSettings(nextSettings);
-        setSettingsState(nextSettings);
+        saveSettings(nextSettings)
+        setSettingsState(nextSettings)
       },
-    };
-  };
+    }
+  }
 
   const renderGeneralSetting = (options) => {
     return (
@@ -130,33 +127,26 @@ const SettingsPage = (props) => {
           inset={options.icon === undefined}
         />
         <ListItemSecondaryAction>
-          <LockedContent locked={options.locked}>
-            {options.component}
-          </LockedContent>
+          <LockedContent locked={options.locked}>{options.component}</LockedContent>
         </ListItemSecondaryAction>
       </ListItem>
-    );
-  };
+    )
+  }
 
   const renderCheckboxSetting = (options) => {
-    const { stateKey, ...renderProps } = options;
+    const { stateKey, ...renderProps } = options
     return renderGeneralSetting({
       ...renderProps,
-      component: <Switch {...bindSettings(stateKey, 'checked')} />
-    });
-  };
+      component: <Switch {...bindSettings(stateKey, 'checked')} />,
+    })
+  }
 
   const renderDropdownSetting = (options) => {
     return renderGeneralSetting({
       ...options,
-      component: (
-        <SettingsSelect
-          options={options.options}
-          {...bindSettings(options.stateKey)}
-        />
-      ),
-    });
-  };
+      component: <SettingsSelect options={options.options} {...bindSettings(options.stateKey)} />,
+    })
+  }
 
   const renderShortcutSetting = (options) => {
     return renderGeneralSetting({
@@ -165,31 +155,27 @@ const SettingsPage = (props) => {
       component: (
         <KeyCombo
           combo={options.shortcut}
-          onClick={() =>
-            chrome.tabs.create({ url: CHROME_SETTINGS_SHORTCUTS })
-          }
+          onClick={() => chrome.tabs.create({ url: CHROME_SETTINGS_SHORTCUTS })}
         />
       ),
-    });
-  };
+    })
+  }
 
   const renderButtonSetting = (options) => {
     return renderGeneralSetting({
       ...options,
       component: <div />,
-    });
-  };
-
-  if (!settingsState) {
-    return null;
+    })
   }
 
-  const weekdayOptions = moment
-    .weekdays()
-    .map((dayName, dayIndex) => ({
-      label: dayName,
-      value: dayIndex,
-    }));
+  if (!settingsState) {
+    return null
+  }
+
+  const weekdayOptions = moment.weekdays().map((dayName, dayIndex) => ({
+    label: dayName,
+    value: dayIndex,
+  }))
 
   return (
     <Root>
@@ -207,11 +193,7 @@ const SettingsPage = (props) => {
                     <CloudIcon />
                   </ListItemIcon>
                   <ListItemText
-                    primary={
-                      <Fragment>
-                        {/* Tabs Sync & Backup <ProBadge /> */}
-                      </Fragment>
-                    }
+                    primary={<Fragment>{/* Tabs Sync & Backup <ProBadge /> */}</Fragment>}
                     secondary="Disabled"
                   />
                   <ListItemSecondaryAction>
@@ -243,15 +225,13 @@ const SettingsPage = (props) => {
             {renderCheckboxSetting({
               icon: <NotificationIcon />,
               title: 'Wake up notification',
-              description:
-                'Show a desktop notification (top-right corner) when tabs wake up',
+              description: 'Show a desktop notification (top-right corner) when tabs wake up',
               stateKey: 'showNotifications',
             })}
             {renderDropdownSetting({
               icon: <BadgeIcon />,
               title: 'Toolbar badge',
-              description:
-                'Display a tab count on the toolbar moon icon',
+              description: 'Display a tab count on the toolbar moon icon',
               stateKey: 'badge',
               options: [
                 {
@@ -271,15 +251,11 @@ const SettingsPage = (props) => {
             {!isPro &&
               renderDropdownSetting({
                 icon: <AlarmIcon />,
-                title: (
-                  <Fragment>
-                    {/* Smart wakeup <ProBadge /> */}
-                  </Fragment>
-                ),
+                title: <Fragment>{/* Smart wakeup <ProBadge /> */}</Fragment>,
                 description: 'Ask before waking up too many tabs',
                 stateKey: 'badge', // TODO: MUST CHANGE THIS
                 locked: !isPro,
-                options: [4, 5, 6, 7].map(num => ({
+                options: [4, 5, 6, 7].map((num) => ({
                   label: 'Disabled', // `${num} tabs`,
                   value: num,
                 })),
@@ -287,14 +263,9 @@ const SettingsPage = (props) => {
             {!isPro &&
               renderGeneralSetting({
                 icon: <DarkIcon />,
-                title: (
-                  <Fragment>
-                    {/* Dark Mode <ProBadge /> */}
-                  </Fragment>
-                ),
+                title: <Fragment>{/* Dark Mode <ProBadge /> */}</Fragment>,
                 locked: !isPro,
-                description:
-                  'Switch on the elegant Ya Snooze, Ya Win dark theme',
+                description: 'Switch on the elegant Ya Snooze, Ya Win dark theme',
                 component: <Switch checked={false} />,
               })}
 
@@ -324,7 +295,6 @@ const SettingsPage = (props) => {
               href: CHROME_WEB_STORE_REVIEW,
             })}
 
-
             {renderButtonSetting({
               icon: <GiftCardIcon />,
               title: 'Donate to support further development',
@@ -353,8 +323,7 @@ const SettingsPage = (props) => {
             {renderButtonSetting({
               icon: <MailIcon />,
               title: 'Support',
-              description:
-                'Contact us for help, questions, or any feature requests',
+              description: 'Contact us for help, questions, or any feature requests',
               href: SUPPORT_EMAIL_URL,
             })}
           </StyledList>
@@ -367,10 +336,10 @@ const SettingsPage = (props) => {
 
           <SnoozeOptionsEditor
             options={settingsState.customSnoozeOptions ?? DEFAULT_CUSTOM_SNOOZE_OPTIONS}
-            onChange={customSnoozeOptions => {
-              const nextSettings = { ...settingsState, customSnoozeOptions };
-              saveSettings(nextSettings);
-              setSettingsState(nextSettings);
+            onChange={(customSnoozeOptions) => {
+              const nextSettings = { ...settingsState, customSnoozeOptions }
+              saveSettings(nextSettings)
+              setSettingsState(nextSettings)
             }}
           />
 
@@ -379,7 +348,7 @@ const SettingsPage = (props) => {
               icon: <SunIcon />,
               title: 'Tomorrow starts at',
               stateKey: 'workdayStart',
-              options: [6, 7, 8, 9, 10, 11].map(hour => ({
+              options: [6, 7, 8, 9, 10, 11].map((hour) => ({
                 label: `${hour}:00 AM`,
                 value: hour,
               })),
@@ -388,7 +357,7 @@ const SettingsPage = (props) => {
               icon: <MoonIcon />,
               title: 'Evening starts at',
               stateKey: 'workdayEnd',
-              options: [15, 16, 17, 18, 19, 20, 21, 22].map(hour => ({
+              options: [15, 16, 17, 18, 19, 20, 21, 22].map((hour) => ({
                 label: `${hour - 12}:00 PM`,
                 value: hour,
               })),
@@ -409,7 +378,7 @@ const SettingsPage = (props) => {
               icon: <CafeIcon />,
               title: 'Later Today is',
               stateKey: 'laterTodayHoursDelta',
-              options: [1, 2, 3, 4, 5].map(hours => ({
+              options: [1, 2, 3, 4, 5].map((hours) => ({
                 label: `in ${hours} hours`,
                 value: hours,
               })),
@@ -418,7 +387,7 @@ const SettingsPage = (props) => {
               icon: <SomedayIcon />,
               title: 'Someday is',
               stateKey: 'somedayMonthsDelta',
-              options: [1, 2, 3, 4, 5].map(months => ({
+              options: [1, 2, 3, 4, 5].map((months) => ({
                 label: `in ${months} months`,
                 value: months,
               })),
@@ -426,9 +395,7 @@ const SettingsPage = (props) => {
 
             {!isPro && (
               <Fragment>
-                <Header>
-                  {/* Custom Snooze Options <ProBadge /> */}
-                </Header>
+                <Header>{/* Custom Snooze Options <ProBadge /> */}</Header>
                 {['Hours', 'Days', 'Weeks'].map((period, index) =>
                   renderGeneralSetting({
                     key: String(index),
@@ -439,14 +406,8 @@ const SettingsPage = (props) => {
                     component: (
                       <Fragment>
                         <span style={{ marginRight: 10 }}>in</span>
-                        <SettingsSelect
-                          small="true"
-                          options={[{ value: 2, label: '2' }]}
-                        />
-                        <SettingsSelect
-                          small="true"
-                          options={[{ value: 'days', label: period }]}
-                        />
+                        <SettingsSelect small="true" options={[{ value: 2, label: '2' }]} />
+                        <SettingsSelect small="true" options={[{ value: 'days', label: period }]} />
                       </Fragment>
                     ),
                   })
@@ -457,8 +418,8 @@ const SettingsPage = (props) => {
         </Column>
       </TwoColumnLayout>
     </Root>
-  );
-};
+  )
+}
 
 // const EditShortcutsInstructions = () => (
 //   <ListItem>
@@ -479,14 +440,13 @@ const SettingsPage = (props) => {
 //   </ListItem>
 // );
 
-
 const EditShortcutsInstructions = () => (
   <ListItem>
     <ListItemText secondary="Additionally, you can use Arrow keys, Numpad, and Capital letters (L-Later Today, etc.) in the Snooze Popup" />
   </ListItem>
-);
+)
 
-const Root = styled.div``;
+const Root = styled.div``
 
 const TwoColumnLayout = styled.div`
   display: grid;
@@ -497,11 +457,11 @@ const TwoColumnLayout = styled.div`
   @media (max-width: 800px) {
     grid-template-columns: 1fr;
   }
-`;
+`
 
 const Column = styled.div`
   min-width: 0;
-`;
+`
 // const MyLink = styled.a`
 //   text-decoration: underline;
 // `;
@@ -510,7 +470,7 @@ const Header = styled(ListSubheader).attrs({ disableSticky: true })`
   /* display: flex; */
   /* align-items: center; */
   margin-top: 10px;
-`;
+`
 
 const LogInButton = styled(Button).attrs({
   color: '#eee',
@@ -519,7 +479,7 @@ const LogInButton = styled(Button).attrs({
   padding: 8px 18px;
   color: #555;
   margin-right: 13px;
-`;
+`
 
 const LockedContent = styled.div`
   ${(props) =>
@@ -529,7 +489,7 @@ const LockedContent = styled.div`
       opacity: 0.5;
       user-select: none;
     `}
-`;
+`
 
 const SettingsSelect = styled(Select).attrs({
   component: 'select',
@@ -553,6 +513,6 @@ const SettingsSelect = styled(Select).attrs({
   :active {
     background-color: #d0d0d0;
   }
-`;
+`
 
-export default SettingsPage;
+export default SettingsPage

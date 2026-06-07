@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react';
-import styled from 'styled-components';
-import Button from '../SnoozePanel/Button';
+import React, { Fragment } from 'react'
+import styled from 'styled-components'
+import Button from '../SnoozePanel/Button'
 
 export default (props) => (
   <Root onClick={props.onClick}>
@@ -13,15 +13,15 @@ export default (props) => (
         ))
       : 'Not Defined'}
   </Root>
-);
+)
 
 function splitKeys(keyCombo) {
   // Windows and Mac Chrome act differently
   // Windows retuns - 'Alt+S'
   // Mac return - '⌥S'
-  const splitDelimiter = keyCombo.includes('+') ? '+' : '';
+  const splitDelimiter = keyCombo.includes('+') ? '+' : ''
 
-  return keyCombo.split(splitDelimiter);
+  return keyCombo.split(splitDelimiter)
 }
 
 const Root = styled(Button).attrs({ color: '#F1F3F4' })`
@@ -34,7 +34,7 @@ const Root = styled(Button).attrs({ color: '#F1F3F4' })`
   border-radius: 4px;
   padding: 6px;
   margin-right: 12px;
-`;
+`
 
 const Key = styled.div`
   background-color: #fff;
@@ -42,7 +42,7 @@ const Key = styled.div`
   border-radius: 4px;
   color: #333;
   padding: 4px 10px;
-`;
+`
 
 const Plus = styled.div`
   :after {
@@ -50,4 +50,4 @@ const Plus = styled.div`
   }
   display: inline-block;
   margin: 0 4px;
-`;
+`

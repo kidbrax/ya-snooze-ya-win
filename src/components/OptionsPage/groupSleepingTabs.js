@@ -1,42 +1,42 @@
-import { getSnoozedTabs } from '../../core/storage';
-import moment from 'moment';
-import { getWakeupTimeRanges } from './wakeupTimeRanges';
-import { compareTabs } from '../../core/utils';
+import { getSnoozedTabs } from '../../core/storage'
+import moment from 'moment'
+import { getWakeupTimeRanges } from './wakeupTimeRanges'
+import { compareTabs } from '../../core/utils'
 
 export async function getSleepingTabByWakeupGroups(hidePeriodic) {
-  const snoozedTabs = await getSnoozedTabs();
-  const timeRanges = await getWakeupTimeRanges();
+  const snoozedTabs = await getSnoozedTabs()
+  const timeRanges = await getWakeupTimeRanges()
 
-  const visibleTabGroups = [];
+  const visibleTabGroups = []
 
-  timeRanges.forEach(timeRange => {
-    const tabsInRange = [];
+  timeRanges.forEach((timeRange) => {
+    const tabsInRange = []
 
     for (let k = 0; k < snoozedTabs.length; k++) {
-      const tab = snoozedTabs[k];
+      const tab = snoozedTabs[k]
       if (moment(tab.when).isBefore(timeRange.maxDate)) {
         if (!tab.period || !hidePeriodic) {
-          tabsInRange.push(tab);
+          tabsInRange.push(tab)
         }
-        snoozedTabs.splice(snoozedTabs.indexOf(tab), 1);
-        k = k - 1;
+        snoozedTabs.splice(snoozedTabs.indexOf(tab), 1)
+        k = k - 1
       }
     }
     // Don't show group if its empty
     if (!tabsInRange.length) {
-      return;
+      return
     }
     // sort tabs in group by date
-    tabsInRange.sort(compareTabs);
+    tabsInRange.sort(compareTabs)
 
     // create s
     var tabGroup = {
       timeRange: timeRange,
       tabs: tabsInRange,
-    };
+    }
 
-    visibleTabGroups.push(tabGroup);
-  });
+    visibleTabGroups.push(tabGroup)
+  })
 
-  return visibleTabGroups;
+  return visibleTabGroups
 }

@@ -39,6 +39,8 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
     "check-whitespace": "bash scripts/check-trailing-whitespace.sh"
   },
   "devDependencies": {
@@ -54,6 +56,7 @@
     "eslint": "^9.0.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "jsdom": "^26.1.0",
+    "prettier": "^3.8.3",
     "vite": "^7.0.4",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^5.1.4",

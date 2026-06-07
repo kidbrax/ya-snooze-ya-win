@@ -1,1 +1,1 @@
-export { default } from './OptionsPage';
+export { default } from './OptionsPage'

@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components'
 
 export default createGlobalStyle`
 
@@ -35,7 +35,7 @@ export default createGlobalStyle`
   }
 
   *::selection {
-    background: ${props => props.theme.primary};
+    background: ${(props) => props.theme.primary};
     color: #fff;
   }
 
@@ -54,8 +54,8 @@ export default createGlobalStyle`
   }
 
   body {
-    font: 400 1.6rem/1.3 ${props => props.theme.fontFamily};
-    color: ${props => props.theme.black};
+    font: 400 1.6rem/1.3 ${(props) => props.theme.fontFamily};
+    color: ${(props) => props.theme.black};
     background-color: #fff;
   }
-`;
+`

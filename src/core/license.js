@@ -1,11 +1,11 @@
-import { getSettings, saveSettings } from './settings';
-import moment from 'moment';
+import { getSettings, saveSettings } from './settings'
+import moment from 'moment'
 
 // export const IS_PRO_PRODUCT_VISIBLE = true;
-export const FREE_WEEKLY_SNOOZE_COUNT = 20;
+export const FREE_WEEKLY_SNOOZE_COUNT = 20
 
 export async function isProUser() {
-  return true;
+  return true
   // const settings = await getSettings();
 
   // // All beta users are PRO users
@@ -38,42 +38,42 @@ export async function isInPaywallTest() {
   // const { installDate } = await getSettings();
 
   // REMOVED FAKE PAYWALL :( 20 May...
-  return false;
+  return false
 
   // All users past March 2019 are in this test, and will see the paywall
   // return moment(installDate) > moment('20190301', 'YYYYMMDD');
 }
 
 export async function incrementWeeklyUsage() {
-  const { weeklyUsage } = await getSettings();
-  let weeklyUsageCount = weeklyUsage.usageCount;
+  const { weeklyUsage } = await getSettings()
+  let weeklyUsageCount = weeklyUsage.usageCount
 
   if (weeklyUsage.weekNumber !== moment().week()) {
-    weeklyUsageCount = 0;
+    weeklyUsageCount = 0
   }
 
-  weeklyUsageCount++;
+  weeklyUsageCount++
 
   return saveSettings({
     weeklyUsage: {
       weekNumber: moment().week(),
       usageCount: weeklyUsageCount,
     },
-  });
+  })
 }
 
 export async function isOverFreeWeeklyQuota() {
-  const { weeklyUsage } = await getSettings();
-  let weeklyUsageCount = weeklyUsage.usageCount;
-  const isInPaywallTestResult = await isInPaywallTest();
+  const { weeklyUsage } = await getSettings()
+  let weeklyUsageCount = weeklyUsage.usageCount
+  const isInPaywallTestResult = await isInPaywallTest()
 
   if (!isInPaywallTestResult) {
-    return false; // never over quota
+    return false // never over quota
   }
 
   if (weeklyUsage.weekNumber !== moment().week()) {
-    weeklyUsageCount = 0;
+    weeklyUsageCount = 0
   }
 
-  return weeklyUsageCount >= FREE_WEEKLY_SNOOZE_COUNT;
+  return weeklyUsageCount >= FREE_WEEKLY_SNOOZE_COUNT
 }

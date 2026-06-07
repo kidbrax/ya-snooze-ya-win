@@ -1,10 +1,10 @@
-import React from 'react';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider as StyledThemeProvider } from 'styled-components';
-import { muiTheme, styledComponentsTheme } from './theme';
-import GlobalStyles from './GlobalStyles';
-import Router from './Router';
+import React from 'react'
+import { ThemeProvider } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
+import { ThemeProvider as StyledThemeProvider } from 'styled-components'
+import { muiTheme, styledComponentsTheme } from './theme'
+import GlobalStyles from './GlobalStyles'
+import Router from './Router'
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
         <Router />
       </StyledThemeProvider>
     </ThemeProvider>
-  );
+  )
 }
 
-export default App;
+export default App
