@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- modularize support links into shared component
+- update dialogs to use centered logo
+- auto-update WhatsNew page from CHANGELOG during release
+
 ## [13.0.16] - 2026-06-29
 
 - remove pro/upgrade/paywall functionality (all users are free)
