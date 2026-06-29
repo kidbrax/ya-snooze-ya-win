@@ -1,18 +1,14 @@
 import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react'
 import styled from 'styled-components'
-// import bugsnag from '../../bugsnag';
 import calcSnoozeOptions, { SNOOZE_TYPE_REPEATED, SNOOZE_TYPE_SPECIFIC_DATE } from './calcSnoozeOptions'
 import SnoozeButtonsGrid from './SnoozeButtonsGrid'
 import { MSG_SNOOZE_TAB, MSG_SNOOZE_TABS } from '../../core/messages'
 import TooltipHelper from './TooltipHelper'
-import UpgradeDialog from './UpgradeDialog'
 import { DEFAULT_SETTINGS, getSettings } from '../../core/settings'
-import { isOverFreeWeeklyQuota } from '../../core/license'
 import SnoozeFooter from './SnoozeFooter'
 import { loadAudio, SOUND_SNOOZE } from '../../core/audio'
 import keycode from 'keycode'
 import { countConsecutiveSnoozes, IS_BETA, createTab, getActiveTab, getSelectedTabs } from '../../core/utils'
-// import { getUpgradeUrl } from '../../paths';
 
 // code splitting these big components
 const AsyncPeriodSelector = lazy(() => import('./PeriodSelector'))
@@ -31,9 +27,7 @@ export function SnoozePanel(props) {
   const [selectedSnoozeOptionId, setSelectedSnoozeOptionId] = useState(null)
   const [focusedButtonIndex, setFocusedButtonIndex] = useState(-1)
   const [snoozeOptions, setSnoozeOptions] = useState(calcSnoozeOptions(DEFAULT_SETTINGS))
-  const [isProUser, setIsProUser] = useState(true)
   const [selectorDialogOpen, setSelectorDialogOpen] = useState(false)
-  const [isOverFreePlanLimit, setIsOverFreePlanLimit] = useState(false)
   const [selectedTabs, setSelectedTabs] = useState([])
 
   useEffect(() => {
@@ -46,15 +40,7 @@ export function SnoozePanel(props) {
 
         if (!cancelled) {
           setSnoozeOptions(calcSnoozeOptions(settings))
-          setIsProUser(true)
         }
-
-        timeoutId = setTimeout(async () => {
-          const isOverFreePlanLimit = await isOverFreeWeeklyQuota()
-          if (!cancelled) {
-            setIsOverFreePlanLimit(isOverFreePlanLimit)
-          }
-        }, 300)
       } catch (error) {
         console.error('Failed to load data:', error)
       }
@@ -100,11 +86,6 @@ export function SnoozePanel(props) {
 
   const onKeyPress = useCallback(
     (event) => {
-      if (isOverFreePlanLimit) {
-        // ignore shortcuts when Upgrade dialog is visible
-        return
-      }
-
       let nextFocusedIndex = focusedButtonIndex
       const key = keycode(event)
       const mappedOptionIndex = key && SNOOZE_SHORTCUT_KEYS[key.toUpperCase()]
@@ -115,7 +96,6 @@ export function SnoozePanel(props) {
         nextFocusedIndex = -1
       } else if (key === 'enter') {
         if (nextFocusedIndex === -1) {
-          // select later by default
           nextFocusedIndex = 0
         }
 
@@ -137,7 +117,7 @@ export function SnoozePanel(props) {
 
       setFocusedButtonIndex(nextFocusedIndex)
     },
-    [focusedButtonIndex, snoozeOptions, isOverFreePlanLimit, onSnoozeButtonClicked]
+    [focusedButtonIndex, snoozeOptions, onSnoozeButtonClicked]
   )
 
   const onSnoozeSpecificDateSelected = useCallback(
@@ -153,22 +133,18 @@ export function SnoozePanel(props) {
 
   const onSnoozePeriodSelected = useCallback(
     (period) => {
-      if (!isProUser) {
-        return
-      }
       delayedSnooze(selectedTabs, {
         type: selectedSnoozeOptionId || '',
         period,
         closeTab: true,
       })
     },
-    [selectedSnoozeOptionId, isProUser, selectedTabs]
+    [selectedSnoozeOptionId, selectedTabs]
   )
 
   const getSnoozeButtons = () => {
     return snoozeOptions.map((snoozeOpt, index) => ({
       ...snoozeOpt,
-      proBadge: !isProUser && Boolean(snoozeOpt.isProFeature),
       focused: focusedButtonIndex === index,
       pressed: selectedSnoozeOptionId === snoozeOpt.id,
       onClick: (ev) => onSnoozeButtonClicked(ev, snoozeOpt),
@@ -199,7 +175,6 @@ export function SnoozePanel(props) {
           visible: tooltipVisible || hideFooter,
           text: tooltipText ?? '',
         }}
-        upgradeBadge={!isProUser}
         betaBadge={IS_BETA}
       />
       {selectedSnoozeOptionId === SNOOZE_TYPE_REPEATED && (
@@ -218,7 +193,6 @@ export function SnoozePanel(props) {
           />
         </Suspense>
       )}
-      <UpgradeDialog onDismiss={() => setIsOverFreePlanLimit(false)} visible={isOverFreePlanLimit} />
     </Root>
   )
 }

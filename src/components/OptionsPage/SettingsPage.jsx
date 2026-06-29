@@ -55,8 +55,6 @@ import {
 } from '../../paths'
 // import { EVENTS, track } from '../../core/analytics';
 import { BADGE_HIDDEN, BADGE_TOTAL_SNOOZED, BADGE_DUE_TODAY } from '../../core/badge'
-// import ProBadge from './ProBadge';
-import { isProUser } from '../../core/license'
 import Button from '../SnoozePanel/Button'
 
 // MUI v5 styled components

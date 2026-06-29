@@ -13,7 +13,6 @@ import Button from '../SnoozePanel/Button'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import CodeIcon from '@mui/icons-material/Code'
 
-import loveImage from './images/love.png'
 import chromeWebStoreImage from './images/chrome_web_store.png'
 
 export default function SupportTSDialog() {
@@ -25,7 +24,6 @@ export default function SupportTSDialog() {
   return (
     <TSDialog
       title="Support Ya Snooze, Ya Win"
-      image={loveImage}
       headline="Enjoying Ya Snooze, Ya Win?"
       subheader={
         <Fragment>
