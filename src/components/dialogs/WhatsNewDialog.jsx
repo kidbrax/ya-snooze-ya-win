@@ -5,10 +5,9 @@ import TSDialog from './TSDialog'
 import SupportLinks from './SupportLinks'
 
 const CHANGELOG_ITEMS = [
-  'Remove pro/upgrade/paywall functionality (all users are free)',
-  'Remove unused branding images and update logos',
-  'Add tests to CI pipeline',
-  'Add Prettier check to CI',
+  'modularize support links into shared component',
+  'update dialogs to use centered logo',
+  'auto-update WhatsNew page from CHANGELOG during release',
 ]
 
 export default function WhatsNewDialog() {

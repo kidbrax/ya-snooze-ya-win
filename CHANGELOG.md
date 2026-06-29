@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [13.0.17] - 2026-06-29
+
 - modularize support links into shared component
 - update dialogs to use centered logo
 - auto-update WhatsNew page from CHANGELOG during release
