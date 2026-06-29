@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [13.0.16] - 2026-06-29
+
 - remove pro/upgrade/paywall functionality (all users are free)
 - remove unused branding images and update logos
 - add tests to CI pipeline
