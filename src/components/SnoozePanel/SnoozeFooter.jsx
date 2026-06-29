@@ -12,7 +12,7 @@ import {
 import { getSnoozedTabs } from '../../core/storage'
 import { createTab } from '../../core/utils'
 
-export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }) {
+export default function SnoozeFooter({ tooltip, betaBadge }) {
   const [sleepingTabsCount, setSleepingTabsCount] = useState(0)
 
   useEffect(() => {
@@ -53,12 +53,6 @@ export default function SnoozeFooter({ tooltip, upgradeBadge, betaBadge }) {
           <SleepingCountBadge>{sleepingTabsCount}</SleepingCountBadge>
           Sleeping Tabs
         </SleepingTabsBtn>
-
-        {!betaBadge && upgradeBadge && (
-          <BadgeButton as="a" target="_blank" rel="noopener noreferrer">
-            <UpgradeBadge>Upgrade</UpgradeBadge>
-          </BadgeButton>
-        )}
 
         {betaBadge && (
           <BadgeButton onClick={handleBetaClick}>

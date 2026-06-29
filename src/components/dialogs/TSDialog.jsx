@@ -16,10 +16,12 @@ export default function TSDialog({ image, title, headline, subheader, closeBtnTe
         <Root>
           <Logo />
           <Content noPadding={noPadding}>
-            <picture>
-              <source srcSet={`${image} 2x`} />
-              <img src={image} alt="" />
-            </picture>
+            {image && (
+              <picture>
+                <source srcSet={`${image} 2x`} />
+                <img src={image} alt="" />
+              </picture>
+            )}
             <Headline>{headline}</Headline>
             <Subheader>{subheader}</Subheader>
             {children}

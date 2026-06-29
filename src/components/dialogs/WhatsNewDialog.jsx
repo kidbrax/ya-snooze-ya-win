@@ -12,15 +12,12 @@ import Button from '../SnoozePanel/Button'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import CodeIcon from '@mui/icons-material/Code'
 
-import congratsImage from './images/congrats.png'
-
 const CHANGELOG_ITEMS = ['Fixed a bug where snoozed tabs could re-open repeatedly']
 
 export default function WhatsNewDialog() {
   return (
     <TSDialog
       title={`What's New in Ya Snooze, Ya Win ${APP_VERSION}`}
-      image={congratsImage}
       headline={`Ya Snooze, Ya Win ${APP_VERSION}`}
       subheader={
         <Fragment>

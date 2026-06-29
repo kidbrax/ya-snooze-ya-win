@@ -89,3 +89,5 @@ To create the pull request:
   - src/components/OptionsPage/images/navbar_logo.svg
   - src/components/dialogs/images/congrats.png
   - src/components/dialogs/images/logo.svg
+- add google analytics to ko-fi page
+  add links to my main site?

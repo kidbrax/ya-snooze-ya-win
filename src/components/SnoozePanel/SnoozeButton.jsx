@@ -1,11 +1,10 @@
 import React from 'react'
 import styled, { css, withTheme } from 'styled-components'
-import ProCornerRibbon from './ProCornerRibbon'
 
 const SNOOZE_CLICK_EFFECT_TIME = 400
 
 const SnoozeButton = (props) => {
-  const { title, tooltip, when, focused, pressed, proBadge, onClick, onMouseLeave, onMouseEnter } = props
+  const { title, tooltip, when, focused, pressed, onClick, onMouseLeave, onMouseEnter } = props
 
   // Show the tooltip time string for options that have a concrete wakeup time
   const timeLabel = when ? tooltip : null
@@ -20,7 +19,6 @@ const SnoozeButton = (props) => {
     >
       <Title $pressed={pressed}>{title}</Title>
       {timeLabel && <TimeLabel $pressed={pressed}>({timeLabel})</TimeLabel>}
-      {proBadge && <ProCornerRibbon white={pressed ? true : undefined} />}
     </Button>
   )
 }
