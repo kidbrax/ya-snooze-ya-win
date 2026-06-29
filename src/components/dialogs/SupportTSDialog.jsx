@@ -1,19 +1,8 @@
 import React, { Fragment } from 'react'
 import styled from 'styled-components'
-import {
-  CHROME_WEB_STORE_REVIEW,
-  GITHUB_REPO_URL,
-  DONATE_URL_DEVELOPER2,
-  DONATE_URL_DEVELOPER3,
-  DONATE_URL_ORIGINAL_DEVELOPER,
-} from '../../paths'
 import { saveSettings } from '../../core/settings'
 import TSDialog from './TSDialog'
-import Button from '../SnoozePanel/Button'
-import FavoriteIcon from '@mui/icons-material/Favorite'
-import CodeIcon from '@mui/icons-material/Code'
-
-import chromeWebStoreImage from './images/chrome_web_store.png'
+import SupportLinks from './SupportLinks'
 
 export default function SupportTSDialog() {
   const handleDontShowAgain = async () => {
@@ -33,47 +22,7 @@ export default function SupportTSDialog() {
       }
       closeBtnText={null}
     >
-      <ActionButtons>
-        <ActionButton raised as="a" color="#4A90E2" href={CHROME_WEB_STORE_REVIEW} target="_blank">
-          <CWSLogo />
-          <ButtonText>
-            <Primary>Rate Ya Snooze, Ya Win</Primary>
-            <Secondary>Chrome Web Store</Secondary>
-          </ButtonText>
-        </ActionButton>
-
-        <ActionButton raised as="a" color="#FF5E5B" href={DONATE_URL_DEVELOPER3} target="_blank">
-          <FavoriteIcon style={{ marginRight: 8 }} />
-          <ButtonText>
-            <Primary>Support Latest Developer</Primary>
-            <Secondary>Kofi donation</Secondary>
-          </ButtonText>
-        </ActionButton>
-
-        <ActionButton raised as="a" color="#FF5E5B" href={DONATE_URL_DEVELOPER2} target="_blank">
-          <FavoriteIcon style={{ marginRight: 8 }} />
-          <ButtonText>
-            <Primary>Support Current Developer</Primary>
-            <Secondary>Kofi donation</Secondary>
-          </ButtonText>
-        </ActionButton>
-
-        <ActionButton raised as="a" color="#4A90E2" href={ORIGINAL_DEVLOPER_DONATE_URL} target="_blank">
-          <FavoriteIcon style={{ marginRight: 8 }} />
-          <ButtonText>
-            <Primary>Support Original Developer</Primary>
-            <Secondary>PayPal donation</Secondary>
-          </ButtonText>
-        </ActionButton>
-
-        <ActionButton raised as="a" color="#777777" href={GITHUB_REPO_URL} target="_blank">
-          <CodeIcon style={{ marginRight: 8 }} />
-          <ButtonText>
-            <Primary>Open source codebase</Primary>
-            <Secondary>Github repo</Secondary>
-          </ButtonText>
-        </ActionButton>
-      </ActionButtons>
+      <SupportLinks />
 
       <CloseButtons>
         <CloseButton onClick={handleDontShowAgain}>Don&apos;t show again</CloseButton>
@@ -83,40 +32,8 @@ export default function SupportTSDialog() {
   )
 }
 
-const ActionButtons = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`
-
-const ActionButton = styled(Button)`
-  display: flex;
-  align-items: center;
-  padding: 14px 20px;
-  text-decoration: none;
-`
-
-const CWSLogo = styled.img.attrs({
-  src: chromeWebStoreImage,
-})`
-  margin-right: 10px;
-`
-
-const ButtonText = styled.div``
-const Primary = styled.div`
-  font-weight: 500;
-  font-size: 20px;
-  text-align: left;
-`
-const Secondary = styled.div`
-  font-weight: 400;
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.75);
-  text-align: left;
-`
-
 const CloseButtons = styled.div`
-  margin-top: 16px;
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;

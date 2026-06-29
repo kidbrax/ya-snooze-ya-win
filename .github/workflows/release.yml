@@ -107,6 +107,36 @@ jobs:
           DATE=$(date +%Y-%m-%d)
           sed -i "s/## \[Unreleased\]/## [Unreleased]\n\n## [$VERSION] - $DATE/" CHANGELOG.md
 
+      # ── Update WhatsNewDialog with latest changelog items ────────────────
+      - name: Update WhatsNewDialog
+        if: steps.existing.outputs.skip == 'false'
+        run: |
+          VERSION=${{ steps.bumped.outputs.version }}
+          # Extract items for this version from CHANGELOG
+          ITEMS=$(awk "/^## \[$VERSION\]/{found=1; next} found && /^## \[/{exit} found && /^- /{print}" CHANGELOG.md)
+
+          # Build JSON array of items
+          JSON_ITEMS=$(echo "$ITEMS" | sed 's/^- //' | node -e "
+            let d=''; process.stdin.on('data',c=>d+=c).on('end',()=>{
+              const items = d.trim().split('\n').filter(Boolean);
+              console.log(JSON.stringify(items, null, 2));
+            })
+          ")
+
+          # Replace CHANGELOG_ITEMS in WhatsNewDialog.jsx
+          node -e "
+            const fs = require('fs');
+            const file = 'src/components/dialogs/WhatsNewDialog.jsx';
+            let content = fs.readFileSync(file, 'utf8');
+            const items = ${JSON_ITEMS};
+            const itemsStr = items.map(i => \`  '\${i}',\`).join('\n');
+            content = content.replace(
+              /const CHANGELOG_ITEMS = \[[\s\S]*?\]/,
+              'const CHANGELOG_ITEMS = [\n' + itemsStr + '\n]'
+            );
+            fs.writeFileSync(file, content);
+          "
+
       # ── Commit, tag, push ─────────────────────────────────────────────────
       - name: Commit and tag
         if: steps.existing.outputs.skip == 'false'
@@ -114,7 +144,7 @@ jobs:
           VERSION=${{ steps.bumped.outputs.version }}
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/manifest.json package.json package-lock.json CHANGELOG.md
+          git add public/manifest.json package.json package-lock.json CHANGELOG.md src/components/dialogs/WhatsNewDialog.jsx
           git commit -m "chore: release v$VERSION [skip ci]"
           git tag "v$VERSION"
           git push origin main --follow-tags
