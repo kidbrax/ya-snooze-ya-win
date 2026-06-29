@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async'
 import Fade from '@mui/material/Fade'
 import Button from '../SnoozePanel/Button'
 
-import logoImage from './images/logo.svg'
+import logoImage from '../../../assets/snoozeicon.png'
 
 export default function TSDialog({ image, title, headline, subheader, closeBtnText, children, noPadding }) {
   return (
@@ -14,8 +14,8 @@ export default function TSDialog({ image, title, headline, subheader, closeBtnTe
       </Helmet>
       <Fade in timeout={700}>
         <Root>
-          <Logo />
           <Content noPadding={noPadding}>
+            <Logo />
             {image && (
               <picture>
                 <source srcSet={`${image} 2x`} />
@@ -45,7 +45,7 @@ const Root = styled.div`
 
 const Content = styled.div`
   padding: ${(props) => (props.noPadding ? 0 : PADDING)}px;
-  padding-top: 60px;
+  padding-top: 20px;
 
   display: flex;
   flex-direction: column;
@@ -56,9 +56,9 @@ const Content = styled.div`
 const Logo = styled.img.attrs({
   src: logoImage,
 })`
-  position: absolute;
-  top: ${PADDING}px;
-  left: ${PADDING}px;
+  width: 240px;
+  height: 240px;
+  margin-bottom: 16px;
 `
 
 const Headline = styled.div`
@@ -78,7 +78,7 @@ const Subheader = styled.div`
   line-height: 33px;
   margin-bottom: 38px;
   text-align: center;
-  padding: 0 30px;
+  padding: 0 25%;
 `
 
 const NoThanksButton = styled(Button).attrs((props) => ({
